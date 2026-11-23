@@ -1,0 +1,46 @@
+{
+  "review_provenance": {
+    "status": "provisional",
+    "agent_review": "Claude (AI agent, claude-opus-5-5), 2026-11-23: side-by-side reading of every extracted Arabic/English pair, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references.",
+    "automated_checks": [
+      "existing eligibility rule (no amendment recorded in either source; unique, non-bis, nonempty)",
+      "every digit sequence in the Arabic text also occurs in the English text",
+      "English text is an exact substring of an independent extractor's output (poppler pdftotext, whitespace-normalized)",
+      "run-time token-count guards (no truncation/padding, full character coverage, no special/unknown ids)"
+    ],
+    "human_approval": "PENDING: no human has reviewed or approved any pair in this corpus (including the 10 pilot pairs)",
+    "pilot_notes": "notes for the 10 pilot articles are carried over unchanged from manifest/review.json"
+  },
+  "articles": {
+    "4": "Both: employers and workers must adhere to Sharia when applying the Law.",
+    "6": "Both: incidental, seasonal and temporary workers are subject to the same 9 listed areas (duties and discipline; maximum hours; daily/weekly rest; overtime; official holidays; safety rules; occupational health; work injuries and compensation; Minister's decisions). All 9 present on both sides.",
+    "26": "Both: clause 1 Saudization duties (attract, employ, retain, guide/train/qualify); clause 2 Saudi workers at least 75% of the workforce; Minister may reduce the share temporarily when qualified nationals are unavailable.",
+    "29": "Both: an employer must re-employ a worker whose work injury reduces capacity but permits other work, in a suitable job at that job's wage; injury compensation is preserved. Nuance: EN 'another job' leaves implicit the AR 'other than his previous work'.",
+    "32": "Both: recruitment from abroad for work requires Ministry approval.",
+    "38": "Both: no employment outside the profession on the work permit; worker may not change profession before legal procedures.",
+    "45": "Both: defines the qualification/training contract binding the employer to prepare a person for a specific profession. Nuance: AR 'qualify or train', EN 'train and qualify'.",
+    "49": "Both: training contract subject to 7 listed areas (annual leave; official holidays; maximum hours; daily/weekly rest; occupational safety and health; work injuries and conditions; Minister's decisions).",
+    "59": "Both: monthly-paid worker may not be moved to daily/weekly/piecework/hourly pay without written consent; acquired rights preserved.",
+    "65": "Both: worker duties beyond the Law - six numbered items (work per instructions; care of employer property; conduct; help in disasters without extra pay; medical examinations; confidentiality).",
+    "70": "Both: no penalty for off-site acts unless work-related; fine per violation max five days' wage; one penalty per violation; deductions max five days' wage per month; unpaid suspension max five days per month.",
+    "89": "Both: Council of Ministers may set a minimum wage on the Minister's proposal.",
+    "92": "Both: no deductions without written consent except six numbered cases (10% loan cap; social insurance; savings fund; housing scheme; fines/damages; court judgment capped at one quarter), with alimony first.",
+    "108": "Both: Articles 98 and 101 do not apply to four numbered cases (senior management; preparatory/supplementary work; intermittent work; guards and cleaners except civil security guards); Regulations set jobs and maximum hours for items 2-4.",
+    "120": "Both: Minister issues rules for part-time work; the Law applies only as the Minister decides, except occupational safety/health and work-injury protection.",
+    "132": "Both: this Chapter does not cover establishments that fall under the occupational-hazards branch of social insurance.",
+    "134": "Both: work injury as defined by the Social Insurance Law; occupational diseases count as work injuries; date of first medical diagnosis counts as the injury date.",
+    "138": "Both: permanent total disability or death gives compensation of 3 years' wages with a 54,000-riyal minimum (AR in words); partial disability gives the assessed percentage per the approved disability guide times the total-disability amount.",
+    "154": "Both: after maternity leave, nursing break(s) totalling at most 1 hour per day, in addition to general rest periods, counted as working time, with no wage reduction.",
+    "158": "Both: in all occupations and places employing women, the employer provides seats for their rest.",
+    "161": "Both: minors barred from hazardous or harmful work endangering health, safety or morals; the Minister specifies such work by decision.",
+    "162": "Both: clause 1 minimum age 15 (Minister may raise it); clause 2 exception for ages 13-15 in light work subject to sub-clauses 2/1 (EN 2.1) no harm to health or growth and 2/2 (EN 2.2) no hindrance to schooling or training.",
+    "163": "Both: minors may not work during a night period of at least 12 consecutive hours (AR in words), except as the Minister decides.",
+    "188": "Both: actual underground work at most 7 hours per day; presence at the workplace at most 10 hours per day (AR in words), including underground travel time.",
+    "191": "Both: the employer or responsible manager issues a list of public-safety orders and instructions.",
+    "201": "Both: inspector may order changes to equipment/machinery operating rules within set deadlines for health and safety, and may require immediate measures against an imminent hazard.",
+    "202": "Both: inspector keeps complaints about equipment shortages or violations absolutely confidential and must not reveal their existence to the employer or representative.",
+    "204": "Both: physicians, engineers, chemists and occupational safety and health specialists join inspections as needed; labor office director and inspectors may ask competent executive bodies for assistance.",
+    "244": "Both: supersedes the Labor and Workers Law (Royal Decree M/21 dated 6/9/1389H); repeals conflicting provisions; earlier regulations remain until amended.",
+    "245": "Both: published in the Official Gazette; in force 180 days after publication (AR in words)."
+  }
+}

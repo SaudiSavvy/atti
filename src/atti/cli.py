@@ -41,18 +41,26 @@ def cmd_manifest(args) -> int:
     sources.fetch_all(raw)
     review = corpus.read_json(root / "manifest" / "review.json")
     fetch_log = corpus.read_json(raw / "fetch_log.json")
-    articles = [int(x) for x in args.articles.split(",")]
-    m = corpus.build_manifest(raw, articles, review, fetch_log)
-    corpus.write_json(root / "manifest" / "pilot_manifest.json", m)
-    print(f"wrote manifest/pilot_manifest.json with {len(m['articles'])} article pairs")
+    if args.corpus == "expanded_v1":
+        from atti import selection
+
+        pilot = corpus.read_json(root / "manifest" / "pilot_manifest.json")
+        review = corpus.read_json(root / "manifest" / "expanded_v1_review.json")
+        m = selection.expanded_manifest(raw, pilot, review, fetch_log)
+    else:
+        articles = [int(x) for x in args.articles.split(",")]
+        m = corpus.build_manifest(raw, articles, review, fetch_log)
+    out = root / "manifest" / f"{args.corpus}_manifest.json"
+    corpus.write_json(out, m)
+    print(f"wrote {out.relative_to(root)} with {len(m['articles'])} article pairs")
     return 0
 
 
-def cmd_pilot(args) -> int:
+def cmd_pilot(args, name: str = "pilot") -> int:
     from atti import corpus, pipeline, sources
 
     try:
-        summary = pipeline.run(_root())
+        summary = pipeline.run(_root(), name)
     except sources.NetworkError as exc:
         return _network_error(exc)
     except corpus.VerificationError as exc:
@@ -61,15 +69,19 @@ def cmd_pilot(args) -> int:
     for model, s in summary["models"].items():
         print(f"{model}: AR={s['ar_tokens_total']} EN={s['en_tokens_total']} "
               f"TTR={s['ttr']:.4f} median={s['median_article_ratio']:.4f}")
-    print("wrote results/pilot.csv, results/pilot_summary.json, reports/pilot.md")
+    print("wrote " + ", ".join(pipeline.CORPORA[name][1:]))
     return 0
+
+
+def cmd_expanded(args) -> int:
+    return cmd_pilot(args, "expanded_v1")
 
 
 def cmd_verify_live(args) -> int:
     from atti import corpus, live, sources
 
     root = _root()
-    manifest = corpus.read_json(root / "manifest" / "pilot_manifest.json")
+    manifest = corpus.read_json(root / "manifest" / f"{args.corpus}_manifest.json")
     try:
         report = live.verify_live(manifest, root / "data" / "raw")
     except sources.NetworkError as exc:
@@ -84,13 +96,18 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("fetch", help="download missing official sources into data/raw "
                    "(git-ignored; cached files are never replaced)").set_defaults(func=cmd_fetch)
     m = sub.add_parser("manifest", help="(re)build the verified article manifest")
-    m.add_argument("--articles", default=DEFAULT_ARTICLES)
+    m.add_argument("--articles", default=DEFAULT_ARTICLES, help="pilot only")
+    m.add_argument("--corpus", choices=("pilot", "expanded_v1"), default="pilot")
     m.set_defaults(func=cmd_manifest)
     sub.add_parser("pilot", help="reproduce from cached sources: verify hashes, count tokens, "
                    "write results and report").set_defaults(func=cmd_pilot)
-    sub.add_parser("verify-live", help="download fresh official sources to a temp dir and "
-                   "compare with the manifest (exit 0 clean, 1 source changed, "
-                   "2 articles failed, 3 network error)").set_defaults(func=cmd_verify_live)
+    sub.add_parser("expanded", help="reproduce the 30-article expanded_v1 corpus (writes only "
+                   "expanded_v1 artifacts)").set_defaults(func=cmd_expanded)
+    v = sub.add_parser("verify-live", help="download fresh official sources to a temp dir and "
+                       "compare with the manifest (exit 0 clean, 1 source changed, "
+                       "2 articles failed, 3 network error)")
+    v.add_argument("--corpus", choices=("pilot", "expanded_v1"), default="pilot")
+    v.set_defaults(func=cmd_verify_live)
     args = p.parse_args(argv)
     return args.func(args)
 

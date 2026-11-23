@@ -1,5 +1,5 @@
 {
-  "reviewer_note": "Manual side-by-side review of the extracted Arabic article body and English article body (2026-11-23). Each note states what both texts say; no legal text is reproduced here.",
+  "reviewer_note": "Agent review (Claude, AI agent) on 2026-11-23: side-by-side comparison of the extracted Arabic and English article bodies. NOT human-approved. Each note states what both texts say; no legal text is reproduced here.",
   "articles": {
     "4": "Both: employers and workers must adhere to Sharia when applying the Law.",
     "32": "Both: recruitment from abroad for work requires Ministry approval.",

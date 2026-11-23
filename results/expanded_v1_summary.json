@@ -1,0 +1,76 @@
+{
+  "tokenizers": [
+    {
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "tokenizer_json_sha256": "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49"
+    }
+  ],
+  "models": {
+    "Qwen/Qwen2.5-3B-Instruct": {
+      "articles": 30,
+      "ar_tokens_total": 2925,
+      "en_tokens_total": 2075,
+      "ttr": 1.4096385542168675,
+      "median_article_ratio": 1.3972089314194576,
+      "min_article_ratio": 0.85,
+      "max_article_ratio": 1.8
+    },
+    "mistralai/Mistral-7B-Instruct-v0.3": {
+      "articles": 30,
+      "ar_tokens_total": 7161,
+      "en_tokens_total": 2236,
+      "ttr": 3.202593917710197,
+      "median_article_ratio": 3.1616688396349413,
+      "min_article_ratio": 2.090909090909091,
+      "max_article_ratio": 4.523809523809524
+    }
+  },
+  "subsets": {
+    "pilot_10": {
+      "Qwen/Qwen2.5-3B-Instruct": {
+        "articles": 10,
+        "ar_tokens_total": 1290,
+        "en_tokens_total": 898,
+        "ttr": 1.4365256124721604,
+        "median_article_ratio": 1.398265790434465,
+        "min_article_ratio": 0.85,
+        "max_article_ratio": 1.6842105263157894
+      },
+      "mistralai/Mistral-7B-Instruct-v0.3": {
+        "articles": 10,
+        "ar_tokens_total": 3114,
+        "en_tokens_total": 982,
+        "ttr": 3.1710794297352343,
+        "median_article_ratio": 3.1613007866353096,
+        "min_article_ratio": 2.090909090909091,
+        "max_article_ratio": 4.0476190476190474
+      }
+    },
+    "added_20": {
+      "Qwen/Qwen2.5-3B-Instruct": {
+        "articles": 20,
+        "ar_tokens_total": 1635,
+        "en_tokens_total": 1177,
+        "ttr": 1.389124893797791,
+        "median_article_ratio": 1.396754385964912,
+        "min_article_ratio": 1.1388888888888888,
+        "max_article_ratio": 1.8
+      },
+      "mistralai/Mistral-7B-Instruct-v0.3": {
+        "articles": 20,
+        "ar_tokens_total": 4047,
+        "en_tokens_total": 1254,
+        "ttr": 3.227272727272727,
+        "median_article_ratio": 3.2126373626373628,
+        "min_article_ratio": 2.4864864864864864,
+        "max_article_ratio": 4.523809523809524
+      }
+    }
+  }
+}

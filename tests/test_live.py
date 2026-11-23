@@ -119,10 +119,34 @@ def test_network_failure_raises(law):
     assert {p.name: p.read_bytes() for p in base.iterdir()} == snapshot
 
 
-def test_without_baseline_cache_only_notes(law, tmp_path):
+def test_with_baseline_output_unchanged(law):
+    """The successful baseline output is locked (Task 04 must not change it)."""
+    base, manifest, _ = law
+    r = live.verify_live(manifest, base, serve(ar_html(AR), en_text(EN, APPX)))
+    assert r.full_source_compared
+    assert live.format_report(r) == (
+        "verify-live: CLEAN\n"
+        "  selected articles verified: 2/2\n"
+        "  source-level changes: none\n"
+        "  baseline corpus and manifest were not modified")
+
+
+def test_without_baseline_distinguishes_scopes(law, tmp_path):
     _, manifest, _ = law
     r = live.verify_live(manifest, tmp_path / "absent", serve(ar_html(AR), en_text(EN, APPX)))
-    assert r.outcome == live.CLEAN and r.notes
+    assert r.outcome == live.CLEAN and not r.full_source_compared
+    out = live.format_report(r)
+    assert "[1] selected-article verification (fresh text vs manifest hashes): PASSED" in out
+    assert "[2] full-source comparison (all articles vs cached baseline): NOT PERFORMED" in out
+    assert "outcome CLEAN refers to [1] and the limited checks only" in out
+
+
+def test_without_baseline_selected_failure_reported(law, tmp_path):
+    _, manifest, _ = law
+    ar = {**AR, 1: ("نص مختلف.", False)}
+    r = live.verify_live(manifest, tmp_path / "absent", serve(ar_html(ar), en_text(EN, APPX)))
+    assert r.outcome == live.ARTICLES_FAILED
+    assert "[1] selected-article verification (fresh text vs manifest hashes): FAILED" in live.format_report(r)
 
 
 @pytest.mark.parametrize("command", ["verify-live", "pilot"])

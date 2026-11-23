@@ -56,7 +56,9 @@ def eligible_pairs(ar_articles, en_doc) -> dict[int, ArticlePair]:
     return pairs
 
 
-def build_manifest(raw_dir: Path, articles: list[int], review: dict, fetch_log: dict) -> dict:
+def build_manifest(raw_dir: Path, articles: list[int], review: dict, fetch_log: dict,
+                   extra: dict | None = None) -> dict:
+    """Build a manifest; ``extra`` adds/overrides top-level keys (corpus metadata)."""
     ar_articles, en_doc = load_sources(raw_dir)
     pairs = eligible_pairs(ar_articles, en_doc)
     missing = [n for n in articles if n not in pairs]
@@ -83,7 +85,7 @@ def build_manifest(raw_dir: Path, articles: list[int], review: dict, fetch_log: 
                 "content_review": review["articles"][str(n)],
             },
         })
-    return {
+    manifest = {
         "manifest_version": MANIFEST_VERSION,
         "law": {
             "name_en": "Labor Law",
@@ -122,6 +124,9 @@ def build_manifest(raw_dir: Path, articles: list[int], review: dict, fetch_log: 
         "audit": audit(ar_articles, en_doc),
         "articles": entries,
     }
+    if extra:
+        manifest.update(extra)
+    return manifest
 
 
 def audit(ar_articles, en_doc) -> dict:

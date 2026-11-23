@@ -1,0 +1,904 @@
+{
+  "manifest_version": 1,
+  "law": {
+    "name_en": "Labor Law",
+    "name_ar": "نظام العمل",
+    "instrument": "Royal Decree No. M/51 dated 1426/08/23 AH (2005-09-27)",
+    "latest_amendment_in_both_sources": "Royal Decree No. M/44 dated 1446/02/08 AH (2024-08-12)"
+  },
+  "sources": {
+    "ar": {
+      "url": "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/08381293-6388-48e2-8ad2-a9a700f2aa94/1",
+      "publisher": "Bureau of Experts at the Council of Ministers (laws.boe.gov.sa)",
+      "format": "HTML; article body text only (amendment pop-ups excluded)",
+      "retrieved_at_utc": "2026-11-23T11:46:04+00:00",
+      "page_sha256_at_curation": "629211bc8aba6d8318139e79422bb6271abe9b5b5ee1e7fa9fae7d9d87d39194",
+      "page_sha256_note": "informational only: the page embeds a live view counter; per-article text hashes are authoritative"
+    },
+    "en": {
+      "url": "https://laws.boe.gov.sa/Files/Download/?attId=704cf56e-eb7a-4ddb-8c28-adbb01244dc6",
+      "publisher": "Bureau of Experts, Official Translation Department",
+      "format": "PDF (69 pages, created 2025-05-08); body = 2005 text, amendments in appendix",
+      "retrieved_at_utc": "2026-11-23T11:46:06+00:00",
+      "pdf_sha256": "8fd3c9e17f25318b9bdf784827923c53a2666a3d63e49c6d471e8a41987ff3c5"
+    }
+  },
+  "extraction": {
+    "normalization": "every whitespace run (incl. line wraps, <br>, NBSP) -> one ASCII space; strip ends; no other changes",
+    "ar": "HTML tags removed, entities unescaped",
+    "en": "pdfminer.six text, running page header/footer and section headings removed"
+  },
+  "selection_rule": [
+    "Arabic page: exactly one non-bis article with this number, not marked changed-article",
+    "English PDF: article number never referenced in the amendments appendix",
+    "Both texts nonempty; manual content review recorded in manifest/review.json",
+    "Pilot 10 retained; 20 added by the deterministic procedure in `selection`"
+  ],
+  "audit": {
+    "ar_articles_marked_amended": [
+      2,
+      3,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14,
+      22,
+      23,
+      24,
+      25,
+      27,
+      28,
+      30,
+      31,
+      35,
+      37,
+      39,
+      40,
+      42,
+      43,
+      44,
+      46,
+      47,
+      48,
+      51,
+      52,
+      53,
+      54,
+      55,
+      58,
+      61,
+      64,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      80,
+      83,
+      90,
+      101,
+      107,
+      113,
+      115,
+      131,
+      137,
+      149,
+      150,
+      151,
+      152,
+      155,
+      156,
+      160,
+      168,
+      178,
+      182,
+      186,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      203,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239,
+      241
+    ],
+    "en_appendix_article_refs": [
+      2,
+      3,
+      5,
+      7,
+      11,
+      12,
+      13,
+      14,
+      22,
+      23,
+      24,
+      25,
+      27,
+      28,
+      30,
+      31,
+      35,
+      37,
+      39,
+      40,
+      42,
+      43,
+      44,
+      46,
+      47,
+      48,
+      51,
+      52,
+      53,
+      54,
+      55,
+      58,
+      61,
+      64,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      80,
+      83,
+      90,
+      98,
+      99,
+      100,
+      101,
+      104,
+      107,
+      113,
+      115,
+      137,
+      149,
+      150,
+      151,
+      152,
+      155,
+      156,
+      160,
+      168,
+      178,
+      182,
+      186,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      203,
+      205,
+      206,
+      207,
+      208,
+      209,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239,
+      240,
+      241,
+      242
+    ],
+    "disagreements_en_only": [
+      98,
+      99,
+      100,
+      104,
+      240,
+      242
+    ],
+    "disagreements_ar_only": [
+      131,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228
+    ]
+  },
+  "articles": [
+    {
+      "id": "KSA-LL-004",
+      "article": 4,
+      "ar_heading": "المادة الرابعة :",
+      "en_heading": "Article 4",
+      "ar_sha256": "92fcfbdfe03b748e5126cc170cc3be095cb7fa909f8f147b71ae9130b2cd0639",
+      "en_sha256": "1b36a01984f5639f2e9ae7a9d009af8b364d63bb8432e7e109f7c8107b4584d7",
+      "ar_chars": 96,
+      "en_chars": 109,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: employers and workers must adhere to Sharia when applying the Law."
+      }
+    },
+    {
+      "id": "KSA-LL-006",
+      "article": 6,
+      "ar_heading": "المادة السادسة :",
+      "en_heading": "Article 6",
+      "ar_sha256": "0492c529ee0cfdc9e6fc6abc9b2b8338f108377545a452eeefa4773407619e16",
+      "en_sha256": "9dea163d72ada7a25d1c93336ade5556a2dae641960abd043188ec37a1bcdbfc",
+      "ar_chars": 263,
+      "en_chars": 334,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: incidental, seasonal and temporary workers are subject to the same 9 listed areas (duties and discipline; maximum hours; daily/weekly rest; overtime; official holidays; safety rules; occupational health; work injuries and compensation; Minister's decisions). All 9 present on both sides."
+      }
+    },
+    {
+      "id": "KSA-LL-026",
+      "article": 26,
+      "ar_heading": "المادة السادسة والعشرون :",
+      "en_heading": "Article 26",
+      "ar_sha256": "aad7ad533344a0d792093318c4b549763398ca277d8318b7ac9055e0c3adb14e",
+      "en_sha256": "de13d5b17d0636a0af343dfde0d3f91d4c3a6aed08a29741eb18e6ae5b0a3a37",
+      "ar_chars": 455,
+      "en_chars": 621,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: clause 1 Saudization duties (attract, employ, retain, guide/train/qualify); clause 2 Saudi workers at least 75% of the workforce; Minister may reduce the share temporarily when qualified nationals are unavailable."
+      }
+    },
+    {
+      "id": "KSA-LL-029",
+      "article": 29,
+      "ar_heading": "المادة التاسعة والعشرون :",
+      "en_heading": "Article 29",
+      "ar_sha256": "567ba875d546e52bd7e41aa03994741a3c61a12b26152f6b735c01301bb08a58",
+      "en_sha256": "9b58125c1a056f058f8378993ea0bb4cf29f5c8a000889c515b39abb9731034a",
+      "ar_chars": 251,
+      "en_chars": 354,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: an employer must re-employ a worker whose work injury reduces capacity but permits other work, in a suitable job at that job's wage; injury compensation is preserved. Nuance: EN 'another job' leaves implicit the AR 'other than his previous work'."
+      }
+    },
+    {
+      "id": "KSA-LL-032",
+      "article": 32,
+      "ar_heading": "المادة الثانية والثلاثون :",
+      "en_heading": "Article 32",
+      "ar_sha256": "20d82960019ea0f7e60e3456d479202c8e5971a5d89232b268b0512a63de86e5",
+      "en_sha256": "466748ed3eeffc3981f0b18d3c22ec595c60e76ddf40a4ccb520f0eaa70ebdb6",
+      "ar_chars": 53,
+      "en_chars": 107,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: recruitment from abroad for work requires Ministry approval."
+      }
+    },
+    {
+      "id": "KSA-LL-038",
+      "article": 38,
+      "ar_heading": "المادة الثامنة والثلاثون :",
+      "en_heading": "Article 38",
+      "ar_sha256": "2340ca79eaf20e6ca40f52c1610cc800a45f0cf1b2707d345e78469aa781c90a",
+      "en_sha256": "f1b41996d5d40545580ef97ea84aff8d93f461be1ca436f910a9076931171da8",
+      "ar_chars": 156,
+      "en_chars": 237,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: no employment outside the profession on the work permit; worker may not change profession before legal procedures."
+      }
+    },
+    {
+      "id": "KSA-LL-045",
+      "article": 45,
+      "ar_heading": "المادة الخامسة والأربعون :",
+      "en_heading": "Article 45",
+      "ar_sha256": "6798974a1edcf7f5338170a7c9fbca5fa168fec1978660f17a97fa2586687806",
+      "en_sha256": "b8db27db8d7520d9387557ce6b87ce257bb2f9342376929f355db694bf29edfb",
+      "ar_chars": 92,
+      "en_chars": 134,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: defines the qualification/training contract binding the employer to prepare a person for a specific profession. Nuance: AR 'qualify or train', EN 'train and qualify'."
+      }
+    },
+    {
+      "id": "KSA-LL-049",
+      "article": 49,
+      "ar_heading": "المادة التاسعة والأربعون :",
+      "en_heading": "Article 49",
+      "ar_sha256": "b6e0446e0c80320a8fb31224cd8faa09c45f666d07c0317b4a896d9250cfba10",
+      "en_sha256": "e84df4e35ae9175b53f9bf6410e083df260fdc6e7b16a49791a313172de466ee",
+      "ar_chars": 243,
+      "en_chars": 314,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: training contract subject to 7 listed areas (annual leave; official holidays; maximum hours; daily/weekly rest; occupational safety and health; work injuries and conditions; Minister's decisions)."
+      }
+    },
+    {
+      "id": "KSA-LL-059",
+      "article": 59,
+      "ar_heading": "المادة التاسعة والخمسون :",
+      "en_heading": "Article 59",
+      "ar_sha256": "af556aa47c348b5c237ed6d545be0150a3e49089fc0b1f8352c3896e40a6a14a",
+      "en_sha256": "0afa053afd499ebb7a2f434f7c65ff9f9f74066208429021587412f1a41e712d",
+      "ar_chars": 227,
+      "en_chars": 283,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: monthly-paid worker may not be moved to daily/weekly/piecework/hourly pay without written consent; acquired rights preserved."
+      }
+    },
+    {
+      "id": "KSA-LL-065",
+      "article": 65,
+      "ar_heading": "المادة الخامسة والستون :",
+      "en_heading": "Article 65",
+      "ar_sha256": "1c8274277c9226fd701827e1fdc4632013f11cdd7279c68a1fec33079e0c6d97",
+      "en_sha256": "82e8df33593d47a98093ce549834dfacaf6b0030d649f8b44fe1d7a9395c1f6a",
+      "ar_chars": 993,
+      "en_chars": 1302,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: worker duties beyond the Law - six numbered items (work per instructions; care of employer property; conduct; help in disasters without extra pay; medical examinations; confidentiality)."
+      }
+    },
+    {
+      "id": "KSA-LL-070",
+      "article": 70,
+      "ar_heading": "المادة السبعون :",
+      "en_heading": "Article 70",
+      "ar_sha256": "8e1cda7f8334aab4f70d2bec559c7d095526e7eb28e44004e52e0075bd455331",
+      "en_sha256": "6b2fcab4d3804b6262d8a07092113d1c564838d719f11450b74bb415e0e21615",
+      "ar_chars": 410,
+      "en_chars": 529,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: no penalty for off-site acts unless work-related; fine per violation max five days' wage; one penalty per violation; deductions max five days' wage per month; unpaid suspension max five days per month."
+      }
+    },
+    {
+      "id": "KSA-LL-089",
+      "article": 89,
+      "ar_heading": "المادة التاسعة والثمانون :",
+      "en_heading": "Article 89",
+      "ar_sha256": "843c678594804e0d82c2912f16a60f87c4987e1258cdf0f5b4bc7879622612b0",
+      "en_sha256": "1365ce3103ed9a4beaa0cbca74a5eeac4cd29bb9787ad98d40919638a03b3d28",
+      "ar_chars": 72,
+      "en_chars": 101,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: Council of Ministers may set a minimum wage on the Minister's proposal."
+      }
+    },
+    {
+      "id": "KSA-LL-092",
+      "article": 92,
+      "ar_heading": "المادة الثانية والتسعون :",
+      "en_heading": "Article 92",
+      "ar_sha256": "ad41bb1d3b6cb1704721a09220120c5e2d8cac94e64ba2fa1fac7fff48d007ea",
+      "en_sha256": "b143ce45b718b6b7b5fd136ec6d7802dba8c75b4e4a133fe9800bb817c2aa58b",
+      "ar_chars": 742,
+      "en_chars": 928,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: no deductions without written consent except six numbered cases (10% loan cap; social insurance; savings fund; housing scheme; fines/damages; court judgment capped at one quarter), with alimony first."
+      }
+    },
+    {
+      "id": "KSA-LL-108",
+      "article": 108,
+      "ar_heading": "المادة الثامنة بعد المائة :",
+      "en_heading": "Article 108",
+      "ar_sha256": "8b95e72bb885b0811f0e13f88e9f760d16914850ca14fce536d8e5d75777433b",
+      "en_sha256": "9382bf95e9415206cbbb567a610d9121234269774e25c463ff8278c060c870ec",
+      "ar_chars": 520,
+      "en_chars": 580,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: Articles 98 and 101 do not apply to four numbered cases (senior management; preparatory/supplementary work; intermittent work; guards and cleaners except civil security guards); Regulations set jobs and maximum hours for items 2-4."
+      }
+    },
+    {
+      "id": "KSA-LL-120",
+      "article": 120,
+      "ar_heading": "المادة العشرون بعد المائة :",
+      "en_heading": "Article 120",
+      "ar_sha256": "13cc327997813cb7dbfb82da0a3d7ffe2795c34c5c884edfed50cb3bca2256ad",
+      "en_sha256": "4b66543bb00f57469fe3f41dfd97eced3baa9891f86d12546615785cbe6e158d",
+      "ar_chars": 293,
+      "en_chars": 380,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: Minister issues rules for part-time work; the Law applies only as the Minister decides, except occupational safety/health and work-injury protection."
+      }
+    },
+    {
+      "id": "KSA-LL-132",
+      "article": 132,
+      "ar_heading": "المادة الثانية والثلاثون بعد المائة :",
+      "en_heading": "Article 132",
+      "ar_sha256": "e6d8f3eb128d07b5dc56a89a092e6f7ed5a53175643aa23aea3e4bb21939fc47",
+      "en_sha256": "183cbd4f9b6abd316174af02345128f693ec46ec4253366555365e7b810bb774",
+      "ar_chars": 96,
+      "en_chars": 140,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: this Chapter does not cover establishments that fall under the occupational-hazards branch of social insurance."
+      }
+    },
+    {
+      "id": "KSA-LL-134",
+      "article": 134,
+      "ar_heading": "المادة الرابعة والثلاثون بعد المائة :",
+      "en_heading": "Article 134",
+      "ar_sha256": "96cce215425fe8ea82eafb763b11b80fe692cdba3fafa8b6414f576548ce391d",
+      "en_sha256": "6ef31c7d70854f2308c2fb800429945cef2945bdec0004c3f0491acf12bfb0ae",
+      "ar_chars": 172,
+      "en_chars": 273,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: work injury as defined by the Social Insurance Law; occupational diseases count as work injuries; date of first medical diagnosis counts as the injury date."
+      }
+    },
+    {
+      "id": "KSA-LL-138",
+      "article": 138,
+      "ar_heading": "المادة الثامنة والثلاثون بعد المائة :",
+      "en_heading": "Article 138",
+      "ar_sha256": "9ff256a0823c8b254bec634c282108e08d2eaad8b8c98657408a70a9b358f663",
+      "en_sha256": "b4143363f2e8c6e57e1b751a06e9a1c5b1281a08b7e4d72b826b3e92c4826255",
+      "ar_chars": 349,
+      "en_chars": 548,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: permanent total disability or death gives compensation of 3 years' wages with a 54,000-riyal minimum (AR in words); partial disability gives the assessed percentage per the approved disability guide times the total-disability amount."
+      }
+    },
+    {
+      "id": "KSA-LL-154",
+      "article": 154,
+      "ar_heading": "المادة الرابعة والخمسون بعد المائة :",
+      "en_heading": "Article 154",
+      "ar_sha256": "81590e8640d8db350255743c2f2c2166f0c1e8914386de9658c549152531139c",
+      "en_sha256": "006bf3d2fe45699fe0df675972cf103a44fc852954ffe14732b27f627a6c3685",
+      "ar_chars": 292,
+      "en_chars": 361,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: after maternity leave, nursing break(s) totalling at most 1 hour per day, in addition to general rest periods, counted as working time, with no wage reduction."
+      }
+    },
+    {
+      "id": "KSA-LL-158",
+      "article": 158,
+      "ar_heading": "المادة الثامنة والخمسون بعد المائة :",
+      "en_heading": "Article 158",
+      "ar_sha256": "1e6cb2167eede4812a177b5faba5de1c61492b2f3629e82c2f084f0f701601ac",
+      "en_sha256": "78e81b8165a7dee0c87f742e44b9f6c6616f2ca817fd901df6104634b4dd4bc8",
+      "ar_chars": 103,
+      "en_chars": 111,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: in all occupations and places employing women, the employer provides seats for their rest."
+      }
+    },
+    {
+      "id": "KSA-LL-161",
+      "article": 161,
+      "ar_heading": "المادة الحادية والستون بعد المائة :",
+      "en_heading": "Article 161",
+      "ar_sha256": "a3bbe27ca0cd6c3daa220b5d89f195a22ccb0d3091b65d99de1f35aa1624453d",
+      "en_sha256": "8280366ea98fab3d112a807b53d3eb2e7676d7f81a9db1e78a9cd9c1b9c75f94",
+      "ar_chars": 235,
+      "en_chars": 292,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: minors barred from hazardous or harmful work endangering health, safety or morals; the Minister specifies such work by decision."
+      }
+    },
+    {
+      "id": "KSA-LL-162",
+      "article": 162,
+      "ar_heading": "المادة الثانية والستون بعد المائة :",
+      "en_heading": "Article 162",
+      "ar_sha256": "d050adf9df23285a10dd991c067fd4d385b4bf8c71bad5b03183b1cd2ea12740",
+      "en_sha256": "af6d2a2408a0982ce67ed0412810f84923aa4702d5130221cc5a4f25ffb336ac",
+      "ar_chars": 514,
+      "en_chars": 684,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: clause 1 minimum age 15 (Minister may raise it); clause 2 exception for ages 13-15 in light work subject to sub-clauses 2/1 (EN 2.1) no harm to health or growth and 2/2 (EN 2.2) no hindrance to schooling or training."
+      }
+    },
+    {
+      "id": "KSA-LL-163",
+      "article": 163,
+      "ar_heading": "المادة الثالثة والستون بعد المائة :",
+      "en_heading": "Article 163",
+      "ar_sha256": "0aab719354e47bab83646cacd8639e1918142b048fe70c8a296aa180bb41e879",
+      "en_sha256": "ef73f439a7c0e011174612e7d219f909687bd5b31930f2f2ec0689c277a90a99",
+      "ar_chars": 117,
+      "en_chars": 172,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: minors may not work during a night period of at least 12 consecutive hours (AR in words), except as the Minister decides."
+      }
+    },
+    {
+      "id": "KSA-LL-188",
+      "article": 188,
+      "ar_heading": "المادة الثامنة والثمانون بعد المائة :",
+      "en_heading": "Article 188",
+      "ar_sha256": "af75957c43c4d3d4a46aa742ac35477508f102f4602cee812995823161f2c152",
+      "en_sha256": "146bafb1056580733eca8458a2fff022e0674bf5bf6066b5c9531f618a0d5283",
+      "ar_chars": 328,
+      "en_chars": 355,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: actual underground work at most 7 hours per day; presence at the workplace at most 10 hours per day (AR in words), including underground travel time."
+      }
+    },
+    {
+      "id": "KSA-LL-191",
+      "article": 191,
+      "ar_heading": "المادة الحادية والتسعون بعد المائة :",
+      "en_heading": "Article 191",
+      "ar_sha256": "2cbe7619284c2a707e1a6c6a96fd9bd315f4d82186d522e2fb8dc6fde8ca60f7",
+      "en_sha256": "356f25587c711fca1de7d2dc02477ced27e95008759ee424c048e607338904c9",
+      "ar_chars": 89,
+      "en_chars": 108,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: the employer or responsible manager issues a list of public-safety orders and instructions."
+      }
+    },
+    {
+      "id": "KSA-LL-201",
+      "article": 201,
+      "ar_heading": "المادة الأولى بعد المائتين :",
+      "en_heading": "Article 201",
+      "ar_sha256": "0d789684c85ae2ca47f0ff1cfd94d62e67b792ffc5f664aa916241dd64992878",
+      "en_sha256": "e701ff717defe55e7c476a778ab632ea5d0ef047fc9ce3b0d80fa4faf62abd58",
+      "ar_chars": 299,
+      "en_chars": 395,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: inspector may order changes to equipment/machinery operating rules within set deadlines for health and safety, and may require immediate measures against an imminent hazard."
+      }
+    },
+    {
+      "id": "KSA-LL-202",
+      "article": 202,
+      "ar_heading": "المادة الثانية بعد المائتين :",
+      "en_heading": "Article 202",
+      "ar_sha256": "f857ce8d5cbc3b48f87f27d6f2ff0d0ce5f1988c7b47482d5982743d16e6cd98",
+      "en_sha256": "6b5f9222b31693f2a1bb1992892e9dd9ea0986b014ed06c6d997a928a136b6a0",
+      "ar_chars": 169,
+      "en_chars": 258,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: inspector keeps complaints about equipment shortages or violations absolutely confidential and must not reveal their existence to the employer or representative."
+      }
+    },
+    {
+      "id": "KSA-LL-204",
+      "article": 204,
+      "ar_heading": "المادة الرابعة بعد المائتين :",
+      "en_heading": "Article 204",
+      "ar_sha256": "7198d87d3d41d0253e1f67082fb988b5af9c82cad2750ee00491e97ac610b2f5",
+      "en_sha256": "b4ffa5d88f9f8a105b98a695315743abfd0e72d2aa1d7a0ab08b070743394cdf",
+      "ar_chars": 199,
+      "en_chars": 285,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: physicians, engineers, chemists and occupational safety and health specialists join inspections as needed; labor office director and inspectors may ask competent executive bodies for assistance."
+      }
+    },
+    {
+      "id": "KSA-LL-244",
+      "article": 244,
+      "ar_heading": "المادة الرابعة والأربعون بعد المائتين :",
+      "en_heading": "Article 244",
+      "ar_sha256": "0001ad6c45fb1cd9c39515958318e768a79653362e483ed007d9384894faeb16",
+      "en_sha256": "3d85e9ecbb0bf3261c841609d742395958815d3e100246a9097ddb62cac6670e",
+      "ar_chars": 210,
+      "en_chars": 293,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: supersedes the Labor and Workers Law (Royal Decree M/21 dated 6/9/1389H); repeals conflicting provisions; earlier regulations remain until amended."
+      }
+    },
+    {
+      "id": "KSA-LL-245",
+      "article": 245,
+      "ar_heading": "المادة الخامسة والأربعون بعد المائتين :",
+      "en_heading": "Article 245",
+      "ar_sha256": "b350f3afb43566ac74e2d9a32f42062e8bf6a5b11c1117ca8de440fa541a5cfe",
+      "en_sha256": "ebd88d7ecdea89a11a31158a2dbb68a91650eba989683e0685a721eb348cd462",
+      "ar_chars": 82,
+      "en_chars": 122,
+      "verification": {
+        "ar_page_marks_amended": false,
+        "en_appendix_references_article": false,
+        "content_review": "Both: published in the Official Gazette; in force 180 days after publication (AR in words)."
+      }
+    }
+  ],
+  "corpus": "expanded_v1",
+  "corpus_version": 1,
+  "derived_from": "manifest/pilot_manifest.json (all 10 entries retained unchanged)",
+  "review_provenance": {
+    "status": "provisional",
+    "agent_review": "Claude (AI agent, claude-opus-5-5), 2026-11-23: side-by-side reading of every extracted Arabic/English pair, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references.",
+    "automated_checks": [
+      "existing eligibility rule (no amendment recorded in either source; unique, non-bis, nonempty)",
+      "every digit sequence in the Arabic text also occurs in the English text",
+      "English text is an exact substring of an independent extractor's output (poppler pdftotext, whitespace-normalized)",
+      "run-time token-count guards (no truncation/padding, full character coverage, no special/unknown ids)"
+    ],
+    "human_approval": "PENDING: no human has reviewed or approved any pair in this corpus (including the 10 pilot pairs)",
+    "pilot_notes": "notes for the 10 pilot articles are carried over unchanged from manifest/review.json"
+  },
+  "selection": {
+    "procedure": [
+      "Pool: pairs passing the existing eligibility rule, minus the 10 pilot articles",
+      "Excluded from pool: Part 11 (marine terms redefined by M/44) and articles mentioning the Labor Dispute Commissions (M/1 global phrase replacement)",
+      "Strata: pool sorted by Arabic character count (ties by article number) and cut into thirds",
+      "Quotas 7 short / 7 medium / 6 long; within a stratum, repeatedly take the candidate whose Part has the fewest selected articles (pilot included), ties broken by SHA-256(seed:article)",
+      "Token counts are never consulted during selection"
+    ],
+    "seed": "atti-expanded-v1",
+    "pool_size": 106,
+    "stratum_bounds_ar_chars": {
+      "short": [
+        27,
+        172
+      ],
+      "medium": [
+        172,
+        286
+      ],
+      "long": [
+        292,
+        930
+      ]
+    },
+    "quotas": {
+      "short": 7,
+      "medium": 7,
+      "long": 6
+    },
+    "added": {
+      "158": {
+        "stratum": "short",
+        "part": 9
+      },
+      "132": {
+        "stratum": "short",
+        "part": 8
+      },
+      "202": {
+        "stratum": "short",
+        "part": 13
+      },
+      "45": {
+        "stratum": "short",
+        "part": 4
+      },
+      "191": {
+        "stratum": "short",
+        "part": 12
+      },
+      "163": {
+        "stratum": "short",
+        "part": 10
+      },
+      "245": {
+        "stratum": "short",
+        "part": 16
+      },
+      "29": {
+        "stratum": "medium",
+        "part": 2
+      },
+      "134": {
+        "stratum": "medium",
+        "part": 8
+      },
+      "49": {
+        "stratum": "medium",
+        "part": 4
+      },
+      "204": {
+        "stratum": "medium",
+        "part": 13
+      },
+      "244": {
+        "stratum": "medium",
+        "part": 16
+      },
+      "161": {
+        "stratum": "medium",
+        "part": 10
+      },
+      "6": {
+        "stratum": "medium",
+        "part": 1
+      },
+      "154": {
+        "stratum": "long",
+        "part": 9
+      },
+      "188": {
+        "stratum": "long",
+        "part": 12
+      },
+      "26": {
+        "stratum": "long",
+        "part": 2
+      },
+      "162": {
+        "stratum": "long",
+        "part": 10
+      },
+      "138": {
+        "stratum": "long",
+        "part": 8
+      },
+      "201": {
+        "stratum": "long",
+        "part": 13
+      }
+    },
+    "excluded_from_pool": {
+      "20": "mentions Labor Dispute Commissions (M/1 global phrase replacement)",
+      "91": "mentions Labor Dispute Commissions (M/1 global phrase replacement)",
+      "93": "mentions Labor Dispute Commissions (M/1 global phrase replacement)",
+      "94": "mentions Labor Dispute Commissions (M/1 global phrase replacement)",
+      "95": "mentions Labor Dispute Commissions (M/1 global phrase replacement)",
+      "169": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "170": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "171": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "172": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "173": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "174": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "175": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "176": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "177": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "179": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "180": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "181": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "183": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law",
+      "184": "Part 11 (marine): terms redefined by M/44 via the Commercial Maritime Law"
+    },
+    "excluded_after_review": {}
+  },
+  "subsets": {
+    "pilot_10": [
+      4,
+      32,
+      38,
+      59,
+      65,
+      70,
+      89,
+      92,
+      108,
+      120
+    ],
+    "added_20": [
+      6,
+      26,
+      29,
+      45,
+      49,
+      132,
+      134,
+      138,
+      154,
+      158,
+      161,
+      162,
+      163,
+      188,
+      191,
+      201,
+      202,
+      204,
+      244,
+      245
+    ]
+  }
+}

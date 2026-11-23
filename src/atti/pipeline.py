@@ -1,4 +1,4 @@
-"""Pilot run: verify corpus -> count tokens -> write CSV, summary, and report."""
+"""Corpus run: verify corpus -> count tokens -> write CSV, summary, and report."""
 
 from __future__ import annotations
 
@@ -51,26 +51,28 @@ def read_csv(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
-# Published artifacts that must exist for results to be reviewable.
-REQUIRED_ARTIFACTS = (
-    "manifest/pilot_manifest.json",
-    "results/pilot.csv",
-    "results/pilot_summary.json",
-    "reports/pilot.md",
-)
+# Published artifacts per corpus: (manifest, csv, summary json, report).
+CORPORA = {
+    "pilot": ("manifest/pilot_manifest.json", "results/pilot.csv",
+              "results/pilot_summary.json", "reports/pilot.md"),
+    "expanded_v1": ("manifest/expanded_v1_manifest.json", "results/expanded_v1.csv",
+                    "results/expanded_v1_summary.json", "reports/expanded_v1.md"),
+}
+REQUIRED_ARTIFACTS = CORPORA["pilot"]
 
 
-def load_published(root: Path) -> dict:
+def load_published(root: Path, name: str = "pilot") -> dict:
     """Load all published artifacts; raise FileNotFoundError naming any that are missing."""
-    missing = [a for a in REQUIRED_ARTIFACTS if not (root / a).is_file()]
+    paths = CORPORA[name]
+    missing = [a for a in paths if not (root / a).is_file()]
     if missing:
         raise FileNotFoundError(f"missing published artifacts: {missing}")
     return {
-        "manifest": corpus.read_json(root / REQUIRED_ARTIFACTS[0]),
-        "csv_text": (root / REQUIRED_ARTIFACTS[1]).read_text(encoding="utf-8"),
-        "rows": read_csv(root / REQUIRED_ARTIFACTS[1]),
-        "summary_text": (root / REQUIRED_ARTIFACTS[2]).read_text(encoding="utf-8"),
-        "report_text": (root / REQUIRED_ARTIFACTS[3]).read_text(encoding="utf-8"),
+        "manifest": corpus.read_json(root / paths[0]),
+        "csv_text": (root / paths[1]).read_text(encoding="utf-8"),
+        "rows": read_csv(root / paths[1]),
+        "summary_text": (root / paths[2]).read_text(encoding="utf-8"),
+        "report_text": (root / paths[3]).read_text(encoding="utf-8"),
     }
 
 
@@ -78,25 +80,45 @@ def summary_to_json(summary: dict) -> str:
     return json.dumps(summary, ensure_ascii=False, indent=2) + "\n"
 
 
-def run(root: Path) -> dict:
-    """Reproduce the benchmark from the cached baseline sources.
+def build_summary(rows: list[dict], tok_info: list[dict], manifest: dict) -> dict:
+    """Aggregates over all rows, plus named article subsets if the manifest defines them."""
+    summary = {"tokenizers": tok_info, "models": metrics.summarize(rows)}
+    if "subsets" in manifest:
+        summary["subsets"] = {
+            name: metrics.summarize([r for r in rows if int(r["article"]) in set(arts)])
+            for name, arts in manifest["subsets"].items()
+        }
+    return summary
+
+
+def render_report(name: str, manifest: dict, rows: list[dict], summary: dict, root: Path) -> str:
+    if name == "pilot":
+        return report.render(manifest, rows, summary)
+    pilot_summary = json.loads((root / CORPORA["pilot"][2]).read_text(encoding="utf-8"))
+    return report.render_expanded(manifest, rows, summary, pilot_summary, csv_name=CORPORA[name][1])
+
+
+def run(root: Path, name: str = "pilot") -> dict:
+    """Reproduce one corpus from the cached baseline sources.
 
     Sources are downloaded only if absent from ``data/raw`` (first run);
     cached files are never replaced. Every article is re-verified against the
-    manifest hashes before any token is counted.
+    manifest hashes before any token is counted. Only this corpus's own
+    artifacts are written.
     """
     raw_dir, hf_cache = root / "data" / "raw", root / "data" / "hf"
     from atti import sources
 
+    m_path, csv_path, summary_path, report_path = (root / p for p in CORPORA[name])
     sources.fetch_all(raw_dir)
-    manifest = corpus.read_json(root / "manifest" / "pilot_manifest.json")
+    manifest = corpus.read_json(m_path)
     pairs = corpus.verify(manifest, raw_dir)
     rows, tok_info = measure(pairs, manifest, hf_cache)
-    summary = {"tokenizers": tok_info, "models": metrics.summarize(rows)}
+    summary = build_summary(rows, tok_info, manifest)
 
-    (root / "results").mkdir(exist_ok=True)
-    (root / "results" / "pilot.csv").write_text(rows_to_csv(rows), encoding="utf-8")
-    (root / "results" / "pilot_summary.json").write_text(summary_to_json(summary), encoding="utf-8")
-    (root / "reports").mkdir(exist_ok=True)
-    (root / "reports" / "pilot.md").write_text(report.render(manifest, rows, summary), encoding="utf-8")
+    csv_path.parent.mkdir(exist_ok=True)
+    csv_path.write_text(rows_to_csv(rows), encoding="utf-8")
+    summary_path.write_text(summary_to_json(summary), encoding="utf-8")
+    report_path.parent.mkdir(exist_ok=True)
+    report_path.write_text(render_report(name, manifest, rows, summary, root), encoding="utf-8")
     return summary

@@ -68,10 +68,12 @@ class ArabicArticle:
     heading: str
     amended: bool  # page marks the article with class "changed-article"
     text: str
+    part: int = 0  # 1-based Part (الباب) of the Law, by order of headings on the page
 
 
 _ITEM_SPLIT = re.compile(r'<div class="article_item no_alternate ?')
 _HEADING = re.compile(r'<h3 class="center">(.*?)</h3>', re.S)
+_PART_HEADING = re.compile(r'<h3 class="center">\s*الباب')
 _BODY = re.compile(r'<p><div class="HTMLContainer">(.*?)</div></p>', re.S)
 
 
@@ -83,7 +85,9 @@ def _html_to_text(fragment: str) -> str:
 
 def parse_articles(page_html: str) -> list[ArabicArticle]:
     out: list[ArabicArticle] = []
-    for item in _ITEM_SPLIT.split(page_html)[1:]:
+    chunks = _ITEM_SPLIT.split(page_html)
+    part = len(_PART_HEADING.findall(chunks[0]))
+    for item in chunks[1:]:
         # A block may open with a chapter title before the article heading.
         heading, parsed = "", None
         for h in _HEADING.findall(item):
@@ -91,16 +95,18 @@ def parse_articles(page_html: str) -> list[ArabicArticle]:
             parsed = parse_ordinal(heading)
             if parsed is not None:
                 break
-        if parsed is None:
-            continue
-        body = _BODY.search(item)
-        out.append(
-            ArabicArticle(
-                number=parsed[0],
-                bis=parsed[1],
-                heading=heading,
-                amended=item.startswith("changed-article"),
-                text=_html_to_text(body.group(1)) if body else "",
+        if parsed is not None:
+            body = _BODY.search(item)
+            out.append(
+                ArabicArticle(
+                    number=parsed[0],
+                    bis=parsed[1],
+                    heading=heading,
+                    amended=item.startswith("changed-article"),
+                    text=_html_to_text(body.group(1)) if body else "",
+                    part=part,
+                )
             )
-        )
+        # Part headings follow the closing tag of the previous article block.
+        part += len(_PART_HEADING.findall(item))
     return out

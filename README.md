@@ -13,7 +13,9 @@ Requires [uv](https://docs.astral.sh/uv/) and internet access on the first run. 
 ```bash
 uv sync
 uv run atti pilot                  # reproduce from the cached baseline corpus
+uv run atti expanded               # reproduce the 30-article expanded_v1 corpus
 uv run atti verify-live            # compare today's official sources with the manifest
+uv run atti verify-live --corpus expanded_v1
 uv run pytest -m "not network" -q  # offline tests (no downloads)
 uv run pytest -q                   # all tests (needs the cache, downloaded on first run)
 ```
@@ -21,9 +23,10 @@ uv run pytest -q                   # all tests (needs the cache, downloaded on f
 | Command | What it does | Writes |
 |---|---|---|
 | `atti pilot` | Reproduces the benchmark from `data/raw`. It downloads a source only if it is missing (first run) and never replaces a cached file. It checks every article against the manifest hashes, then counts tokens. | `results/pilot.csv`, `results/pilot_summary.json`, `reports/pilot.md` |
-| `atti verify-live` | Downloads fresh official sources into a temporary directory, which is deleted afterwards. It compares them with the manifest and, if present, with the cached baseline. It never updates hashes or approves new text. | nothing |
+| `atti expanded` | Does the same as `pilot` for the 30-article `expanded_v1` corpus. It writes only `expanded_v1` artifacts; the pilot files are never touched. | `results/expanded_v1.csv`, `results/expanded_v1_summary.json`, `reports/expanded_v1.md` |
+| `atti verify-live [--corpus expanded_v1]` | Downloads fresh official sources into a temporary directory, which is deleted afterwards. It compares them with the manifest and, if present, with the cached baseline. It never updates hashes or approves new text. | nothing |
 | `atti fetch` | Downloads missing sources into `data/raw`. | `data/raw` (git-ignored) |
-| `atti manifest` | Rebuilds the manifest. Only use this as a deliberate curation step. It refuses articles that are ineligible or have no review note in `manifest/review.json`. | `manifest/pilot_manifest.json` |
+| `atti manifest [--corpus expanded_v1]` | Rebuilds a manifest. Only use this as a deliberate curation step. It refuses articles that are ineligible or have no review note in `manifest/review.json`. | `manifest/pilot_manifest.json` |
 
 **Exit codes:**
 
@@ -44,6 +47,30 @@ The legal texts are **downloaded at runtime** into `data/` (git-ignored) and are
 | English (official translation) | BOE Official Translation Department (PDF) | https://laws.boe.gov.sa/Files/Download/?attId=704cf56e-eb7a-4ddb-8c28-adbb01244dc6 |
 
 The law is Royal Decree M/51 of 1426/08/23 AH (2005‑09‑27). Both sources record amendments up to Royal Decree M/44 of 1446/02/08 AH (2024‑08‑12).
+
+## Corpora
+
+| Corpus | Articles | Manifest | Results | Review status |
+|---|---:|---|---|---|
+| `pilot` | 10 | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | agent-reviewed, **not human-approved** |
+| `expanded_v1` | 30 (the pilot 10 + 20) | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **PROVISIONAL**: agent-reviewed, human approval pending |
+
+**Review provenance.** Every pair in both corpora was reviewed side by side by an AI agent (Claude). No human has approved any pair. The published pilot report says "reviewed manually"; that review was agent-performed. The pilot report is kept byte-identical as a published artifact, so the wording is corrected here and in `manifest/review.json`. The `expanded_v1` manifest records the review provenance explicitly (`review_provenance`), and its report carries a PROVISIONAL banner.
+
+### Expanded corpus selection (`src/atti/selection.py`)
+
+The selection is deterministic and ratio-blind: token counts are never consulted.
+
+1. **Pool:** pairs passing the eligibility rule below, minus the 10 pilot articles, minus two groups affected by *global* amendments that are not attached to individual articles:
+   - **Part 11 (Marine Employment Contract):** Royal Decree M/44 redefined its key terms by reference to the Commercial Maritime Law.
+   - **Articles mentioning the Labor Dispute Commissions:** Royal Decree M/1 replaced that phrase "wherever mentioned". The check matches capitalized "Commission" in the English or "تسوية الخلافات" in the Arabic; lowercase sales "commissions" stays eligible.
+2. **Strata:** the pool is sorted by Arabic character count and cut into thirds (short / medium / long).
+3. **Quotas:** 7 short, 7 medium, 6 long.
+4. **Picking:** within each stratum, repeatedly take the candidate whose Part of the Law has the fewest articles selected so far (pilot included). Ties are broken by `SHA-256("atti-expanded-v1:<article>")`.
+
+Parts are taken from the Arabic page's Part headings. They were cross-checked against poppler's reading of the English PDF; pdfminer misorders two Part headings.
+
+**Review process.** Each new pair was read side by side, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references. There were also automated checks: every digit sequence in the Arabic appears in the English, and the English text matches poppler's output exactly. A pair that fails review goes into `selection.EXCLUDED` with a reason, and the selection is re-run. No pair failed. The two translation nuances found (Articles 29 and 45) are recorded in `manifest/expanded_v1_review.json`.
 
 ## How the article pairs are verified
 
@@ -112,9 +139,17 @@ Guard 2 replaces the earlier check that the last token's offset ends at `len(tex
 - The published totals are pinned: Qwen 1290/898, Mistral 3114/982.
 - `pilot_summary.json` and `pilot.md` must regenerate byte for byte from the CSV and manifest.
 
+**Expanded corpus checks:**
+
+- All 30 entries are unique and have review notes; the 10 pilot entries are identical to the pilot manifest.
+- The pilot rows inside `expanded_v1.csv` equal `pilot.csv`; the expanded totals are pinned.
+- The selection is deterministic, order-independent and ignores the English side, and the quotas and exclusion rules are tested.
+- `network` tests rebuild the selection from the sources and reproduce `expanded_v1.csv` byte for byte. They also apply full character coverage, no-special-token and decode checks to all 30 pairs.
+
 **Source checks:**
 
 - Network failures are reported separately from verification failures.
+- Without a cached baseline, `verify-live` states that only the selected articles were verified ([1]) and that the full-source comparison ([2]) was not performed.
 - Changed, missing and ineligible articles are each detected, and changes outside the selected articles are distinguished from changes to them.
 - `verify-live` never modifies the baseline.
 - All of this is tested offline with mocked downloads. One `network` test replays the real cached sources and tampers with one word.
@@ -124,6 +159,7 @@ Guard 2 replaces the earlier check that the last token's offset ends at `len(tex
 - That offsets align with *linguistic* units. They only show that characters are attributed to tokens.
 - That the tokenizer used in production inference for these models is the same `tokenizer.json`. Counts were cross-checked once against `transformers` and Mistral's SentencePiece model; that check is not part of the test suite.
 - That the Arabic and English texts are legally equivalent beyond the recorded manual review.
+- That any pair is human-approved. All review is agent-assisted; `expanded_v1` is provisional.
 - That the official sources are unchanged *today*. Only `atti verify-live` checks that, and only at the moment it runs.
 - The Arabic page bytes are not compared, because they embed a live view counter. Only the parsed article text, headings and amendment flags are compared.
 
@@ -136,11 +172,12 @@ src/atti/  sources.py   official URLs, cached downloader, NetworkError
            english.py   BOE PDF -> articles + amendment-appendix references
            textnorm.py  the single whitespace normalization
            corpus.py    eligibility rule, manifest build + verification
+           selection.py deterministic expanded_v1 selection
            tokenization.py  pinned tokenizer loading, content-only counting
            metrics.py   TTR, median ratio
            pipeline.py / report.py / cli.py
-manifest/  pilot_manifest.json (hashes, ids, audit), review.json (manual review notes)
-results/   pilot.csv, pilot_summary.json
-reports/   pilot.md
+manifest/  pilot_manifest.json, review.json; expanded_v1_manifest.json, expanded_v1_review.json
+results/   pilot.csv, pilot_summary.json; expanded_v1.csv, expanded_v1_summary.json
+reports/   pilot.md; expanded_v1.md
 tests/
 ```

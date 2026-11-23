@@ -28,7 +28,9 @@ class LiveReport:
     articles: list[corpus.ArticleStatus] = field(default_factory=list)
     source_changes: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
-    notes: list[str] = field(default_factory=list)
+    # False when no cached baseline exists: only the manifest hashes (selected
+    # articles), the English PDF hash and the amendment audit lists were checked.
+    full_source_compared: bool = True
 
     @property
     def outcome(self) -> int:
@@ -84,9 +86,7 @@ def verify_live(manifest: dict, baseline_dir: Path,
         if all((baseline_dir / s.filename).exists() for s in sources.SOURCES):
             report.source_changes += _compare_full_texts(corpus.load_sources(baseline_dir), parsed)
         else:
-            report.notes.append(
-                "no cached baseline in data/raw: whole-law comparison skipped "
-                "(only manifest hashes and audit lists were compared)")
+            report.full_source_compared = False
     return report
 
 
@@ -101,8 +101,19 @@ def format_report(report: LiveReport) -> str:
         for s in report.articles:
             if s.status != "ok":
                 lines.append(f"  {s.status.upper():<10} Article {s.article}: {s.detail}")
-    lines.append("  source-level changes: " + ("none" if not report.source_changes else ""))
-    lines += [f"    - {c}" for c in report.source_changes]
-    lines += [f"  note: {n}" for n in report.notes]
+    if report.full_source_compared:
+        lines.append("  source-level changes: " + ("none" if not report.source_changes else ""))
+        lines += [f"    - {c}" for c in report.source_changes]
+    else:
+        lines.append("  [1] selected-article verification (fresh text vs manifest hashes): "
+                     + ("PASSED" if report.articles and not report.errors
+                        and all(s.status == "ok" for s in report.articles) else "FAILED"))
+        lines.append("  [2] full-source comparison (all articles vs cached baseline): NOT PERFORMED "
+                     "- no cached baseline in data/raw; changes outside the selected articles "
+                     "are not detected")
+        lines.append("      limited source checks performed instead (English PDF hash, amendment "
+                     "audit lists): " + ("no changes" if not report.source_changes else "changes found"))
+        lines += [f"    - {c}" for c in report.source_changes]
+        lines.append(f"  outcome {names[report.outcome]} refers to [1] and the limited checks only")
     lines.append("  baseline corpus and manifest were not modified")
     return "\n".join(lines)
