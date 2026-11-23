@@ -1,0 +1,457 @@
+{
+  "corpus": "current_law_v2",
+  "kind": "AI-generated review (NOT human decisions; human decisions live in review/current_law_v2_human_decisions.json)",
+  "status": "provisional",
+  "reviewer": "Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full",
+  "independence_caveat": "Single AI reviewer. Automated checks (numbers incl. number words, article references, clause markers) were used as prompts, not as verdicts. AI review is provisional even where checks agree.",
+  "human_approval": "PENDING: no human has reviewed or approved any pair",
+  "status_categories": {
+    "PROPOSED_PASS": "identity, clauses, numbers, references, negation, modality, and/or and scope correspond",
+    "NEEDS_REVIEW": "structure corresponds but a qualifier, term, negation, scope reference or clause numbering differs; a human should judge",
+    "FAIL": "a clause, number, reference or exception is missing, added or contradictory",
+    "MISSING_SOURCE": "one language has no correctly identified counterpart (used for excluded candidates)",
+    "VERSION_MISMATCH": "the two texts represent different legal versions (used for excluded candidates)"
+  },
+  "articles": {
+    "1": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Short title; identical meaning."
+    },
+    "6": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Same 9 listed areas (duties/discipline, max hours, rest, overtime, holidays, safety, occupational health, injuries/compensation, Minister) for casual, seasonal and temporary workers."
+    },
+    "8": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Nullity of contrary conditions and of waivers/settlements during the contract, unless more beneficial to the worker: all present."
+    },
+    "12": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond (unified template(s) incl. benefits/violations/penalties; approval controls)."
+    },
+    "13": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-3 correspond, incl. Minister's exemption power and posting requirement."
+    },
+    "15": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Five notification items correspond in order, but list labels differ: Arabic (PDF and HTML alike) numbers them 4-8, English 1-5. Source numbering anomaly; content equivalent."
+    },
+    "19": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "First-class privileged debts, lien on all employer assets, bankruptcy/liquidation rule, advance of one month's wage before all other expenses: all present."
+    },
+    "20": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Abuse-of-provisions and pressure-on-freedom prohibitions present; consolidated text refers to the competent dispute-settlement authority in both languages."
+    },
+    "21": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "24": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "26": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond; 75% identical; temporary reduction by the Minister with both triggers."
+    },
+    "27": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "29": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Condition, re-employment duty, wage rule and compensation saving clause correspond; HRSD English keeps 'other work than their previous job' (v1 nuance absent)."
+    },
+    "31": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "34": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "36": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "38": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Both prohibitions (employer: profession on permit; worker: before legal change procedures) present."
+    },
+    "40": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Four clauses correspond. Clause 1 scope: Arabic limits liability to delay fines 'caused by the employer' (يتسبب بها صاحب العمل); English 'any penalties resulting from delays' drops that limit."
+    },
+    "42": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "45": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Re-evaluated: 'qualification and training contract ... to qualify or train' matches the Arabic and/or exactly (v1 BOE inversion absent)."
+    },
+    "47": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "48": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond; one-week notice; compensation only if the contract provides; repayment of costs or pro-rata share."
+    },
+    "50": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "53": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Written probation clause, maximum 180 days (both), regulations on excluded leave, right to terminate during probation."
+    },
+    "54": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Single probation per employer; written exception for a different profession/work or after six months; no compensation or end-of-service award."
+    },
+    "55": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond; reference to Article 37 matches; three renewals or four years, whichever is less."
+    },
+    "57": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "62": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "63": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Arabic: substances 'prohibited by Sharia' (محرمة شرعاً); English: 'legally prohibited substance'. Basis of the prohibition differs; rest corresponds."
+    },
+    "64": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Two obligations correspond, but list labels differ: Arabic 1-2, English 7-8 (English list continues numbering from the previous article). Source numbering anomaly; content equivalent."
+    },
+    "66": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Six penalties correspond in order, but item 2 'الغرامة' (fine) is rendered 'Penalty' in English, a vaguer term inside a list of penalties."
+    },
+    "68": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "180 days (both); same rule."
+    },
+    "72": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Written notice, registered mail, 30-day grievance excluding holidays, 15-day decision, 30-day appeal to labor courts, whichever is earlier: all present."
+    },
+    "74": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "All 8 cases plus 3 bis (resignation) and 7 bis (bankruptcy) correspond; reference to Article 75 matches."
+    },
+    "81": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Seven cases correspond. Case 6: Arabic 'grave danger' (خطر جسيم); English 'a danger', dropping the seriousness threshold for leaving without notice."
+    },
+    "84": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Half a month's wage for each of the first five years, one month thereafter, last wage as basis, pro rata: all present."
+    },
+    "85": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "One third after 2-5 years, two thirds after 5-10 years, full after 10 years: all present."
+    },
+    "87": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Exception to Article 85 (reference matches); force majeure; six months after marriage or three months after delivery."
+    },
+    "88": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "One week (employer termination) and two weeks (worker termination); set-off of work-related debts."
+    },
+    "93": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Half-wage cap, Labor Court exceptions, three-quarters ceiling: all present."
+    },
+    "96": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond (piece-rate average over last year; commission-based daily average)."
+    },
+    "97": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "50% wage for up to 180 days, refund on acquittal or closure, no recovery on conviction unless the judgment provides."
+    },
+    "99": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Article 98 reference matches; increase to nine hours, reduction to seven, Minister's decision."
+    },
+    "100": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Ministry approval, eight hours/48 hours, three-week averaging: all present."
+    },
+    "103": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "108": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Re-evaluated: item 1 now 'employer-like authority' (v1 BOE issue resolved). New issue: English labels the four items 1, 1, 2, 3 while its own closing sentence refers to paragraphs 2, 3 and 4 (Arabic 1-4 consistent). References to Articles 98 and 101 match."
+    },
+    "110": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-2 correspond; 90 days; written consent; end of following year."
+    },
+    "111": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "112": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "114": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "10-15 days incl. Eid al-Adha, once, after two consecutive years; employer sets annual number."
+    },
+    "117": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "30 days full pay, 60 days three-quarters, 30 days unpaid, within one year from first sick leave."
+    },
+    "118": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "119": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "120": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Minister's rules; limited applicability; safety, health and work-injury protection exception."
+    },
+    "123": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "124": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Duties correspond; English adds 'damage' and 'well-being' to the listed items (minor expansion, noted)."
+    },
+    "125": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "128": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Three definitions correspond (major hazard facility, hazardous substance, major accident)."
+    },
+    "129": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "132": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "134": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Re-evaluated: 'date of the first medical observation' matches أول مشاهدة طبية (v1 BOE 'diagnosis' issue resolved)."
+    },
+    "135": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "English makes explicit what the relapse arises from; clarification, not a scope change."
+    },
+    "136": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "142": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "144": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "146": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Six facilities correspond; family definition (spouse, children, parents residing with the worker) present."
+    },
+    "147": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "148": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "153": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "155": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Dismissal protection during pregnancy/maternity leave, related illness with medical certificate, 180-day ceiling."
+    },
+    "158": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "159": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "50 female workers, children under six, 10 children, 100 workers in one city: all present."
+    },
+    "163": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Night period of at least 12 consecutive hours; Minister's exceptions."
+    },
+    "165": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Three documents correspond; file retention."
+    },
+    "166": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "First-week notification; register contents correspond."
+    },
+    "167": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Exemptions and three programmes correspond; minimum age 14. Scope reference: Arabic 'this Part' (هذا الباب), English 'this Chapter' (the English pages otherwise render الباب as Part)."
+    },
+    "171": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Contract particulars, single-voyage rules, three copies (triplicate) correspond."
+    },
+    "173": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Three conditions; age 18."
+    },
+    "174": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "175": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "178": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Amended article (M/44) in both: the Minister issues a maritime-contract regulation jointly with the national transport authority; the listed contents correspond."
+    },
+    "179": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "14 hours per 24 hours; 72 hours per seven days."
+    },
+    "180": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "181": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Rules correspond. Source note: Arabic text contains a stray '0' where a full stop is expected (identical in PDF and HTML; kept verbatim)."
+    },
+    "184": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Six cases correspond. Source note: English item 5 reads 'seafarer1' (literal digit in the official page; kept verbatim)."
+    },
+    "186": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Minimum age 18 (M/5 amendment present in both)."
+    },
+    "188": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Seven hours underground, ten hours at workplace, travel time included."
+    },
+    "189": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Arabic lists permit holders without a negation (literally ambiguous); the English resolves it by adding 'do not' before the permit condition. Likely the intended meaning, but the English adds a negation."
+    },
+    "191": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "192": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "199": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "200": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "202": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "209": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "229": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses 1-3 correspond; fine up to 100,000 riyals, closure up to 30 days, permanent closure, doubling on repetition, fines per person."
+    },
+    "231": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "232": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "235": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "243": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "180 days; publication of implementing regulations."
+    },
+    "245": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Publication in the Official Gazette; in force 180 days after publication."
+    }
+  },
+  "previously_disputed": {
+    "45": "v1 (BOE English): and/or inverted. v2 (HRSD English): matches the Arabic. Selected; PROPOSED_PASS.",
+    "65": "v1: 'undue' added in item 1, 'required' in item 5. v2 English: item 1 matches ('does not pose a danger'); item 5 'at the employer's request' (the Arabic's 'which he wishes to conduct' is not rendered, minor). NOT eligible in v2: the Arabic PDF numbers the duties 1-6 while the HRSD Arabic HTML (and the English) number them 1,1,2,3,4,5, so the Arabic extraction cannot be confirmed by the second rendering.",
+    "108": "v1: 'employer's' dropped from item 1. v2: resolved ('employer-like authority'). New: English item labels 1,1,2,3 vs its own cross-reference to paragraphs 2,3,4. Selected; NEEDS_REVIEW.",
+    "134": "v1: 'diagnosis' vs 'observation'. v2: 'first medical observation' matches. Selected; PROPOSED_PASS."
+  },
+  "material_discrepancies": [
+    {
+      "article": "40",
+      "issue": "liability limited to fines caused by the employer (AR) vs any delay penalties (EN)"
+    },
+    {
+      "article": "63",
+      "issue": "prohibited by Sharia (AR) vs legally prohibited (EN)"
+    },
+    {
+      "article": "66",
+      "issue": "'fine' rendered as 'Penalty' in a list of penalties"
+    },
+    {
+      "article": "81",
+      "issue": "'grave danger' (AR) vs 'a danger' (EN): seriousness threshold dropped"
+    },
+    {
+      "article": "167",
+      "issue": "scope reference 'this Part' (AR) vs 'this Chapter' (EN)"
+    },
+    {
+      "article": "189",
+      "issue": "English adds a negation to resolve an ambiguous Arabic list"
+    },
+    {
+      "article": "108",
+      "issue": "English item numbering inconsistent with its own paragraph cross-reference"
+    }
+  ],
+  "numbering_only": [
+    "15",
+    "64"
+  ]
+}

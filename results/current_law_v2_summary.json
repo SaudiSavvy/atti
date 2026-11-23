@@ -1,0 +1,220 @@
+{
+  "tokenizers": [
+    {
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "tokenizer_json_sha256": "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49"
+    }
+  ],
+  "models": {
+    "Qwen/Qwen2.5-3B-Instruct": {
+      "articles": 100,
+      "ar_tokens_total": 10117,
+      "en_tokens_total": 7567,
+      "ttr": 1.3369895599312807,
+      "median_article_ratio": 1.3564217891054473,
+      "min_article_ratio": 0.8888888888888888,
+      "max_article_ratio": 1.8846153846153846
+    },
+    "mistralai/Mistral-7B-Instruct-v0.3": {
+      "articles": 100,
+      "ar_tokens_total": 24662,
+      "en_tokens_total": 8233,
+      "ttr": 2.9955058909267582,
+      "median_article_ratio": 2.974044227886057,
+      "min_article_ratio": 2.3125,
+      "max_article_ratio": 4.696428571428571
+    }
+  },
+  "by_part": {
+    "Qwen/Qwen2.5-3B-Instruct": {
+      "1": {
+        "articles": 9,
+        "ar_tokens_total": 864,
+        "en_tokens_total": 628,
+        "ttr": 1.375796178343949
+      },
+      "2": {
+        "articles": 5,
+        "ar_tokens_total": 454,
+        "en_tokens_total": 319,
+        "ttr": 1.4231974921630095
+      },
+      "3": {
+        "articles": 4,
+        "ar_tokens_total": 347,
+        "en_tokens_total": 293,
+        "ttr": 1.1843003412969284
+      },
+      "4": {
+        "articles": 4,
+        "ar_tokens_total": 530,
+        "en_tokens_total": 364,
+        "ttr": 1.456043956043956
+      },
+      "5": {
+        "articles": 17,
+        "ar_tokens_total": 2154,
+        "en_tokens_total": 1732,
+        "ttr": 1.24364896073903
+      },
+      "6": {
+        "articles": 13,
+        "ar_tokens_total": 1429,
+        "en_tokens_total": 1092,
+        "ttr": 1.3086080586080586
+      },
+      "7": {
+        "articles": 2,
+        "ar_tokens_total": 154,
+        "en_tokens_total": 99,
+        "ttr": 1.5555555555555556
+      },
+      "8": {
+        "articles": 14,
+        "ar_tokens_total": 1378,
+        "en_tokens_total": 1000,
+        "ttr": 1.378
+      },
+      "9": {
+        "articles": 4,
+        "ar_tokens_total": 368,
+        "en_tokens_total": 272,
+        "ttr": 1.3529411764705883
+      },
+      "10": {
+        "articles": 4,
+        "ar_tokens_total": 434,
+        "en_tokens_total": 311,
+        "ttr": 1.3954983922829582
+      },
+      "11": {
+        "articles": 9,
+        "ar_tokens_total": 1070,
+        "en_tokens_total": 804,
+        "ttr": 1.3308457711442787
+      },
+      "12": {
+        "articles": 5,
+        "ar_tokens_total": 302,
+        "en_tokens_total": 209,
+        "ttr": 1.444976076555024
+      },
+      "13": {
+        "articles": 4,
+        "ar_tokens_total": 228,
+        "en_tokens_total": 133,
+        "ttr": 1.7142857142857142
+      },
+      "15": {
+        "articles": 4,
+        "ar_tokens_total": 324,
+        "en_tokens_total": 240,
+        "ttr": 1.35
+      },
+      "16": {
+        "articles": 2,
+        "ar_tokens_total": 81,
+        "en_tokens_total": 71,
+        "ttr": 1.1408450704225352
+      }
+    },
+    "mistralai/Mistral-7B-Instruct-v0.3": {
+      "1": {
+        "articles": 9,
+        "ar_tokens_total": 2072,
+        "en_tokens_total": 681,
+        "ttr": 3.0425844346549193
+      },
+      "2": {
+        "articles": 5,
+        "ar_tokens_total": 1138,
+        "en_tokens_total": 337,
+        "ttr": 3.376854599406528
+      },
+      "3": {
+        "articles": 4,
+        "ar_tokens_total": 870,
+        "en_tokens_total": 313,
+        "ttr": 2.779552715654952
+      },
+      "4": {
+        "articles": 4,
+        "ar_tokens_total": 1207,
+        "en_tokens_total": 395,
+        "ttr": 3.0556962025316454
+      },
+      "5": {
+        "articles": 17,
+        "ar_tokens_total": 5233,
+        "en_tokens_total": 1901,
+        "ttr": 2.752761704366123
+      },
+      "6": {
+        "articles": 13,
+        "ar_tokens_total": 3642,
+        "en_tokens_total": 1168,
+        "ttr": 3.118150684931507
+      },
+      "7": {
+        "articles": 2,
+        "ar_tokens_total": 376,
+        "en_tokens_total": 107,
+        "ttr": 3.514018691588785
+      },
+      "8": {
+        "articles": 14,
+        "ar_tokens_total": 3375,
+        "en_tokens_total": 1105,
+        "ttr": 3.0542986425339365
+      },
+      "9": {
+        "articles": 4,
+        "ar_tokens_total": 923,
+        "en_tokens_total": 300,
+        "ttr": 3.0766666666666667
+      },
+      "10": {
+        "articles": 4,
+        "ar_tokens_total": 1050,
+        "en_tokens_total": 341,
+        "ttr": 3.0791788856304985
+      },
+      "11": {
+        "articles": 9,
+        "ar_tokens_total": 2476,
+        "en_tokens_total": 878,
+        "ttr": 2.8200455580865604
+      },
+      "12": {
+        "articles": 5,
+        "ar_tokens_total": 783,
+        "en_tokens_total": 220,
+        "ttr": 3.559090909090909
+      },
+      "13": {
+        "articles": 4,
+        "ar_tokens_total": 575,
+        "en_tokens_total": 146,
+        "ttr": 3.9383561643835616
+      },
+      "15": {
+        "articles": 4,
+        "ar_tokens_total": 733,
+        "en_tokens_total": 266,
+        "ttr": 2.755639097744361
+      },
+      "16": {
+        "articles": 2,
+        "ar_tokens_total": 209,
+        "en_tokens_total": 75,
+        "ttr": 2.7866666666666666
+      }
+    }
+  }
+}

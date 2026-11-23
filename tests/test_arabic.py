@@ -34,7 +34,7 @@ HTML = """
 <div class="article_item no_alternate ">
   <h3 class="center">الفصل الأول : التعريفات</h3>
   <h3 class="center">المادة الأولى :</h3>
-  <p><div class="HTMLContainer">يسمى   هذا النظام<br />نظام&nbsp;العمل.</div></p>
+  <p><div class="HTMLContainer">نص   تجريبي<br />للمادة&nbsp;الأولى.</div></p>
 </div>
 <div class="article_item no_alternate changed-article">
   <h3 class="center">المادة الثانية</h3>
@@ -47,5 +47,5 @@ HTML = """
 def test_parse_articles():
     arts = parse_articles(HTML)
     assert [(a.number, a.amended) for a in arts] == [(1, False), (2, True)]
-    assert arts[0].text == "يسمى هذا النظام نظام العمل."
+    assert arts[0].text == "نص تجريبي للمادة الأولى."
     assert arts[1].text == 'نص أصلي "مقتبس"'

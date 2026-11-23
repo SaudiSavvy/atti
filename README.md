@@ -53,6 +53,7 @@ The law is Royal Decree M/51 of 1426/08/23 AH (2005‑09‑27). Both sources rec
 | Corpus | Articles | Manifest | Results | Review status |
 |---|---:|---|---|---|
 | `pilot` | 10 | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | agent-reviewed, **not human-approved** |
+| `current_law_v2` | 100 (new sources) | `manifest/current_law_v2_manifest.json` | `results/current_law_v2.csv`, `reports/current_law_v2.md` | **PROVISIONAL**: AI-reviewed (91 PROPOSED_PASS, 9 NEEDS_REVIEW), human approval pending |
 | `expanded_v1` | 30 (the pilot 10 + 20) | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **PROVISIONAL**: agent-reviewed, human approval pending |
 
 **Review provenance.** Every pair in both corpora was reviewed side by side by an AI agent (Claude). No human has approved any pair. The published pilot report says "reviewed manually"; that review was agent-performed. The pilot report is kept byte-identical as a published artifact, so the wording is corrected here and in `manifest/review.json`. The `expanded_v1` manifest records the review provenance explicitly (`review_provenance`), and its report carries a PROVISIONAL banner.
@@ -71,6 +72,58 @@ The selection is deterministic and ratio-blind: token counts are never consulted
 Parts are taken from the Arabic page's Part headings. They were cross-checked against poppler's reading of the English PDF; pdfminer misorders two Part headings.
 
 **Review process.** Each new pair was read side by side, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references. There were also automated checks: every digit sequence in the Arabic appears in the English, and the English text matches poppler's output exactly. A pair that fails review goes into `selection.EXCLUDED` with a reason, and the selection is re-run. No pair failed. The two translation nuances found (Articles 29 and 45) are recorded in `manifest/expanded_v1_review.json`.
+
+## current_law_v2: the current consolidated law
+
+`pilot` and `expanded_v1` are frozen historical corpora. They use the 2005 base text, from the BOE Arabic page and the BOE English PDF. `current_law_v2` uses the **current consolidated law** (amendments through Royal Decree M/44, in force from 1446/8/20 AH):
+
+| Role | Source |
+|---|---|
+| Arabic (measured) | HRSD consolidated PDF, pinned by SHA-256 `cfb8e0e6…` |
+| English (measured) | HRSD English pages: 16 Parts, discovered from the official index |
+| Arabic cross-check | HRSD Arabic HTML pages (x-default alternates) |
+| Legal-version checks | BOE register; Umm Al-Qura gazette |
+
+The full evidence is in `reports/current_law_v2_sources.md`.
+
+```bash
+uv run atti v2-fetch        # polite fetch: one request at a time, >=2 s apart, backoff, TLS verified, write-once cache
+uv run atti v2              # reproduce all v2 outputs from the pinned cache (historical files are only read)
+uv run atti v2-manifest     # (curation only) rebuild the manifest from the cache and the AI review file
+uv run atti review-sheet --corpus current_law_v2   # local bilingual review page (git-ignored)
+```
+
+**Extraction:**
+
+- **English:** HTTPX and selectolax over server-rendered HTML, so no browser automation is needed. `<ol>` numbering is rebuilt as "N.", and section titles end an article.
+- **Arabic:** PyMuPDF, with lines classified by font size: headings, body, repealed marker, footnotes (excluded) and titles.
+- **Arabic layout cleanup:** this is kept separate from the whitespace normalization used for token counting. It covers:
+  - presentation-form letters, converted to base letters;
+  - justification tatweel, removed;
+  - mirrored brackets, swapped back.
+
+**Eligibility.** An article pair qualifies only if all of these hold:
+
+- the PDF text is character-identical to the HRSD Arabic HTML text, apart from HTML-only tatweel/ZWNJ;
+- it is not repealed;
+- it has exactly one correctly numbered English article in the same Part.
+
+Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 172 qualify. The exclusions and their reasons are in the manifest's `candidates` block.
+
+**Reported anomalies (not repaired).** The English pages label Articles 101, 197, 219 and 79 bis as "10", "194", "210" and "79" respectively; the first three numbers are therefore duplicated. Some articles have clause numbering that differs between the languages, and two source typos are kept verbatim.
+
+**Selection** is deterministic and token-blind:
+
+- each Part gets a minimum of 2 articles, with the remaining quota proportional to its pool size;
+- within a Part, picks cycle through short, medium and long thirds by Arabic length;
+- ties are broken by `SHA-256("atti-current-law-v2:<key>")`.
+
+**Review:**
+
+- `manifest/current_law_v2_review.json` holds the AI pair review: statuses PROPOSED_PASS, NEEDS_REVIEW, FAIL, MISSING_SOURCE and VERSION_MISMATCH, with evidence and the re-evaluation of v1's disputed Articles 45, 65, 108 and 134.
+- Human decisions go in `review/current_law_v2_human_decisions.json` (`uv run atti decide <key> <DECISION> --reviewer "Name" --corpus current_law_v2`).
+
+**Comparing with v1:** the migration record is `manifest/current_law_v2_migration.json`. The v2 report separates a *source* effect (the same 15 articles with old and new texts) from a *sample-composition* effect. Tokenizers are unchanged.
 
 ## Human validation (expanded_v1)
 
@@ -192,6 +245,8 @@ src/atti/  sources.py   official URLs, cached downloader, NetworkError
            corpus.py    eligibility rule, manifest build + verification
            selection.py deterministic expanded_v1 selection
            review.py    human-validation sheet, decision template + validation
+           hrsd.py      HRSD fetcher (HTTPX), English/Arabic HTML and Arabic PDF extraction
+           v2.py        current_law_v2 eligibility, QA checks, selection, measurement, report, migration
            tokenization.py  pinned tokenizer loading, content-only counting
            metrics.py   TTR, median ratio
            pipeline.py / report.py / cli.py
