@@ -2,7 +2,7 @@
   "corpus": "current_law_v2",
   "kind": "AI-generated review (NOT human decisions; human decisions live in review/current_law_v2_human_decisions.json)",
   "status": "provisional",
-  "reviewer": "Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full; Task 07 re-examination of the 9 flagged pairs and the replacement draws on 2026-11-23",
+  "reviewer": "Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full; Task 07 re-examination of the 9 flagged pairs and the replacement draws on 2026-11-23; 2026-11-24 re-examination of Articles 34, 35 and 108 (Task 12)",
   "independence_caveat": "Single AI reviewer. Automated checks (numbers incl. number words, article references, clause markers) were used as prompts, not as verdicts. AI review is provisional even where checks agree.",
   "human_approval": "PENDING: no human has reviewed or approved any pair",
   "status_categories": {
@@ -70,12 +70,12 @@
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
     },
     "34": {
-      "proposed_status": "PROPOSED_PASS",
-      "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Source-alignment limitation (retained under the research scope; see source_alignment_limitations). Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits."
     },
     "35": {
-      "proposed_status": "PROPOSED_PASS",
-      "evidence": "Replacement for 40 (Part 3; long stratum exhausted, next draw from medium). Amended article (the BOE Arabic shows the earlier text); the English renders the current Arabic: ministry discretion, localization standards and other conditions in the regulations, and regulation procedures protecting the worker, including transfer without the violating employer's consent."
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Source-alignment limitation (retained under the research scope; see source_alignment_limitations). The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved."
     },
     "36": {
       "proposed_status": "PROPOSED_PASS",
@@ -194,8 +194,8 @@
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
     },
     "108": {
-      "proposed_status": "PROPOSED_PASS",
-      "evidence": "Re-evaluated (v1 item 1 issue resolved: 'employer-like authority'). The English HTML nests items 2-4 as a sub-list inside item 1, so they display and extract as 1-3. The four items correspond in order, and the English closing cross-reference to paragraphs 2, 3 and 4 matches the Arabic and the intended flat list. Labels only. Caveat: a reader resolving the cross-reference by the displayed labels would misread it. References to Articles 98 and 101 match."
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Source-alignment limitation (retained under the research scope; see source_alignment_limitations). English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items. Re-evaluated (v1 item 1 issue resolved: 'employer-like authority'). The English HTML nests items 2-4 as a sub-list inside item 1, so they display and extract as 1-3. The four items correspond in order, and the English closing cross-reference to paragraphs 2, 3 and 4 matches the Arabic and the intended flat list. Labels only. Caveat: a reader resolving the cross-reference by the displayed labels would misread it. References to Articles 98 and 101 match."
     },
     "110": {
       "proposed_status": "PROPOSED_PASS",
@@ -426,12 +426,20 @@
       "issue": "list labels: Arabic 4-8 vs English 1-5 (source formatting; content corresponds)"
     },
     {
+      "article": "34",
+      "issue": "source-alignment limitation: Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits."
+    },
+    {
+      "article": "35",
+      "issue": "source-alignment limitation: The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved."
+    },
+    {
       "article": "64",
       "issue": "list labels: Arabic 1-2 vs English 7-8 (source formatting; content corresponds)"
     },
     {
       "article": "108",
-      "issue": "English labels 1,1,2,3 (nested list) vs its own reference to paragraphs 2,3,4"
+      "issue": "source-alignment limitation: English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items."
     },
     {
       "article": "167",
@@ -713,9 +721,62 @@
   },
   "priority_for_human": [
     "15",
+    "34",
+    "35",
     "64",
     "108",
     "167",
     "187"
+  ],
+  "research_scope": "ATTI measures tokenization of Saudi government-published Arabic and English legal texts as published. It is not a legal translation equivalence benchmark. Semantic differences between the published texts are documented as source-alignment limitations; the six pairs excluded on 2026-11-23 (Task 07) remain excluded so that the measured 100 pairs do not change.",
+  "source_alignment_limitations": [
+    {
+      "article": "34",
+      "finding_origin": "independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24",
+      "category": "TRANSLATION_DIFFERENCE",
+      "ar_excerpt": "لا يغني عن رخصة العمل",
+      "en_excerpt": "The work permit ... shall not substitute for",
+      "boe_en_crosscheck": "'No permit or license ... shall substitute for said work permit' (matches the Arabic)",
+      "finding": "Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits.",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=15"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86"
+      }
+    },
+    {
+      "article": "35",
+      "finding_origin": "independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24",
+      "category": "TRANSLATION_DIFFERENCE",
+      "ar_excerpt": "وأيًّا من الاشتراطات",
+      "en_excerpt": "or any other conditions",
+      "boe_en_crosscheck": "n/a (article amended after the BOE text)",
+      "finding": "The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved.",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=15"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86"
+      }
+    },
+    {
+      "article": "108",
+      "finding_origin": "AI review 2026-11-23 (Task 07), also named by the independent audit (Task 12)",
+      "category": "FORMATTING_ANOMALY",
+      "ar_excerpt": "الفقرات 2 ، 3 ، 4",
+      "en_excerpt": "items 1, 1, 2, 3",
+      "boe_en_crosscheck": "items 1-4",
+      "finding": "English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items.",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=35"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87"
+      }
+    }
   ]
 }

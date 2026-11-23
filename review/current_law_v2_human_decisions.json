@@ -1,6 +1,6 @@
 {
   "corpus": "current_law_v2",
-  "manifest_sha256": "fd6733813de3d893dea7213a47c4b05d5aa2b6c4576a357456706f64ce511a68",
+  "manifest_sha256": "ee00910fa50935114f510dadcff509db33c2144d36b3c818af5502a9d07cb61a",
   "kind": "HUMAN decisions only. Do not fill in on behalf of a human; AI notes live in the separate *_ai_review.json file.",
   "allowed_decisions": [
     "APPROVE",

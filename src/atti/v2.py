@@ -348,14 +348,16 @@ def tiebreak(k: str) -> str:
     return hashlib.sha256(f"{SEED}:{k}".encode()).hexdigest()
 
 
-def select(recs: dict[str, Record], excluded_after_review: dict[str, str], target: int = TARGET) -> dict:
+def select(recs: dict[str, Record], excluded_after_review: dict[str, str], target: int = TARGET,
+           outside_draw: dict[str, str] | None = None) -> dict:
     """Token-blind: uses only Part, Arabic character length and a seeded hash.
 
     The base draw runs over the whole eligible pool, so review exclusions never reshuffle it: each
     excluded pick is replaced by the next draw from the same Part, preferring its own length stratum
     (then the following strata in cycle order). Excluded articles are never drawn as replacements.
     """
-    pool = {k: r for k, r in recs.items() if r.eligible}
+    outside_draw = outside_draw or {}
+    pool = {k: r for k, r in recs.items() if r.eligible and k not in outside_draw}
     by_part = collections.defaultdict(list)
     for k, r in pool.items():
         by_part[r.part].append(k)
@@ -390,6 +392,8 @@ def select(recs: dict[str, Record], excluded_after_review: dict[str, str], targe
                 replacements[k] = None  # Part exhausted: shortfall, never filled from another Part
     return {
         "seed": SEED, "target": target, "pool_size": len(pool),
+        "eligible_total": sum(1 for r in recs.values() if r.eligible),
+        "eligible_outside_draw": {k: outside_draw[k] for k in sorted(outside_draw, key=sort_key)},
         "pool_size_after_review": len([k for k in pool if k not in excluded_after_review]),
         "replacements": {k: replacements[k] for k in sorted(replacements, key=sort_key)},
         "quota_by_part": {str(p): q for p, q in sorted(quota.items())},
@@ -412,6 +416,21 @@ EXCLUDED_AFTER_REVIEW: dict[str, str] = {
     "81": "FAIL: threshold dropped (grave danger -> a danger)",
     "189": "FAIL: negation conflict (English adds 'do not'); unresolved by authoritative evidence",
 }
+# Articles that became eligible only after the 2026-11-24 parser fixes (Article 33: an inter-word
+# space set in a smaller font was dropped; Articles 79 and 79 bis: the English heading
+# "Article 79:(Bis)" was not recognised). No selected pair's text changed, so the draw stays on the
+# pool as curated on 2026-11-23 and the 100 measured pairs are kept. Not AI-reviewed (not selected).
+OUTSIDE_DRAW: dict[str, str] = {
+    "33": "eligible after PDF whitespace-span fix (2026-11-24); outside the frozen draw",
+    "79": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw",
+    "79bis": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw",
+}
+
+
+def curated_selection(recs: dict[str, Record]) -> dict:
+    return select(recs, EXCLUDED_AFTER_REVIEW, outside_draw=OUTSIDE_DRAW)
+
+
 REVIEW_PATH = Path("manifest") / f"{CORPUS}_review.json"
 MANIFEST_PATH = Path("manifest") / f"{CORPUS}_manifest.json"
 DECISIONS_PATH = Path("review") / f"{CORPUS}_human_decisions.json"
@@ -426,12 +445,14 @@ PROCEDURE = [
     "Review exclusions never reshuffle the draw: each excluded pick is replaced by the next draw (same "
     "seed order) from the same Part, preferring its own stratum, then the following strata in cycle order",
     "Token counts, ratios and English length are never consulted",
+    "Frozen pool: articles that became eligible only after later parser fixes are recorded but kept out of "
+    "the draw, so fixes that leave every selected text unchanged do not reshuffle the measured pairs",
 ]
 
 
 def build_manifest(root: Path, recs: dict[str, Record], anomalies: dict, src: dict) -> dict:
     review = json.loads((root / REVIEW_PATH).read_text(encoding="utf-8"))
-    sel = select(recs, EXCLUDED_AFTER_REVIEW)
+    sel = curated_selection(recs)
     missing = [k for k in sel["selected"] if k not in review["articles"]]
     if missing:
         raise ValueError(f"selected pairs without an AI review entry: {missing}")
@@ -441,7 +462,7 @@ def build_manifest(root: Path, recs: dict[str, Record], anomalies: dict, src: di
     for k in sel["selected"]:
         r = recs[k]
         entries.append({
-            "id": f"KSA-LL-v2-{k.zfill(6) if not k.endswith('bis') else k[:-3].zfill(3) + 'bis'}",
+            "id": entry_id(k),
             "key": k, "part": r.part,
             "ar_heading": r.ar_heading, "en_label": r.en_labels[0],
             "ar_sha256": sha256_text(r.ar_text), "en_sha256": sha256_text(r.en_text),
@@ -498,8 +519,79 @@ class VerificationError(RuntimeError):
     pass
 
 
+_HEX64 = re.compile(r"[0-9a-f]{64}")
+_ENTRY_TYPES = {"id": str, "key": str, "part": int, "ar_sha256": str, "en_sha256": str,
+                "ar_chars": int, "en_chars": int, "review_status": str}
+
+
+def entry_id(key: str) -> str:
+    return f"KSA-LL-v2-{key.zfill(6) if not key.endswith('bis') else key[:-3].zfill(3) + 'bis'}"
+
+
+def validate_manifest(manifest) -> list[str]:
+    """Structural checks that need no sources: a manifest failing any of them is never measured."""
+    if not isinstance(manifest, dict):
+        return ["manifest is not a JSON object"]
+    errs = []
+    if manifest.get("corpus") != CORPUS:
+        errs.append(f"corpus is {manifest.get('corpus')!r}, expected {CORPUS!r}")
+    arts = manifest.get("articles")
+    if not isinstance(arts, list) or not arts:
+        return errs + ["article list is missing or empty"]
+    pdf_hash = (manifest.get("sources") or {}).get("ar_pdf", {}).get("sha256")
+    if not isinstance(pdf_hash, str) or not _HEX64.fullmatch(pdf_hash):
+        errs.append("sources.ar_pdf.sha256 missing or malformed")
+    keys, ids = [], []
+    for i, e in enumerate(arts):
+        if not isinstance(e, dict):
+            errs.append(f"entry {i}: not an object")
+            continue
+        for f, t in _ENTRY_TYPES.items():
+            if type(e.get(f)) is not t:
+                errs.append(f"entry {i}: field {f!r} missing or not {t.__name__}")
+        if errs and errs[-1].startswith(f"entry {i}:"):
+            continue
+        k = e["key"]
+        keys.append(k)
+        ids.append(e["id"])
+        if not re.fullmatch(r"[1-9]\d{0,2}(bis)?", k):
+            errs.append(f"entry {i}: malformed key {k!r}")
+        elif e["id"] != entry_id(k):
+            errs.append(f"{k}: id {e['id']!r} does not match key")
+        for f in ("ar_sha256", "en_sha256"):
+            if not _HEX64.fullmatch(e[f]):
+                errs.append(f"{k}: malformed {f}")
+        if e["ar_chars"] <= 0 or e["en_chars"] <= 0:
+            errs.append(f"{k}: non-positive character count")
+        if e["review_status"] not in ("PROPOSED_PASS", "NEEDS_REVIEW"):
+            errs.append(f"{k}: review_status {e['review_status']!r} is not admissible in the corpus")
+    for name, seq in (("key", keys), ("id", ids)):
+        dups = sorted({x for x in seq if seq.count(x) > 1})
+        if dups:
+            errs.append(f"duplicate article {name}s: {dups}")
+    sel = manifest.get("selection") or {}
+    if sel.get("selected") != keys:
+        errs.append("article list does not match selection.selected (order and membership)")
+    excluded = set(sel.get("excluded_after_review") or {})
+    if excluded & set(keys):
+        errs.append(f"articles excluded after review are listed: {sorted(excluded & set(keys))}")
+    cands = manifest.get("candidates") or {}
+    for e in arts:
+        if isinstance(e, dict) and isinstance(e.get("key"), str):
+            c = cands.get(e["key"])
+            if not c or not c.get("eligible"):
+                errs.append(f"{e['key']}: not an eligible candidate in this manifest")
+            elif c.get("part") != e.get("part"):
+                errs.append(f"{e['key']}: part {e.get('part')} disagrees with candidates ({c.get('part')})")
+    return errs
+
+
 def verify(manifest: dict, raw: Path = RAW) -> list[Record]:
-    """Re-extract from the pinned cache; raise unless every manifest pair is unchanged and eligible."""
+    """Re-extract from the pinned cache; raise unless the manifest is well formed and every pair is
+    unchanged, eligible and consistent with its recorded metadata."""
+    errs = validate_manifest(manifest)
+    if errs:
+        raise VerificationError("malformed manifest: " + "; ".join(errs))
     pdf = raw / "ar/labor-law.pdf"
     if sha256_bytes(pdf.read_bytes()) != manifest["sources"]["ar_pdf"]["sha256"]:
         raise VerificationError("Arabic PDF differs from the pinned SHA-256")
@@ -513,6 +605,8 @@ def verify(manifest: dict, raw: Path = RAW) -> list[Record]:
             bad.append(f"{e['key']}: no longer eligible ({'; '.join(r.reasons)})")
         elif sha256_text(r.ar_text) != e["ar_sha256"] or sha256_text(r.en_text) != e["en_sha256"]:
             bad.append(f"{e['key']}: text hash mismatch")
+        elif (len(r.ar_text), len(r.en_text), r.part) != (e["ar_chars"], e["en_chars"], e["part"]):
+            bad.append(f"{e['key']}: recorded character counts or part disagree with the source")
         else:
             out.append(r)
     if bad:
@@ -638,6 +732,7 @@ def render_report(manifest: dict, rows: list[dict], summary: dict, review: dict,
     L = [f"# ATTI {CORPUS}: Arabic vs English token counts, current Saudi Labor Law ({len(manifest['articles'])} articles)\n",
          f"> **Status: PROVISIONAL.** {manifest['human_approval']}. Pair review is AI-assisted "
          f"({review['reviewer']}): {manifest['review']['proposed_status_counts']}.\n",
+         f"**Research scope.** {review['research_scope']}\n" if review.get("research_scope") else "",
          "Token counts from the pinned tokenizers; content only (no special tokens, no chat template, no "
          "truncation). **TTR = Σ Arabic tokens / Σ English tokens.** These are tokenizer measurements, not "
          "inference cost, latency or quality.\n",
@@ -694,15 +789,20 @@ def render_report(manifest: dict, rows: list[dict], summary: dict, review: dict,
     L.append(f"- v2 includes {len(mig['summary']['newly_included'])} articles that were in no earlier corpus. "
              "No statistical significance is claimed.\n")
     L += _review_exclusions_section(sel, review)
+    L += _limitations_section(review)
     L += ["## Selection\n"] + [f"- {x}" for x in sel["procedure"]] + [
         f"- Seed `{sel['seed']}`; pool {sel['pool_size']} eligible ({sel['pool_size_after_review']} after review "
         f"exclusions) of {len(manifest['candidates'])} Arabic articles; "
         f"quota by Part {sel['quota_by_part']}.",
+        f"- {sel['eligible_total']} articles are eligible now; "
+        + ", ".join(sel["eligible_outside_draw"]) + " became eligible only after the 2026-11-24 parser fixes "
+        "and are kept outside the frozen draw (no selected text changed).",
         "- Excluded candidates and reasons: `manifest/current_law_v2_manifest.json` → `candidates`.\n",
         "## Source anomalies (reported, not repaired)\n",
         f"- English labels used twice: {manifest['anomalies']['en_duplicate_labels']}; English numbers missing: "
         f"{manifest['anomalies']['en_missing']} (Part 14 shows Article 210 twice and no Article 219; Part 6 labels "
-        "Article 101 as 'Article 10'; Part 13 labels Article 197 as 'Article 194'; 79 bis is labelled 'Article 79').",
+        "Article 101 as 'Article 10'; Part 13 labels Article 197 as 'Article 194'). Article 79 bis is published as "
+        "'Article 79:(Bis)' and is parsed as 79 bis since the 2026-11-24 fix.",
         "- Clause numbering differs between languages in selected Articles "
         + ", ".join(d["article"] for d in review.get("discrepancy_matrix", [])
                     if d["category"] == "FORMATTING_ANOMALY" and d["disposition"] == "RETAINED")
@@ -743,6 +843,20 @@ def _review_exclusions_section(sel: dict, review: dict) -> list[str]:
     return L
 
 
+def _limitations_section(review: dict) -> list[str]:
+    lim = review.get("source_alignment_limitations") or []
+    if not lim:
+        return []
+    L = ["## Source-alignment limitations (retained pairs)\n",
+         "Semantic differences between the published Arabic and English texts of selected pairs. They are "
+         "documented, not repaired; the pairs stay in the corpus under the research scope.\n",
+         "| Art. | Category | Arabic excerpt | English excerpt | Finding | Origin |", "|---:|---|---|---|---|---|"]
+    for d in lim:
+        L.append(f"| {d['article']} | {d['category']} | {d['ar_excerpt']} | {d['en_excerpt']} | {d['finding']} | "
+                 f"{d['finding_origin']} |")
+    return L + [""]
+
+
 def render_discrepancy_matrix(review: dict, texts: dict | None = None) -> str:
     """Committed matrix (short excerpts only). With `texts` ({key: (ar, en)}) it appends the full
     texts: that variant is written only under git-ignored data/review/."""
@@ -759,7 +873,10 @@ def render_discrepancy_matrix(review: dict, texts: dict | None = None) -> str:
         L.append(f"| {d['article']} | {d['part']} | {'yes' if d['originally_flagged'] else 'no'} | {d['category']} | "
                  f"{d['ar_excerpt']} | {d['en_excerpt']} | {d['boe_en_crosscheck']} | {disp} ({d['proposed_status']}) |")
     L.append("")
-    for d in review["discrepancy_matrix"]:
+    L += _limitations_section(review)
+    for d in review["discrepancy_matrix"] + review.get("source_alignment_limitations", []):
+        if "disposition" not in d:
+            d = {**d, "disposition": "RETAINED (source-alignment limitation)"}
         s = d["sources"]
         L += [f"## Article {d['article']}: {d['category']}, {d['disposition']}\n",
               "- Arabic PDF: " + ", ".join(f"<{u}>" for u in s["ar_pdf"]),

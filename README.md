@@ -53,7 +53,7 @@ The law is Royal Decree M/51 of 1426/08/23 AH (2005‑09‑27). Both sources rec
 | Corpus | Articles | Manifest | Results | Review status |
 |---|---:|---|---|---|
 | `pilot` | 10 | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | agent-reviewed, **not human-approved** |
-| `current_law_v2` | 100 (new sources) | `manifest/current_law_v2_manifest.json` | `results/current_law_v2.csv`, `reports/current_law_v2.md` | **PROVISIONAL**: AI-reviewed (100 PROPOSED_PASS after 6 review exclusions and 5 replacements), human approval pending |
+| `current_law_v2` | 100 (new sources) | `manifest/current_law_v2_manifest.json` | `results/current_law_v2.csv`, `reports/current_law_v2.md` | **PROVISIONAL**: AI-reviewed (97 PROPOSED_PASS, 3 NEEDS_REVIEW source-alignment limitations; 6 review exclusions, 5 replacements), human approval pending |
 | `expanded_v1` | 30 (the pilot 10 + 20) | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **PROVISIONAL**: agent-reviewed, human approval pending |
 
 **Review provenance.** Every pair in both corpora was reviewed side by side by an AI agent (Claude). No human has approved any pair. The published pilot report says "reviewed manually"; that review was agent-performed. The pilot report is kept byte-identical as a published artifact, so the wording is corrected here and in `manifest/review.json`. The `expanded_v1` manifest records the review provenance explicitly (`review_provenance`), and its report carries a PROVISIONAL banner.
@@ -74,6 +74,10 @@ Parts are taken from the Arabic page's Part headings. They were cross-checked ag
 **Review process.** Each new pair was read side by side, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references. There were also automated checks: every digit sequence in the Arabic appears in the English, and the English text matches poppler's output exactly. A pair that fails review goes into `selection.EXCLUDED` with a reason, and the selection is re-run. No pair failed. The two translation nuances found (Articles 29 and 45) are recorded in `manifest/expanded_v1_review.json`.
 
 ## current_law_v2: the current consolidated law
+
+**Research scope.** ATTI measures tokenization of Saudi government-published Arabic and English legal texts as published. It is not a legal translation equivalence benchmark. Semantic differences in retained pairs (Articles 34, 35 and 108) are documented as source-alignment limitations in `manifest/current_law_v2_review.json` and in the report.
+
+**Manifest verification.** `v2.verify()` rejects any manifest that is empty or has duplicate keys or ids, malformed hashes or keys, missing or mistyped fields, inadmissible statuses, or a mismatch with `selection.selected`, the candidates or the source texts. Such a manifest is never measured. The v1 `corpus.verify()` rejects empty and duplicate article lists.
 
 `pilot` and `expanded_v1` are frozen historical corpora. They use the 2005 base text, from the BOE Arabic page and the BOE English PDF. `current_law_v2` uses the **current consolidated law** (amendments through Royal Decree M/44, in force from 1446/8/20 AH):
 
@@ -108,9 +112,9 @@ uv run atti review-sheet --corpus current_law_v2   # local bilingual review page
 - it is not repealed;
 - it has exactly one correctly numbered English article in the same Part.
 
-Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 172 qualify. The exclusions and their reasons are in the manifest's `candidates` block.
+Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 175 qualify. The draw uses the 172 that qualified when the corpus was curated (2026-11-23). Articles 33, 79 and 79 bis qualified only after two parser fixes on 2026-11-24, and are recorded as `eligible_outside_draw`. Those fixes changed none of the 100 selected texts, so the measured pairs are kept. The exclusions and their reasons are in the manifest's `candidates` block.
 
-**Reported anomalies (not repaired).** The English pages label Articles 101, 197, 219 and 79 bis as "10", "194", "210" and "79" respectively; the first three numbers are therefore duplicated. Some articles have clause numbering that differs between the languages, and two source typos are kept verbatim.
+**Reported anomalies (not repaired).** The English pages label Articles 101, 197 and 219 as "10", "194" and "210" respectively, so those numbers are duplicated. Article 79 bis is published as "Article 79:(Bis)"; an earlier parser misread it as a second Article 79, which was fixed on 2026-11-24. Some articles have clause numbering that differs between the languages, and two source typos are kept verbatim.
 
 **Selection** is deterministic and token-blind:
 

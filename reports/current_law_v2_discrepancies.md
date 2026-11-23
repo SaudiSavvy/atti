@@ -22,6 +22,16 @@ For 15, 64 and 108 the label differences were checked against the raw PDF text a
 | 76 | 5 | no | TRANSLATION_DIFFERENCE | على أكثر من ذلك | agree otherwise | n/a (article amended) | EXCLUDED (FAIL) |
 | 187 | 12 | no | TRANSLATION_DIFFERENCE | يسري عليها هذا الباب | subject to this Chapter | 'this Part' | RETAINED (PROPOSED_PASS) |
 
+## Source-alignment limitations (retained pairs)
+
+Semantic differences between the published Arabic and English texts of selected pairs. They are documented, not repaired; the pairs stay in the corpus under the research scope.
+
+| Art. | Category | Arabic excerpt | English excerpt | Finding | Origin |
+|---:|---|---|---|---|---|
+| 34 | TRANSLATION_DIFFERENCE | لا يغني عن رخصة العمل | The work permit ... shall not substitute for | Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits. | independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24 |
+| 35 | TRANSLATION_DIFFERENCE | وأيًّا من الاشتراطات | or any other conditions | The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved. | independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24 |
+| 108 | FORMATTING_ANOMALY | الفقرات 2 ، 3 ، 4 | items 1, 1, 2, 3 | English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items. | AI review 2026-11-23 (Task 07), also named by the independent audit (Task 12) |
+
 ## Article 15: FORMATTING_ANOMALY, RETAINED
 
 - Arabic PDF: <https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=8>
@@ -99,3 +109,24 @@ For 15, 64 and 108 the label differences were checked against the raw PDF text a
 - Arabic HTML: <https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-3>
 - English HTML: <https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-3>
 - Finding: Not one of the 9 flagged pairs: replacement for Article 189. Same terminology pattern as 167; Part 12 has no chapters, so the referent is unchanged. Otherwise corresponds.
+
+## Article 34: TRANSLATION_DIFFERENCE, RETAINED (source-alignment limitation)
+
+- Arabic PDF: <https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=15>
+- Arabic HTML: <https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86>
+- English HTML: <https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86>
+- Finding: Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits.
+
+## Article 35: TRANSLATION_DIFFERENCE, RETAINED (source-alignment limitation)
+
+- Arabic PDF: <https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=15>
+- Arabic HTML: <https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86>
+- English HTML: <https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86>
+- Finding: The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved.
+
+## Article 108: FORMATTING_ANOMALY, RETAINED (source-alignment limitation)
+
+- Arabic PDF: <https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=35>
+- Arabic HTML: <https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87>
+- English HTML: <https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87>
+- Finding: English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items.
