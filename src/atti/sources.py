@@ -1,16 +1,21 @@
 """Official source definitions and a cached downloader (stdlib only).
 
 The legal texts are fetched into a local, git-ignored cache (``data/raw``) and
-never committed to the repository.
+never committed to the repository. A cached file is never overwritten:
+the cache is the pinned baseline that ``atti pilot`` reproduces from.
 """
 
 from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import http.client
 import json
+import os
 import ssl
+import urllib.error
 import urllib.request
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -41,6 +46,12 @@ SOURCES = (ARABIC, ENGLISH)
 
 USER_AGENT = "atti-benchmark/0.1 (research; tokenizer measurement)"
 
+Downloader = Callable[[str], bytes]
+
+
+class NetworkError(RuntimeError):
+    """The source could not be retrieved (DNS, TLS, timeout, HTTP error status)."""
+
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -50,20 +61,35 @@ def sha256_text(text: str) -> str:
     return sha256_bytes(text.encode("utf-8"))
 
 
-def fetch(source: Source, cache_dir: Path, refresh: bool = False) -> Path:
-    """Download ``source`` into ``cache_dir`` unless already cached."""
+def download(url: str) -> bytes:
+    """GET ``url``; every transport-level failure is raised as NetworkError."""
+    import truststore  # verify TLS against the OS trust store (the BOE server needs it)
+
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    try:
+        with urllib.request.urlopen(req, timeout=120, context=ctx) as resp:
+            return resp.read()
+    except urllib.error.HTTPError as exc:
+        raise NetworkError(f"{url}: HTTP {exc.code}") from exc
+    except (urllib.error.URLError, http.client.HTTPException, OSError) as exc:
+        raise NetworkError(f"{url}: {exc}") from exc
+
+
+def _write_atomic(path: Path, data: bytes) -> None:
+    tmp = path.with_name(path.name + ".part")
+    tmp.write_bytes(data)
+    os.replace(tmp, path)
+
+
+def fetch(source: Source, cache_dir: Path, downloader: Downloader = download) -> Path:
+    """Download ``source`` into ``cache_dir`` only if it is not cached yet."""
     cache_dir.mkdir(parents=True, exist_ok=True)
     path = cache_dir / source.filename
-    if path.exists() and not refresh:
+    if path.exists():
         return path
-    req = urllib.request.Request(source.url, headers={"User-Agent": USER_AGENT})
-    # Verify TLS against the OS trust store (the BOE server relies on it).
-    import truststore
-
-    ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    with urllib.request.urlopen(req, timeout=120, context=ctx) as resp:
-        data = resp.read()
-    path.write_bytes(data)
+    data = downloader(source.url)
+    _write_atomic(path, data)
     log_path = cache_dir / "fetch_log.json"
     log = json.loads(log_path.read_text()) if log_path.exists() else {}
     log[source.key] = {
@@ -73,9 +99,19 @@ def fetch(source: Source, cache_dir: Path, refresh: bool = False) -> Path:
         "bytes": len(data),
         "retrieved_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
     }
-    log_path.write_text(json.dumps(log, indent=2, ensure_ascii=False) + "\n")
+    _write_atomic(log_path, (json.dumps(log, indent=2, ensure_ascii=False) + "\n").encode())
     return path
 
 
-def fetch_all(cache_dir: Path, refresh: bool = False) -> dict[str, Path]:
-    return {s.key: fetch(s, cache_dir, refresh) for s in SOURCES}
+def fetch_all(cache_dir: Path, downloader: Downloader = download) -> dict[str, Path]:
+    return {s.key: fetch(s, cache_dir, downloader) for s in SOURCES}
+
+
+def fetch_fresh(dest_dir: Path, downloader: Downloader = download) -> dict[str, Path]:
+    """Always download every source into ``dest_dir`` (a temporary directory)."""
+    out = {}
+    for s in SOURCES:
+        path = dest_dir / s.filename
+        path.write_bytes(downloader(s.url))
+        out[s.key] = path
+    return out

@@ -13,10 +13,22 @@ def _root() -> Path:
     return Path.cwd()
 
 
+EXIT_VERIFICATION, EXIT_NETWORK = 2, 3
+
+
+def _network_error(exc) -> int:
+    print(f"NETWORK ERROR: {exc}", file=sys.stderr)
+    return EXIT_NETWORK
+
+
 def cmd_fetch(args) -> int:
     from atti import sources
 
-    for key, path in sources.fetch_all(_root() / "data" / "raw", refresh=args.refresh).items():
+    try:
+        paths = sources.fetch_all(_root() / "data" / "raw")
+    except sources.NetworkError as exc:
+        return _network_error(exc)
+    for key, path in paths.items():
         print(f"{key}: {path}")
     return 0
 
@@ -37,13 +49,15 @@ def cmd_manifest(args) -> int:
 
 
 def cmd_pilot(args) -> int:
-    from atti import corpus, pipeline
+    from atti import corpus, pipeline, sources
 
     try:
         summary = pipeline.run(_root())
+    except sources.NetworkError as exc:
+        return _network_error(exc)
     except corpus.VerificationError as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
-        return 2
+        return EXIT_VERIFICATION
     for model, s in summary["models"].items():
         print(f"{model}: AR={s['ar_tokens_total']} EN={s['en_tokens_total']} "
               f"TTR={s['ttr']:.4f} median={s['median_article_ratio']:.4f}")
@@ -51,16 +65,32 @@ def cmd_pilot(args) -> int:
     return 0
 
 
+def cmd_verify_live(args) -> int:
+    from atti import corpus, live, sources
+
+    root = _root()
+    manifest = corpus.read_json(root / "manifest" / "pilot_manifest.json")
+    try:
+        report = live.verify_live(manifest, root / "data" / "raw")
+    except sources.NetworkError as exc:
+        return _network_error(exc)
+    print(live.format_report(report))
+    return report.outcome
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="atti", description="Arabic Token Tax Index")
     sub = p.add_subparsers(dest="command", required=True)
-    f = sub.add_parser("fetch", help="download official sources into data/raw (git-ignored)")
-    f.add_argument("--refresh", action="store_true")
-    f.set_defaults(func=cmd_fetch)
+    sub.add_parser("fetch", help="download missing official sources into data/raw "
+                   "(git-ignored; cached files are never replaced)").set_defaults(func=cmd_fetch)
     m = sub.add_parser("manifest", help="(re)build the verified article manifest")
     m.add_argument("--articles", default=DEFAULT_ARTICLES)
     m.set_defaults(func=cmd_manifest)
-    sub.add_parser("pilot", help="verify corpus, count tokens, write results and report").set_defaults(func=cmd_pilot)
+    sub.add_parser("pilot", help="reproduce from cached sources: verify hashes, count tokens, "
+                   "write results and report").set_defaults(func=cmd_pilot)
+    sub.add_parser("verify-live", help="download fresh official sources to a temp dir and "
+                   "compare with the manifest (exit 0 clean, 1 source changed, "
+                   "2 articles failed, 3 network error)").set_defaults(func=cmd_verify_live)
     args = p.parse_args(argv)
     return args.func(args)
 

@@ -12,20 +12,27 @@ Requires [uv](https://docs.astral.sh/uv/) and internet access on the first run. 
 
 ```bash
 uv sync
-uv run atti pilot      # fetch sources -> verify manifest -> count tokens -> write outputs
-uv run pytest          # unit + integration tests
+uv run atti pilot                  # reproduce from the cached baseline corpus
+uv run atti verify-live            # compare today's official sources with the manifest
+uv run pytest -m "not network" -q  # offline tests (no downloads)
+uv run pytest -q                   # all tests (needs the cache, downloaded on first run)
 ```
 
-`atti pilot` writes:
+| Command | What it does | Writes |
+|---|---|---|
+| `atti pilot` | Reproduces the benchmark from `data/raw`. It downloads a source only if it is missing (first run) and never replaces a cached file. It checks every article against the manifest hashes, then counts tokens. | `results/pilot.csv`, `results/pilot_summary.json`, `reports/pilot.md` |
+| `atti verify-live` | Downloads fresh official sources into a temporary directory, which is deleted afterwards. It compares them with the manifest and, if present, with the cached baseline. It never updates hashes or approves new text. | nothing |
+| `atti fetch` | Downloads missing sources into `data/raw`. | `data/raw` (git-ignored) |
+| `atti manifest` | Rebuilds the manifest. Only use this as a deliberate curation step. It refuses articles that are ineligible or have no review note in `manifest/review.json`. | `manifest/pilot_manifest.json` |
 
-- `results/pilot.csv`: raw per-article, per-model measurements (no legal text)
-- `results/pilot_summary.json`: aggregates
-- `reports/pilot.md`: human-readable report
+**Exit codes:**
 
-Other commands:
-
-- `uv run atti fetch [--refresh]` downloads the official sources into `data/raw/`.
-- `uv run atti manifest [--articles 4,32,...]` rebuilds `manifest/pilot_manifest.json`. It refuses any article that is ineligible or has no manual review note in `manifest/review.json`.
+| Code | `pilot` | `verify-live` |
+|---|---|---|
+| 0 | success | `CLEAN`: all selected articles verified and no source change detected |
+| 1 | — | `SOURCE_CHANGED`: selected articles verified, but the law changed elsewhere (PDF bytes, other articles, amendment lists) |
+| 2 | `VERIFICATION FAILED` | `ARTICLES_FAILED`: a selected article is changed, missing or ineligible, or a fresh source could not be parsed |
+| 3 | `NETWORK ERROR` (download failed) | `NETWORK ERROR` (download failed) |
 
 ## Sources (not redistributed)
 
@@ -75,13 +82,56 @@ Source disagreements found during curation are recorded in the manifest's `audit
 
 - Only `tokenizer.json` is downloaded, anonymously (`token=False`). No model weights are fetched.
 - Counts use `encode(text, add_special_tokens=False)`: no BOS/EOS and no chat template.
-- Truncation and padding are disabled. Each count also asserts that token offsets cover the full text.
+- Truncation and padding are disabled, and every count is checked at run time (see below).
 - During development, counts were cross-checked against `transformers.AutoTokenizer` (fast) and Mistral's SentencePiece slow tokenizer. All 40 counts matched.
+
+## What the tests prove, and what they don't
+
+**Run-time guards** (`tokenization.count_tokens`, applied to every published count). A count is rejected unless:
+
+1. truncation and padding are both disabled, and there are no overflow segments;
+2. every non-whitespace character of the input lies inside some token's offset span;
+3. no special-token id or unknown-token id appears in the content encoding.
+
+Guard 2 replaces the earlier check that the last token's offset ends at `len(text)`. That check was misleading: left-side truncation keeps the end of the text, so it would still pass. It also said nothing about characters dropped in the middle. `test_last_offset_check_was_insufficient_left_truncation` demonstrates the gap.
+
+**Stronger checks on the two pinned tokenizers and the 10 articles** (`network` tests):
+
+- Offsets cover *every* character, including whitespace.
+- `decode(ids)` equals the tokenizer's own normalization of the input:
+  - **Mistral:** no normalizer, so decoding reproduces the text exactly.
+  - **Qwen:** applies Unicode NFC. Articles 65 and 92 (Arabic) contain combining marks in non-NFC order, so they decode to their NFC form. This is expected and is not data loss; the test pins exactly these two cases.
+- No special tokens appear in content counts. Mistral would add `<s>` (BOS) with `add_special_tokens=True`; Qwen adds nothing.
+- Counts are identical across fresh tokenizer loads, and a fresh measurement reproduces `results/pilot.csv` byte for byte.
+
+**Results checks** (offline):
+
+- A missing published artifact fails the tests; it is never skipped.
+- CSV rows must match the manifest (ids, hashes, character counts) and the pinned revisions.
+- TTR, median, min and max are recomputed from the CSV integers with exact fractions, independently of `atti.metrics`.
+- The published totals are pinned: Qwen 1290/898, Mistral 3114/982.
+- `pilot_summary.json` and `pilot.md` must regenerate byte for byte from the CSV and manifest.
+
+**Source checks:**
+
+- Network failures are reported separately from verification failures.
+- Changed, missing and ineligible articles are each detected, and changes outside the selected articles are distinguished from changes to them.
+- `verify-live` never modifies the baseline.
+- All of this is tested offline with mocked downloads. One `network` test replays the real cached sources and tampers with one word.
+
+**Not proven:**
+
+- That offsets align with *linguistic* units. They only show that characters are attributed to tokens.
+- That the tokenizer used in production inference for these models is the same `tokenizer.json`. Counts were cross-checked once against `transformers` and Mistral's SentencePiece model; that check is not part of the test suite.
+- That the Arabic and English texts are legally equivalent beyond the recorded manual review.
+- That the official sources are unchanged *today*. Only `atti verify-live` checks that, and only at the moment it runs.
+- The Arabic page bytes are not compared, because they embed a live view counter. Only the parsed article text, headings and amendment flags are compared.
 
 ## Layout
 
 ```
-src/atti/  sources.py   official URLs + cached downloader
+src/atti/  sources.py   official URLs, cached downloader, NetworkError
+           live.py      verify-live (fresh download -> temp dir -> compare)
            arabic.py    BOE HTML -> articles (Arabic ordinal parser)
            english.py   BOE PDF -> articles + amendment-appendix references
            textnorm.py  the single whitespace normalization

@@ -46,19 +46,52 @@ def load(spec: TokenizerSpec, cache_dir: Path) -> LoadedTokenizer:
     return LoadedTokenizer(spec, tok, hashlib.sha256(data).hexdigest())
 
 
-class TruncationError(RuntimeError):
-    pass
+class TokenCountError(RuntimeError):
+    """A content-only count could not be shown to cover the whole input."""
+
+
+def special_ids(tok: Tokenizer) -> set[int]:
+    """Ids of added special tokens plus the model's unknown token, if any."""
+    ids = {i for i, t in tok.get_added_tokens_decoder().items() if t.special}
+    unk = getattr(tok.model, "unk_token", None)
+    if unk is not None and tok.token_to_id(unk) is not None:
+        ids.add(tok.token_to_id(unk))
+    return ids
+
+
+def uncovered_chars(text: str, offsets: list[tuple[int, int]]) -> list[int]:
+    """Indices of non-whitespace characters not inside any token's offset span.
+
+    Offsets are character spans into the *original* string (tokenizers maps
+    them back through normalization). An empty result means every visible
+    character is attributed to at least one token, which rules out truncation
+    from either end and silently dropped characters in the middle.
+    """
+    covered = bytearray(len(text))
+    for start, end in offsets:
+        covered[start:end] = b"\x01" * (end - start)
+    return [i for i, c in enumerate(text) if not covered[i] and not c.isspace()]
 
 
 def count_tokens(tok: Tokenizer, text: str) -> int:
-    """Content-only token count: no BOS/EOS, no chat template, no truncation."""
+    """Content-only token count: no BOS/EOS, no chat template, no truncation/padding.
+
+    Raises TokenCountError unless (1) truncation and padding are disabled,
+    (2) no overflow segments exist, (3) every non-whitespace input character
+    is covered by a token offset span, and (4) no special or unknown token
+    appears in the encoding.
+    """
     if tok.truncation is not None:
-        raise TruncationError("truncation must be disabled")
+        raise TokenCountError("truncation must be disabled")
+    if tok.padding is not None:
+        raise TokenCountError("padding must be disabled")
     enc = tok.encode(text, add_special_tokens=False)
-    if text and enc.offsets and enc.offsets[-1][1] != len(text):
-        raise TruncationError(
-            f"encoding covers {enc.offsets[-1][1]} of {len(text)} characters"
-        )
     if enc.overflowing:
-        raise TruncationError("encoding produced overflowing segments")
+        raise TokenCountError("encoding produced overflowing segments")
+    gaps = uncovered_chars(text, enc.offsets)
+    if gaps:
+        raise TokenCountError(f"{len(gaps)} characters not covered by any token (first at index {gaps[0]})")
+    leaked = set(enc.ids) & special_ids(tok)
+    if leaked:
+        raise TokenCountError(f"special/unknown token ids in content encoding: {sorted(leaked)}")
     return len(enc.ids)
