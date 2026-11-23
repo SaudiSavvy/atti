@@ -90,6 +90,72 @@ def cmd_verify_live(args) -> int:
     return report.outcome
 
 
+def cmd_review_sheet(args) -> int:
+    from atti import corpus, review
+
+    root = _root()
+    name = args.corpus
+    m_path = root / "manifest" / f"{name}_manifest.json"
+    manifest = corpus.read_json(m_path)
+    m_hash = review.manifest_sha256(m_path)
+    try:
+        pairs = corpus.verify(manifest, root / "data" / "raw")
+    except corpus.VerificationError as exc:
+        print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    ai = corpus.read_json(root / "review" / f"{name}_ai_review.json")
+    dec_path = root / "review" / f"{name}_human_decisions.json"
+    if review.write_json_new(dec_path, review.decisions_template(name, manifest, m_hash)):
+        print(f"created empty decision template {dec_path.relative_to(root)}")
+    dec = corpus.read_json(dec_path)
+    errors = review.validate_decisions(dec, manifest, m_hash)
+    ar_articles, _ = corpus.load_sources(root / "data" / "raw")
+    parts = {a.number: a.part for a in ar_articles if not a.bis}
+    out = root / "data" / "review" / f"{name}_review_sheet.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(review.render_sheet(manifest, pairs, parts, ai, dec, errors), encoding="utf-8")
+    flagged = [n for n, v in ((int(k), v) for k, v in ai["articles"].items()) if v["proposed_status"] != "PASS"]
+    page = out.with_name(f"{name}_review.html")
+    page.write_text(review.render_html(manifest, pairs, parts, ai, dec, errors, sorted(flagged)), encoding="utf-8")
+    s = review.summarize(ai, dec)
+    print(f"wrote {out.relative_to(root)} and {page.relative_to(root)} (git-ignored; contain full legal texts)")
+    print(f"AI proposed: {s['ai_proposed']}")
+    print(f"human decisions: {s['human']}; fully human-approved: {s['fully_human_approved']}")
+    for e in errors:
+        print(f"DECISION FILE ERROR: {e}", file=sys.stderr)
+    return EXIT_VERIFICATION if errors else 0
+
+
+def cmd_decide(args) -> int:
+    """Record ONE human decision in the decision file (the only writer of that file)."""
+    import datetime as dt
+    import json
+    import os
+
+    from atti import corpus, review
+
+    root = _root()
+    m_path = root / "manifest" / f"{args.corpus}_manifest.json"
+    dec_path = root / "review" / f"{args.corpus}_human_decisions.json"
+    if not dec_path.exists():
+        print(f"ERROR: {dec_path.relative_to(root)} not found; run `atti review-sheet` first", file=sys.stderr)
+        return EXIT_VERIFICATION
+    try:
+        new = review.record_decision(
+            corpus.read_json(dec_path), corpus.read_json(m_path), review.manifest_sha256(m_path),
+            args.article, args.decision, args.reviewer, args.date or dt.date.today().isoformat(),
+            args.comment, replace=args.replace)
+    except ValueError as exc:
+        print(f"NOT RECORDED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    tmp = dec_path.with_name(dec_path.name + ".part")
+    tmp.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, dec_path)
+    d = new["decisions"][str(args.article)]
+    print(f"recorded Article {args.article}: {d['decision']} by {d['reviewer']} on {d['date']}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="atti", description="Arabic Token Tax Index")
     sub = p.add_subparsers(dest="command", required=True)
@@ -108,6 +174,20 @@ def main(argv: list[str] | None = None) -> int:
                        "2 articles failed, 3 network error)")
     v.add_argument("--corpus", choices=("pilot", "expanded_v1"), default="pilot")
     v.set_defaults(func=cmd_verify_live)
+    r = sub.add_parser("review-sheet", help="write the local bilingual review sheet (data/review, "
+                       "git-ignored) and validate recorded human decisions")
+    r.add_argument("--corpus", choices=("pilot", "expanded_v1"), default="expanded_v1")
+    r.set_defaults(func=cmd_review_sheet)
+    d = sub.add_parser("decide", help="record one HUMAN review decision (refuses to overwrite "
+                       "without --replace)")
+    d.add_argument("article", type=int)
+    d.add_argument("decision", choices=("APPROVE", "REJECT", "REQUEST_EXAMINATION"))
+    d.add_argument("--reviewer", required=True, help="your name (a human)")
+    d.add_argument("--comment", default="")
+    d.add_argument("--date", help="YYYY-MM-DD (default: today)")
+    d.add_argument("--replace", action="store_true", help="change an already recorded decision")
+    d.add_argument("--corpus", choices=("pilot", "expanded_v1"), default="expanded_v1")
+    d.set_defaults(func=cmd_decide)
     args = p.parse_args(argv)
     return args.func(args)
 

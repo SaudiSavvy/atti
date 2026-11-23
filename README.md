@@ -72,6 +72,24 @@ Parts are taken from the Arabic page's Part headings. They were cross-checked ag
 
 **Review process.** Each new pair was read side by side, checking numbered clauses and sub-clauses, enumerated lists, exceptions, numbers, percentages, dates and legal references. There were also automated checks: every digit sequence in the Arabic appears in the English, and the English text matches poppler's output exactly. A pair that fails review goes into `selection.EXCLUDED` with a reason, and the selection is re-run. No pair failed. The two translation nuances found (Articles 29 and 45) are recorded in `manifest/expanded_v1_review.json`.
 
+## Human validation (expanded_v1)
+
+`expanded_v1` stays **provisional** until a human has recorded a decision for every pair. The validation material lives in three separate places:
+
+| File | Content | Author | Committed? |
+|---|---|---|---|
+| `review/expanded_v1_ai_review.json` | AI proposed status (PASS / NEEDS_REVIEW / FAIL), evidence, material discrepancies | AI agent; the second pass is by the same model as the first, so it is not independent | yes (no legal text) |
+| `review/expanded_v1_human_decisions.json` | APPROVE / REJECT / REQUEST_EXAMINATION, reviewer, date, comment | **human only** | yes, once filled in |
+| `data/review/expanded_v1_review_sheet.md` | both full texts side by side, AI notes, recorded decisions | generated | **no** (git-ignored; contains legal texts) |
+
+**To record decisions:**
+
+1. Run `uv run atti review-sheet`. It re-extracts and hash-verifies all 30 pairs, writes the sheet, creates an empty decision template if none exists (never overwriting one), and validates recorded decisions.
+2. Read each pair in the sheet and fill in `review/expanded_v1_human_decisions.json`. Each entry needs a `decision` (`APPROVE`, `REJECT` or `REQUEST_EXAMINATION`), your name as `reviewer`, the `date` (YYYY-MM-DD), and a `comment`; the comment is required for anything other than APPROVE.
+3. Re-run `uv run atti review-sheet`. It exits with code 2 if the file is invalid: an unknown decision, missing name or date, an AI-system reviewer name, or a manifest hash mismatch.
+
+Decisions are bound to the manifest's SHA-256. A REJECT does not remove an article automatically. Excluding one is a separate, reported change: add it to `selection.EXCLUDED` with the reason and re-run the selection. That replaces the pair and changes the `expanded_v1` results, which would then need a new corpus version.
+
 ## How the article pairs are verified
 
 The two sources represent the amendment history differently:
@@ -173,6 +191,7 @@ src/atti/  sources.py   official URLs, cached downloader, NetworkError
            textnorm.py  the single whitespace normalization
            corpus.py    eligibility rule, manifest build + verification
            selection.py deterministic expanded_v1 selection
+           review.py    human-validation sheet, decision template + validation
            tokenization.py  pinned tokenizer loading, content-only counting
            metrics.py   TTR, median ratio
            pipeline.py / report.py / cli.py
