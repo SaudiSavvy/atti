@@ -11,8 +11,8 @@ These are tokenizer measurements of input text. They do not measure inference sp
 | DeepSeek V4.1 Flash 1017 | raw_content_tokens | **MEASURED** | `deepseek-ai/DeepSeek-V4.1-Flash-1017@08c8657f0229` |  |
 | GLM-5.3 Flash | raw_content_tokens | **MEASURED** | `zai-org/GLM-5.3-Flash@46a050bec130` |  |
 | Kimi K3.1 Pro | raw_content_tokens | **MEASURED** | `moonshotai/Kimi-K3.1-Pro@d9e99b0792a5` |  |
-| Claude Opus 5.5 | api_input_tokens | **BLOCKED** | `claude-opus-5-5` via API | ANTHROPIC_API_KEY is not set in the environment; no request was made |
-| GPT-6.2 Sol | api_input_tokens | **BLOCKED** | `gpt-6.2-sol` via API | OPENAI_API_KEY is not set in the environment; no request was made |
+| Claude Opus 5.5 | api_input_tokens | **MEASURED** | `claude-opus-5-5` via API |  |
+| GPT-6.2 Sol | api_input_tokens | **MEASURED** | `gpt-6.2-sol` via API |  |
 
 ## Content-only token counts (`raw_content_tokens`)
 
@@ -28,7 +28,10 @@ These are tokenizer measurements of input text. They do not measure inference sp
 
 > **Methodological warning.** API counts are for a structured one-message request and include provider framing tokens, which inflate both languages by a similar absolute amount and pull the ratio towards 1. They are not placed in the content-only ranking above, and no framing constant is subtracted.
 
-No provider API counts were measured; see the adapter status table. No values are estimated.
+| Model | Σ AR | Σ EN | **TTR** | Median | Min | Max |
+|---|---:|---:|---:|---:|---:|---:|
+| claude-opus-5-5 | 18228 | 11919 | **1.5293** | 1.5017 | 1.1364 | 2.2418 |
+| gpt-6.2-sol | 8689 | 7838 | **1.1086** | 1.1111 | 0.8667 | 1.6897 |
 
 ## Method and limitations
 

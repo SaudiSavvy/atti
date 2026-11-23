@@ -98,7 +98,7 @@
       "key": "claude-opus-5-5",
       "display": "Claude Opus 5.5",
       "measurement_method": "api_input_tokens",
-      "status": "BLOCKED",
+      "status": "MEASURED",
       "provider": "anthropic",
       "api_model": "claude-opus-5-5",
       "endpoint": "https://api.anthropic.com/v1/messages/count_tokens",
@@ -113,13 +113,21 @@
           }
         ]
       },
-      "blocked_reason": "ANTHROPIC_API_KEY is not set in the environment; no request was made"
+      "access_check": {
+        "text": "Hello",
+        "input_tokens": 11
+      },
+      "framing_probe": {
+        "text": "a",
+        "input_tokens": 9,
+        "note": "recorded only; never subtracted from article counts"
+      }
     },
     "gpt-6.2-sol": {
       "key": "gpt-6.2-sol",
       "display": "GPT-6.2 Sol",
       "measurement_method": "api_input_tokens",
-      "status": "BLOCKED",
+      "status": "MEASURED",
       "provider": "openai",
       "api_model": "gpt-6.2-sol",
       "endpoint": "https://api.openai.com/v1/responses/input_tokens",
@@ -134,7 +142,15 @@
           }
         ]
       },
-      "blocked_reason": "OPENAI_API_KEY is not set in the environment; no request was made"
+      "access_check": {
+        "text": "Hello",
+        "input_tokens": 7
+      },
+      "framing_probe": {
+        "text": "a",
+        "input_tokens": 7,
+        "note": "recorded only; never subtracted from article counts"
+      }
     }
   }
 }

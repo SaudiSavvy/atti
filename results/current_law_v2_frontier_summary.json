@@ -192,6 +192,44 @@
         "qwen": 28.802104921620185,
         "mistral": -42.741231669914235
       }
+    },
+    "claude-opus-5-5": {
+      "source": "results/current_law_v2_frontier.csv",
+      "model_key": "claude-opus-5-5",
+      "articles": 100,
+      "measurement_method": "api_input_tokens",
+      "ar_tokens_total": 18228,
+      "en_tokens_total": 11919,
+      "ttr": 1.5293229297759878,
+      "median_article_ratio": 1.5016556291390728,
+      "min_article_ratio": 1.1363636363636365,
+      "max_article_ratio": 2.241758241758242,
+      "ar_tokens_per_1000_chars": 673.2658639284923,
+      "en_tokens_per_1000_chars": 305.1693678469929,
+      "ttr_pct_diff_vs": {
+        "qwen": 13.682113208197721,
+        "mistral": -49.46279963806591
+      },
+      "comparability_warning": "api_input_tokens include provider message framing; not directly comparable with raw_content_tokens"
+    },
+    "gpt-6.2-sol": {
+      "source": "results/current_law_v2_frontier.csv",
+      "model_key": "gpt-6.2-sol",
+      "articles": 100,
+      "measurement_method": "api_input_tokens",
+      "ar_tokens_total": 8689,
+      "en_tokens_total": 7838,
+      "ttr": 1.1085736157182955,
+      "median_article_ratio": 1.1111111111111112,
+      "min_article_ratio": 0.8666666666666667,
+      "max_article_ratio": 1.6896551724137931,
+      "ar_tokens_per_1000_chars": 320.9352145970304,
+      "en_tokens_per_1000_chars": 200.6810558926697,
+      "ttr_pct_diff_vs": {
+        "qwen": -17.594257675736124,
+        "mistral": -63.36665994950097
+      },
+      "comparability_warning": "api_input_tokens include provider message framing; not directly comparable with raw_content_tokens"
     }
   }
 }

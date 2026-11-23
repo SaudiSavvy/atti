@@ -169,6 +169,110 @@
         ]
       },
       "error": null
+    },
+    "claude-opus-5-5": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "strict response validation"
+      },
+      "counts": {
+        "6": [
+          174,
+          111
+        ],
+        "15": [
+          287,
+          192
+        ],
+        "50": [
+          87,
+          58
+        ],
+        "57": [
+          57,
+          44
+        ],
+        "100": [
+          205,
+          110
+        ],
+        "134": [
+          120,
+          88
+        ],
+        "166": [
+          147,
+          91
+        ],
+        "175": [
+          112,
+          72
+        ],
+        "178": [
+          398,
+          283
+        ],
+        "181": [
+          239,
+          162
+        ]
+      },
+      "error": null
+    },
+    "gpt-6.2-sol": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "strict response validation"
+      },
+      "counts": {
+        "6": [
+          86,
+          62
+        ],
+        "15": [
+          145,
+          133
+        ],
+        "50": [
+          41,
+          40
+        ],
+        "57": [
+          27,
+          31
+        ],
+        "100": [
+          86,
+          74
+        ],
+        "134": [
+          49,
+          54
+        ],
+        "166": [
+          67,
+          62
+        ],
+        "175": [
+          54,
+          47
+        ],
+        "178": [
+          205,
+          168
+        ],
+        "181": [
+          125,
+          109
+        ]
+      },
+      "error": null
     }
   }
 }
