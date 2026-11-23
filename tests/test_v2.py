@@ -168,9 +168,9 @@ def test_manifest_integrity_and_provenance(manifest, review_file):
 
 def test_known_anomalies_recorded(manifest):
     an = manifest["anomalies"]
-    assert {"10", "79", "194", "210"} <= set(an["en_duplicate_labels"])
+    assert {"10", "194", "210"} <= set(an["en_duplicate_labels"]) and "79" not in an["en_duplicate_labels"]
     assert {"101", "197", "219"} <= set(an["en_missing"])
-    for k in ("101", "197", "219", "79bis"):
+    for k in ("101", "197", "219"):
         assert not manifest["candidates"][k]["eligible"]
 
 
@@ -288,7 +288,7 @@ def test_clean_reproduction_from_cache(manifest, rows):
 def test_selection_and_candidates_reproduce_from_cache(manifest):
     src = v2.load(ROOT / v2.RAW)
     recs, anomalies = v2.build_records(src)
-    sel = v2.select(recs, v2.EXCLUDED_AFTER_REVIEW)
+    sel = v2.curated_selection(recs)
     assert sel["selected"] == manifest["selection"]["selected"]
     assert {k: {"part": r.part, "eligible": r.eligible, "reasons": r.reasons} for k, r in recs.items()} == manifest["candidates"]
     assert anomalies == manifest["anomalies"]

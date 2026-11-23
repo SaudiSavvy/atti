@@ -1,6 +1,8 @@
 # ATTI current_law_v2: Arabic vs English token counts, current Saudi Labor Law (100 articles)
 
-> **Status: PROVISIONAL.** PENDING: no pair is human-approved; see review/current_law_v2_human_decisions.json. Pair review is AI-assisted (Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full; Task 07 re-examination of the 9 flagged pairs and the replacement draws on 2026-11-23): {'PROPOSED_PASS': 100}.
+> **Status: PROVISIONAL.** PENDING: no pair is human-approved; see review/current_law_v2_human_decisions.json. Pair review is AI-assisted (Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full; Task 07 re-examination of the 9 flagged pairs and the replacement draws on 2026-11-23; 2026-11-24 re-examination of Articles 34, 35 and 108 (Task 12)): {'NEEDS_REVIEW': 3, 'PROPOSED_PASS': 97}.
+
+**Research scope.** ATTI measures tokenization of Saudi government-published Arabic and English legal texts as published. It is not a legal translation equivalence benchmark. Semantic differences between the published texts are documented as source-alignment limitations; the six pairs excluded on 2026-11-23 (Task 07) remain excluded so that the measured 100 pairs do not change.
 
 Token counts from the pinned tokenizers; content only (no special tokens, no chat template, no truncation). **TTR = Σ Arabic tokens / Σ English tokens.** These are tokenizer measurements, not inference cost, latency or quality.
 
@@ -73,6 +75,16 @@ Rule: Strict corpus: a pair is excluded when the English adds, drops or changes 
 
 Per-article sources, excerpts and findings: `reports/current_law_v2_discrepancies.md`.
 
+## Source-alignment limitations (retained pairs)
+
+Semantic differences between the published Arabic and English texts of selected pairs. They are documented, not repaired; the pairs stay in the corpus under the research scope.
+
+| Art. | Category | Arabic excerpt | English excerpt | Finding | Origin |
+|---:|---|---|---|---|---|
+| 34 | TRANSLATION_DIFFERENCE | لا يغني عن رخصة العمل | The work permit ... shall not substitute for | Direction of substitution reversed: the Arabic says no permit from another authority replaces the work permit; the HRSD English says the work permit does not replace other authorities' permits. | independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24 |
+| 35 | TRANSLATION_DIFFERENCE | وأيًّا من الاشتراطات | or any other conditions | The Arabic joins the localization standards and the other conditions with 'and' (wa); the English uses 'or', which may widen the grounds for refusing renewal. The Arabic coordination is open to either reading; not resolved. | independent audit (named in Task 12; the audit text was not available to the AI agent) and AI re-examination 2026-11-24 |
+| 108 | FORMATTING_ANOMALY | الفقرات 2 ، 3 ، 4 | items 1, 1, 2, 3 | English item labels 1, 1, 2, 3 (nested list markup) against its own cross-reference to paragraphs 2, 3 and 4; read by label, the cross-reference points to the wrong items. | AI review 2026-11-23 (Task 07), also named by the independent audit (Task 12) |
+
 ## Selection
 
 - Pool: Arabic articles whose PDF text is confirmed character-for-character by the HRSD Arabic HTML (ignoring HTML-only tatweel/ZWNJ), not repealed, with exactly one correctly numbered English counterpart in the same Part
@@ -80,12 +92,14 @@ Per-article sources, excerpts and findings: `reports/current_law_v2_discrepancie
 - Within a Part: articles sorted by Arabic character count and cut into thirds; picks cycle short -> medium -> long, each taking the lowest SHA-256(seed:key) remaining in that stratum
 - Review exclusions never reshuffle the draw: each excluded pick is replaced by the next draw (same seed order) from the same Part, preferring its own stratum, then the following strata in cycle order
 - Token counts, ratios and English length are never consulted
+- Frozen pool: articles that became eligible only after later parser fixes are recorded but kept out of the draw, so fixes that leave every selected text unchanged do not reshuffle the measured pairs
 - Seed `atti-current-law-v2`; pool 172 eligible (166 after review exclusions) of 249 Arabic articles; quota by Part {'1': 9, '2': 5, '3': 4, '4': 4, '5': 17, '6': 13, '7': 2, '8': 14, '9': 4, '10': 4, '11': 9, '12': 5, '13': 4, '15': 4, '16': 2}.
+- 175 articles are eligible now; 33, 79, 79bis became eligible only after the 2026-11-24 parser fixes and are kept outside the frozen draw (no selected text changed).
 - Excluded candidates and reasons: `manifest/current_law_v2_manifest.json` → `candidates`.
 
 ## Source anomalies (reported, not repaired)
 
-- English labels used twice: ['10', '79', '194', '210']; English numbers missing: ['101', '197', '219'] (Part 14 shows Article 210 twice and no Article 219; Part 6 labels Article 101 as 'Article 10'; Part 13 labels Article 197 as 'Article 194'; 79 bis is labelled 'Article 79').
+- English labels used twice: ['10', '194', '210']; English numbers missing: ['101', '197', '219'] (Part 14 shows Article 210 twice and no Article 219; Part 6 labels Article 101 as 'Article 10'; Part 13 labels Article 197 as 'Article 194'). Article 79 bis is published as 'Article 79:(Bis)' and is parsed as 79 bis since the 2026-11-24 fix.
 - Clause numbering differs between languages in selected Articles 15, 64, 108 (source list markup; content corresponds).
 - Arabic Article 181 contains a stray '0'; English Article 184 reads 'seafarer1' (both kept verbatim).
 
@@ -95,8 +109,8 @@ All aggregates are recomputable from `results/current_law_v2.csv` (TTR = Σ ar_t
 
 ## Limitations
 
-- PROVISIONAL: AI-assisted review only; 0 pairs NEEDS_REVIEW; no human approval.
-- 6 pairs were excluded after AI review under the strict rule above; applying it is an AI judgement that a human reviewer may overturn. Priority items for human review: 15, 64, 108, 167, 187.
+- PROVISIONAL: AI-assisted review only; 3 pairs NEEDS_REVIEW; no human approval.
+- 6 pairs were excluded after AI review under the strict rule above; applying it is an AI judgement that a human reviewer may overturn. Priority items for human review: 15, 34, 35, 64, 108, 167, 187.
 - The English is the ministry's published translation; its official status is not stated.
-- 77 of 249 Arabic articles were not eligible (35 AR_UNCONFIRMED, 4 MISSING_SOURCE, 4 NUMBERING, 38 REPEALED; an article can have several reasons). Requiring two identical Arabic renderings skews the pool toward articles without lists or layout quirks.
+- 74 of 249 Arabic articles were not eligible (34 AR_UNCONFIRMED, 3 MISSING_SOURCE, 3 NUMBERING, 38 REPEALED; an article can have several reasons). Requiring two identical Arabic renderings skews the pool toward articles without lists or layout quirks.
 - One law; Part 14 absent (repealed).

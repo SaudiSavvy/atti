@@ -184,7 +184,6 @@
   "anomalies": {
     "en_duplicate_labels": [
       "10",
-      "79",
       "194",
       "210"
     ],
@@ -195,6 +194,7 @@
     ],
     "en_bis_found": [
       "11bis",
+      "79bis",
       "131bis",
       "229bis"
     ],
@@ -396,10 +396,8 @@
     },
     "33": {
       "part": 3,
-      "eligible": false,
-      "reasons": [
-        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
-      ]
+      "eligible": true,
+      "reasons": []
     },
     "34": {
       "part": 3,
@@ -644,17 +642,13 @@
     },
     "79": {
       "part": 5,
-      "eligible": false,
-      "reasons": [
-        "NUMBERING: English label used 2 times on the HRSD pages (not repaired)"
-      ]
+      "eligible": true,
+      "reasons": []
     },
     "79bis": {
       "part": 5,
-      "eligible": false,
-      "reasons": [
-        "MISSING_SOURCE: no English article carries this number"
-      ]
+      "eligible": true,
+      "reasons": []
     },
     "80": {
       "part": 5,
@@ -1621,11 +1615,18 @@
       "Quota per Part: floor of 2 (where available), remainder allocated proportionally to pool size (largest remainder, ties by Part number); target 100",
       "Within a Part: articles sorted by Arabic character count and cut into thirds; picks cycle short -> medium -> long, each taking the lowest SHA-256(seed:key) remaining in that stratum",
       "Review exclusions never reshuffle the draw: each excluded pick is replaced by the next draw (same seed order) from the same Part, preferring its own stratum, then the following strata in cycle order",
-      "Token counts, ratios and English length are never consulted"
+      "Token counts, ratios and English length are never consulted",
+      "Frozen pool: articles that became eligible only after later parser fixes are recorded but kept out of the draw, so fixes that leave every selected text unchanged do not reshuffle the measured pairs"
     ],
     "seed": "atti-current-law-v2",
     "target": 100,
     "pool_size": 172,
+    "eligible_total": 175,
+    "eligible_outside_draw": {
+      "33": "eligible after PDF whitespace-span fix (2026-11-24); outside the frozen draw",
+      "79": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw",
+      "79bis": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw"
+    },
     "pool_size_after_review": 166,
     "replacements": {
       "40": "35",
@@ -1884,7 +1885,8 @@
   "review": {
     "file": "manifest/current_law_v2_review.json",
     "proposed_status_counts": {
-      "PROPOSED_PASS": 100
+      "NEEDS_REVIEW": 3,
+      "PROPOSED_PASS": 97
     }
   },
   "tokenizers": [
@@ -2166,7 +2168,7 @@
       "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
       "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
       "stratum": "short",
-      "review_status": "PROPOSED_PASS"
+      "review_status": "NEEDS_REVIEW"
     },
     {
       "id": "KSA-LL-v2-000035",
@@ -2184,7 +2186,7 @@
       "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
       "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
       "stratum": "medium",
-      "review_status": "PROPOSED_PASS"
+      "review_status": "NEEDS_REVIEW"
     },
     {
       "id": "KSA-LL-v2-000036",
@@ -2724,7 +2726,7 @@
       "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
       "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
       "stratum": "long",
-      "review_status": "PROPOSED_PASS"
+      "review_status": "NEEDS_REVIEW"
     },
     {
       "id": "KSA-LL-v2-000110",

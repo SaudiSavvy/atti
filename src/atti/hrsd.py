@@ -172,7 +172,10 @@ class HtmlArticle:
     position: int       # order on the page
 
 
-_EN_HEADING = re.compile(r"^Article\s*\(?\s*(\d+)\s*\)?\s*(?:\(?\s*(bis|repeated)\s*\)?)?\s*:?\s*(.*)$", re.I | re.S)
+# The bis marker may precede the colon ("Article 11 Bis:", "Article 131 (Bis):") or follow it
+# ("Article 79:(Bis)", as published for Article 79 bis in Part 5).
+_EN_HEADING = re.compile(r"^Article\s*\(?\s*(\d+)\s*\)?\s*(?:\(?\s*(bis|repeated)\s*\)?)?\s*:?\s*"
+                         r"(?:\(\s*(bis|repeated)\s*\)\s*:?)?\s*(.*)$", re.I | re.S)
 _AR_HEADING = re.compile(r"^(?:\(\s*)?(المادة\b[^:]*?|\(?\s*[^\s:]+[^:]*?مكرر\s*\)?)\s*:\s*(.*)$", re.S)
 # Sub-section titles that some Part pages publish as plain paragraphs, not headings.
 _SECTION_TITLE = re.compile(
@@ -296,8 +299,8 @@ def _split_heading(text: str, lang: str):
         m = _EN_HEADING.match(text)
         if not m:
             return text, None, False, ""
-        label = text[: len(text) - len(m.group(3))].strip()
-        return label, int(m.group(1)), bool(m.group(2)), m.group(3).strip()
+        label = text[: len(text) - len(m.group(4))].strip()
+        return label, int(m.group(1)), bool(m.group(2) or m.group(3)), m.group(4).strip()
     head, _, rest = text.partition(":")
     parsed = parse_ordinal(_ar_variants(head))
     return head.strip() + ":", (parsed[0] if parsed else None), (parsed[1] if parsed else False), rest.strip()
@@ -358,6 +361,23 @@ class PdfLine:
     marker: str          # 8.4 pt footnote marker digits on the line, if any
 
 
+def line_text(spans: list[dict]) -> tuple[float, str, str]:
+    """(size, text, footnote marker) of one PDF line from its spans (pure; unit-tested).
+
+    Body lines drop superscript footnote markers (< 8.5 pt) but keep whitespace-only spans
+    whatever their size: the PDF sets some inter-word spaces in a smaller font (Article 33),
+    and dropping them joined two words (fixed 2026-11-24).
+    """
+    visible = [s for s in spans if s["text"].strip()]
+    size = max(round(s["size"], 1) for s in visible)
+    if size < FOOTNOTE_MAX_SIZE:
+        text = "".join(s["text"] for s in spans)
+    else:
+        text = "".join(s["text"] for s in spans if round(s["size"], 1) > 8.5 or not s["text"].strip())
+    marker = "".join(s["text"] for s in visible if round(s["size"], 1) == 8.4).strip()
+    return size, text, marker
+
+
 def read_pdf_lines(path: Path) -> list[PdfLine]:
     """PyMuPDF line reader (blocks top-to-bottom; lines in PyMuPDF's logical order)."""
     import fitz
@@ -369,12 +389,7 @@ def read_pdf_lines(path: Path) -> list[PdfLine]:
                 spans = [s for s in line["spans"] if s["text"].strip()]
                 if not spans:
                     continue
-                size = max(round(s["size"], 1) for s in spans)
-                if size < FOOTNOTE_MAX_SIZE:
-                    text = "".join(s["text"] for s in line["spans"])
-                else:
-                    text = "".join(s["text"] for s in spans if round(s["size"], 1) > 8.5)
-                marker = "".join(s["text"] for s in spans if round(s["size"], 1) == 8.4).strip()
+                size, text, marker = line_text(line["spans"])
                 out.append(PdfLine(pno, line["bbox"][1], size, text, marker))
     return out
 
