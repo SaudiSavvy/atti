@@ -127,6 +127,24 @@ Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 172 qualify. T
 
 **Comparing with v1:** the migration record is `manifest/current_law_v2_migration.json`. The v2 report separates a *source* effect (the same 15 articles with old and new texts) from a *sample-composition* effect. Tokenizers are unchanged.
 
+## Frontier tokenizers (current_law_v2, same 100 pairs)
+
+`uv run atti frontier` runs a 10-pair pilot for each adapter, then measures all 100 pairs only for adapters that pass (`--pilot-only` stops after the pilot). Outputs: `results/current_law_v2_frontier.csv`, `results/current_law_v2_frontier_summary.json`, `results/current_law_v2_frontier_pilot.json`, `reports/current_law_v2_frontier.md`, and `manifest/frontier_tokenizers.json` (status, revisions, asset hashes, request shapes). Existing results are only read.
+
+| Model | Method | How it is measured |
+|---|---|---|
+| DeepSeek V4.1 Flash 1017 | `raw_content_tokens` | that repo's `tokenizer.json`, pinned revision and SHA-256 |
+| GLM-5.3 Flash | `raw_content_tokens` | that repo's `tokenizer.json`, pinned revision and SHA-256 |
+| Kimi K3.1 Pro | `raw_content_tokens` | that repo's `tiktoken.model` with the pre-tokenizer and split rule of its `tokenization_kimi.py` |
+| Claude Opus 5.5 | `api_input_tokens` | Anthropic `POST /v1/messages/count_tokens`; needs `ANTHROPIC_API_KEY` |
+| GPT-6.2 Sol | `api_input_tokens` | OpenAI `POST /v1/responses/input_tokens`; needs `OPENAI_API_KEY` |
+
+- **Downloads:** only allow-listed tokenizer files (about 29 MB in total); never model weights.
+- **Validation:** token IDs were checked against the official implementations on all 200 corpus texts. Synthetic reference IDs are in `tests/frontier_reference_ids.json`.
+- **API counts:** each request is one user message whose content is the article text. The provider's framing is included in the count and is never subtracted, so these counts are reported separately from content-only counts.
+- **Credentials:** keys are read from the environment only. API counts are cached write-once in git-ignored `data/api_cache/`; the cache holds counts, never keys.
+- **Missing values:** an adapter without credentials or access is reported BLOCKED, with no value.
+
 ## Human validation (expanded_v1)
 
 `expanded_v1` stays **provisional** until a human has recorded a decision for every pair. The validation material lives in three separate places:

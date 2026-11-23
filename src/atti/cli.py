@@ -219,6 +219,26 @@ def cmd_v2(args) -> int:
     return 0
 
 
+def cmd_frontier(args) -> int:
+    import resource
+
+    from atti import frontier, sources, v2
+
+    try:
+        status = frontier.run(_root(), pilot_only=args.pilot_only)
+    except sources.NetworkError as exc:
+        return _network_error(exc)
+    except v2.VerificationError as exc:
+        print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    for st in status.values():
+        print(f"{st['display']}: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))
+    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    print("wrote " + ", ".join(str(p) for k, p in frontier.OUTPUTS.items() if k == "pilot" or not args.pilot_only))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="atti", description="Arabic Token Tax Index")
     sub = p.add_subparsers(dest="command", required=True)
@@ -257,6 +277,10 @@ def main(argv: list[str] | None = None) -> int:
                    "from the cache and the AI review file").set_defaults(func=cmd_v2_manifest)
     sub.add_parser("v2", help="reproduce current_law_v2 results from the pinned cache "
                    "(historical artifacts are only read)").set_defaults(func=cmd_v2)
+    fr = sub.add_parser("frontier", help="pilot and measure the frontier tokenizers on the 100 current_law_v2 "
+                        "pairs (tokenizer assets only; API adapters need ANTHROPIC_API_KEY / OPENAI_API_KEY)")
+    fr.add_argument("--pilot-only", action="store_true", help="run the 10-pair pilot only")
+    fr.set_defaults(func=cmd_frontier)
     args = p.parse_args(argv)
     return args.func(args)
 

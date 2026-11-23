@@ -1,0 +1,174 @@
+{
+  "corpus": "current_law_v2",
+  "pilot_articles": [
+    "6",
+    "15",
+    "50",
+    "57",
+    "100",
+    "134",
+    "166",
+    "175",
+    "178",
+    "181"
+  ],
+  "selection": "token-blind: articles at the 10 Arabic-length decile midpoints",
+  "adapters": {
+    "deepseek-v4.1-flash-1017": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          92,
+          56
+        ],
+        "15": [
+          165,
+          127
+        ],
+        "50": [
+          42,
+          34
+        ],
+        "57": [
+          27,
+          25
+        ],
+        "100": [
+          100,
+          68
+        ],
+        "134": [
+          50,
+          48
+        ],
+        "166": [
+          76,
+          56
+        ],
+        "175": [
+          56,
+          40
+        ],
+        "178": [
+          237,
+          161
+        ],
+        "181": [
+          125,
+          103
+        ]
+      },
+      "error": null
+    },
+    "glm-5.3-flash": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          102,
+          56
+        ],
+        "15": [
+          171,
+          128
+        ],
+        "50": [
+          44,
+          34
+        ],
+        "57": [
+          28,
+          25
+        ],
+        "100": [
+          115,
+          68
+        ],
+        "134": [
+          63,
+          49
+        ],
+        "166": [
+          84,
+          56
+        ],
+        "175": [
+          67,
+          40
+        ],
+        "178": [
+          258,
+          164
+        ],
+        "181": [
+          139,
+          103
+        ]
+      },
+      "error": null
+    },
+    "kimi-k3.1-pro": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          127,
+          56
+        ],
+        "15": [
+          205,
+          127
+        ],
+        "50": [
+          53,
+          34
+        ],
+        "57": [
+          35,
+          25
+        ],
+        "100": [
+          141,
+          68
+        ],
+        "134": [
+          80,
+          48
+        ],
+        "166": [
+          102,
+          56
+        ],
+        "175": [
+          72,
+          41
+        ],
+        "178": [
+          304,
+          162
+        ],
+        "181": [
+          162,
+          103
+        ]
+      },
+      "error": null
+    }
+  }
+}
