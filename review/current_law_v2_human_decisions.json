@@ -1,6 +1,6 @@
 {
   "corpus": "current_law_v2",
-  "manifest_sha256": "e0abe00c231247924d79be5da8bdf0b254face8c915a585ff9edb7f787efb4f4",
+  "manifest_sha256": "fd6733813de3d893dea7213a47c4b05d5aa2b6c4576a357456706f64ce511a68",
   "kind": "HUMAN decisions only. Do not fill in on behalf of a human; AI notes live in the separate *_ai_review.json file.",
   "allowed_decisions": [
     "APPROVE",
@@ -105,6 +105,12 @@
       "date": null,
       "comment": ""
     },
+    "35": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
     "36": {
       "decision": null,
       "reviewer": null,
@@ -112,12 +118,6 @@
       "comment": ""
     },
     "38": {
-      "decision": null,
-      "reviewer": null,
-      "date": null,
-      "comment": ""
-    },
-    "40": {
       "decision": null,
       "reviewer": null,
       "date": null,
@@ -171,7 +171,19 @@
       "date": null,
       "comment": ""
     },
+    "56": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
     "57": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "58": {
       "decision": null,
       "reviewer": null,
       "date": null,
@@ -183,25 +195,19 @@
       "date": null,
       "comment": ""
     },
-    "63": {
-      "decision": null,
-      "reviewer": null,
-      "date": null,
-      "comment": ""
-    },
     "64": {
       "decision": null,
       "reviewer": null,
       "date": null,
       "comment": ""
     },
-    "66": {
+    "68": {
       "decision": null,
       "reviewer": null,
       "date": null,
       "comment": ""
     },
-    "68": {
+    "71": {
       "decision": null,
       "reviewer": null,
       "date": null,
@@ -214,12 +220,6 @@
       "comment": ""
     },
     "74": {
-      "decision": null,
-      "reviewer": null,
-      "date": null,
-      "comment": ""
-    },
-    "81": {
       "decision": null,
       "reviewer": null,
       "date": null,
@@ -531,13 +531,13 @@
       "date": null,
       "comment": ""
     },
-    "188": {
+    "187": {
       "decision": null,
       "reviewer": null,
       "date": null,
       "comment": ""
     },
-    "189": {
+    "188": {
       "decision": null,
       "reviewer": null,
       "date": null,

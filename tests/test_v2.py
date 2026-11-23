@@ -89,6 +89,30 @@ def test_selection_uses_only_eligible_and_honours_review_exclusions():
     assert "7" not in a["selected"] and "8" not in a["selected"] and a["excluded_after_review"] == {"8": "failed review"}
 
 
+def test_review_exclusions_replace_within_part_without_reshuffling():
+    recs = records()
+    base = v2.select(recs, {}, target=20)
+    victim = base["selected"][0]
+    a = v2.select(recs, {victim: "failed review"}, target=20)
+    assert len(a["selected"]) == 20 and victim not in a["selected"]
+    repl = a["replacements"][victim]
+    assert set(a["selected"]) == set(base["selected"]) - {victim} | {repl}  # nothing else moves
+    assert recs[repl].part == recs[victim].part and repl not in base["selected"]
+    # a rejected replacement draw is skipped, never selected, and the next draw is taken
+    b = v2.select(recs, {victim: "failed review", repl: "failed review"}, target=20)
+    assert repl not in b["selected"] and victim not in b["selected"] and len(b["selected"]) == 20
+    assert set(b["selected"]) - {b["replacements"][victim]} == set(base["selected"]) - {victim}
+    assert a["pool_size"] == base["pool_size"] == a["pool_size_after_review"] + 1
+
+
+def test_review_exclusion_shortfall_is_recorded_not_filled_from_another_part():
+    recs = records(10)
+    full = v2.select(recs, {}, target=10)  # whole pool selected: nothing left to draw
+    victim = full["selected"][0]
+    a = v2.select(recs, {victim: "x"}, target=10)
+    assert a["replacements"] == {victim: None} and len(a["selected"]) == 9
+
+
 def test_allocation_floor_and_total():
     q = v2.allocate({1: list("abcdefghij"), 2: list("ab"), 3: list("a")}, target=8)
     assert sum(q.values()) == 8 and q[3] == 1 and q[2] == 2
@@ -161,7 +185,48 @@ def test_human_approval_pending_and_separate(manifest, review_file):
     assert "PROVISIONAL" in report and "human-approved" in report
 
 
-PUBLISHED_V2 = {"Qwen/Qwen2.5-3B-Instruct": (10117, 7567), "mistralai/Mistral-7B-Instruct-v0.3": (24662, 8233)}
+def test_review_exclusions_recorded_and_applied(manifest, review_file):
+    sel = manifest["selection"]
+    excluded = review_file["excluded_after_review"]
+    assert set(v2.EXCLUDED_AFTER_REVIEW) == set(excluded) == {"40", "63", "66", "76", "81", "189"}
+    assert sel["excluded_after_review"] == v2.EXCLUDED_AFTER_REVIEW
+    keys = {a["key"] for a in manifest["articles"]}
+    assert not keys & set(excluded) and not set(review_file["articles"]) & set(excluded)
+    assert sel["replacements"] == {"40": "35", "63": "56", "66": "71", "81": "58", "189": "187"}
+    for old, new in sel["replacements"].items():
+        assert new in keys and manifest["candidates"][new]["part"] == manifest["candidates"][old]["part"]
+        assert excluded[old]["replaced_by"] == new
+    assert excluded["189"]["proposed_status"] == "FAIL" and "negation" in excluded["189"]["issue"].lower()
+    assert excluded["40"]["proposed_status"] == "VERSION_MISMATCH"
+
+
+def test_discrepancy_matrix_complete_and_short(review_file):
+    mx = {d["article"]: d for d in review_file["discrepancy_matrix"]}
+    flagged = {"15", "40", "63", "64", "66", "81", "108", "167", "189"}
+    assert {k for k, d in mx.items() if d["originally_flagged"]} == flagged
+    for k, d in mx.items():
+        assert d["category"] in review_file["discrepancy_categories"]
+        assert d["disposition"] in ("RETAINED", "EXCLUDED")
+        assert (d["disposition"] == "EXCLUDED") == (k in review_file["excluded_after_review"])
+        assert all(u.startswith("https://www.hrsd.gov.sa/") for u in d["sources"]["ar_pdf"] + [d["sources"]["ar_html"], d["sources"]["en_html"]])
+        assert all("#page=" in u for u in d["sources"]["ar_pdf"])
+        assert len(d["ar_excerpt"]) < 40 and len(d["en_excerpt"]) < 50  # identification only, never full text
+    assert (ROOT / v2.OUTPUTS["discrepancies"]).read_text(encoding="utf-8") == v2.render_discrepancy_matrix(review_file)
+
+
+def test_curate_refuses_to_move_manifest_under_recorded_human_decisions(tmp_path, monkeypatch):
+    (tmp_path / "review").mkdir()
+    dec = {"decisions": {"1": {"decision": "APPROVE"}, "2": {"decision": None}}}
+    (tmp_path / v2.DECISIONS_PATH).write_text(json.dumps(dec))
+    monkeypatch.setattr(v2, "load", lambda raw: {})
+    monkeypatch.setattr(v2, "build_records", lambda src: ({}, {}))
+    monkeypatch.setattr(v2, "build_manifest", lambda *a: {"articles": []})
+    with pytest.raises(ValueError, match="human decisions are recorded"):
+        v2.curate(tmp_path)
+    assert not (tmp_path / v2.MANIFEST_PATH).exists()
+
+
+PUBLISHED_V2 = {"Qwen/Qwen2.5-3B-Instruct": (9811, 7293), "mistralai/Mistral-7B-Instruct-v0.3": (23970, 7921)}
 
 
 def test_results_recompute_independently(rows, manifest):

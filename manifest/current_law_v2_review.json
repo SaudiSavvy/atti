@@ -2,13 +2,13 @@
   "corpus": "current_law_v2",
   "kind": "AI-generated review (NOT human decisions; human decisions live in review/current_law_v2_human_decisions.json)",
   "status": "provisional",
-  "reviewer": "Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full",
+  "reviewer": "Claude (AI agent, claude-opus-5-5), 2026-11-23; read every selected pair in full; Task 07 re-examination of the 9 flagged pairs and the replacement draws on 2026-11-23",
   "independence_caveat": "Single AI reviewer. Automated checks (numbers incl. number words, article references, clause markers) were used as prompts, not as verdicts. AI review is provisional even where checks agree.",
   "human_approval": "PENDING: no human has reviewed or approved any pair",
   "status_categories": {
     "PROPOSED_PASS": "identity, clauses, numbers, references, negation, modality, and/or and scope correspond",
     "NEEDS_REVIEW": "structure corresponds but a qualifier, term, negation, scope reference or clause numbering differs; a human should judge",
-    "FAIL": "a clause, number, reference or exception is missing, added or contradictory",
+    "FAIL": "a clause, number, reference, exception, condition, threshold, negation, sanction or legal basis is missing, added, changed or contradictory",
     "MISSING_SOURCE": "one language has no correctly identified counterpart (used for excluded candidates)",
     "VERSION_MISMATCH": "the two texts represent different legal versions (used for excluded candidates)"
   },
@@ -34,8 +34,8 @@
       "evidence": "Clauses 1-3 correspond, incl. Minister's exemption power and posting requirement."
     },
     "15": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Five notification items correspond in order, but list labels differ: Arabic (PDF and HTML alike) numbers them 4-8, English 1-5. Source numbering anomaly; content equivalent."
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Five items correspond one-to-one and in order (establishment identity and address; licensed activity and registration; number of workers; responsible manager; other data). The Arabic labels 4-8 are printed in the PDF and encoded as <ol start=\"4\"> in the Arabic HTML; nothing is lost or reassigned. Not an extraction failure (checked against raw PDF text and HTML)."
     },
     "19": {
       "proposed_status": "PROPOSED_PASS",
@@ -73,6 +73,10 @@
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
     },
+    "35": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Replacement for 40 (Part 3; long stratum exhausted, next draw from medium). Amended article (the BOE Arabic shows the earlier text); the English renders the current Arabic: ministry discretion, localization standards and other conditions in the regulations, and regulation procedures protecting the worker, including transfer without the violating employer's consent."
+    },
     "36": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
@@ -80,10 +84,6 @@
     "38": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Both prohibitions (employer: profession on permit; worker: before legal change procedures) present."
-    },
-    "40": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Four clauses correspond. Clause 1 scope: Arabic limits liability to delay fines 'caused by the employer' (يتسبب بها صاحب العمل); English 'any penalties resulting from delays' drops that limit."
     },
     "42": {
       "proposed_status": "PROPOSED_PASS",
@@ -117,29 +117,33 @@
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Clauses 1-2 correspond; reference to Article 37 matches; three renewals or four years, whichever is less."
     },
+    "56": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Replacement for 63. Renewal of a fixed-term contract counts as an extension of the original term for service-based rights; corresponds."
+    },
     "57": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
+    },
+    "58": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Replacement for 81. Amended article; the English renders the current Arabic: (1) no transfer requiring a change of residence without written consent; (2) in necessity, up to thirty days a year without consent, employer bears travel and accommodation. Corresponds."
     },
     "62": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
     },
-    "63": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Arabic: substances 'prohibited by Sharia' (محرمة شرعاً); English: 'legally prohibited substance'. Basis of the prohibition differs; rest corresponds."
-    },
     "64": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Two obligations correspond, but list labels differ: Arabic 1-2, English 7-8 (English list continues numbering from the previous article). Source numbering anomaly; content equivalent."
-    },
-    "66": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Six penalties correspond in order, but item 2 'الغرامة' (fine) is rendered 'Penalty' in English, a vaguer term inside a list of penalties."
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "The two obligations (service certificate with its contents and prohibition on harmful content; return of deposited documents) correspond in order. The English HTML encodes the list as <ol start=\"7\">, continuing an earlier article's numbering. Labels only; not an extraction failure."
     },
     "68": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "180 days (both); same rule."
+    },
+    "71": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Replacement for 66 (the first draw, 76, failed review). Written notice, interrogation, defence and record; oral interrogation for minor violations whose penalty does not exceed a warning or a one-day-wage fine, recorded. The fine is rendered 'fine' here. Corresponds."
     },
     "72": {
       "proposed_status": "PROPOSED_PASS",
@@ -148,10 +152,6 @@
     "74": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "All 8 cases plus 3 bis (resignation) and 7 bis (bankruptcy) correspond; reference to Article 75 matches."
-    },
-    "81": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Seven cases correspond. Case 6: Arabic 'grave danger' (خطر جسيم); English 'a danger', dropping the seriousness threshold for leaving without notice."
     },
     "84": {
       "proposed_status": "PROPOSED_PASS",
@@ -194,8 +194,8 @@
       "evidence": "Clauses, conditions and exceptions correspond; no number or reference to check."
     },
     "108": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Re-evaluated: item 1 now 'employer-like authority' (v1 BOE issue resolved). New issue: English labels the four items 1, 1, 2, 3 while its own closing sentence refers to paragraphs 2, 3 and 4 (Arabic 1-4 consistent). References to Articles 98 and 101 match."
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Re-evaluated (v1 item 1 issue resolved: 'employer-like authority'). The English HTML nests items 2-4 as a sub-list inside item 1, so they display and extract as 1-3. The four items correspond in order, and the English closing cross-reference to paragraphs 2, 3 and 4 matches the Arabic and the intended flat list. Labels only. Caveat: a reader resolving the cross-reference by the displayed labels would misread it. References to Articles 98 and 101 match."
     },
     "110": {
       "proposed_status": "PROPOSED_PASS",
@@ -314,8 +314,8 @@
       "evidence": "First-week notification; register contents correspond."
     },
     "167": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Exemptions and three programmes correspond; minimum age 14. Scope reference: Arabic 'this Part' (هذا الباب), English 'this Chapter' (the English pages otherwise render الباب as Part)."
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Terminology only: Part 10 has no chapters in either language, so 'this Chapter' can only refer to Part 10. The HRSD English uses 'Chapter' for the Arabic chapter unit elsewhere (e.g. Article 47) and 'this Part' in Article 168; the term is inconsistent but the referent is unchanged. Exemptions, minimum age 14 and the three programmes correspond."
     },
     "171": {
       "proposed_status": "PROPOSED_PASS",
@@ -357,13 +357,13 @@
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Minimum age 18 (M/5 amendment present in both)."
     },
+    "187": {
+      "proposed_status": "PROPOSED_PASS",
+      "evidence": "Replacement for 189. Full medical examination before work, periodic repetition, no cost to the worker, ministerial decision on conditions. Same terminology pattern as 167; Part 12 has no chapters, so the referent is unchanged. Otherwise corresponds."
+    },
     "188": {
       "proposed_status": "PROPOSED_PASS",
       "evidence": "Seven hours underground, ten hours at workplace, travel time included."
-    },
-    "189": {
-      "proposed_status": "NEEDS_REVIEW",
-      "evidence": "Arabic lists permit holders without a negation (literally ambiguous); the English resolves it by adding 'do not' before the permit condition. Likely the intended meaning, but the English adds a negation."
     },
     "191": {
       "proposed_status": "PROPOSED_PASS",
@@ -417,41 +417,305 @@
   "previously_disputed": {
     "45": "v1 (BOE English): and/or inverted. v2 (HRSD English): matches the Arabic. Selected; PROPOSED_PASS.",
     "65": "v1: 'undue' added in item 1, 'required' in item 5. v2 English: item 1 matches ('does not pose a danger'); item 5 'at the employer's request' (the Arabic's 'which he wishes to conduct' is not rendered, minor). NOT eligible in v2: the Arabic PDF numbers the duties 1-6 while the HRSD Arabic HTML (and the English) number them 1,1,2,3,4,5, so the Arabic extraction cannot be confirmed by the second rendering.",
-    "108": "v1: 'employer's' dropped from item 1. v2: resolved ('employer-like authority'). New: English item labels 1,1,2,3 vs its own cross-reference to paragraphs 2,3,4. Selected; NEEDS_REVIEW.",
+    "108": "v1: 'employer's' dropped from item 1. v2: resolved ('employer-like authority'). Task 07: the remaining label difference is a FORMATTING_ANOMALY (nested list in the English HTML); retained, PROPOSED_PASS.",
     "134": "v1: 'diagnosis' vs 'observation'. v2: 'first medical observation' matches. Selected; PROPOSED_PASS."
   },
   "material_discrepancies": [
     {
-      "article": "40",
-      "issue": "liability limited to fines caused by the employer (AR) vs any delay penalties (EN)"
+      "article": "15",
+      "issue": "list labels: Arabic 4-8 vs English 1-5 (source formatting; content corresponds)"
     },
     {
-      "article": "63",
-      "issue": "prohibited by Sharia (AR) vs legally prohibited (EN)"
-    },
-    {
-      "article": "66",
-      "issue": "'fine' rendered as 'Penalty' in a list of penalties"
-    },
-    {
-      "article": "81",
-      "issue": "'grave danger' (AR) vs 'a danger' (EN): seriousness threshold dropped"
-    },
-    {
-      "article": "167",
-      "issue": "scope reference 'this Part' (AR) vs 'this Chapter' (EN)"
-    },
-    {
-      "article": "189",
-      "issue": "English adds a negation to resolve an ambiguous Arabic list"
+      "article": "64",
+      "issue": "list labels: Arabic 1-2 vs English 7-8 (source formatting; content corresponds)"
     },
     {
       "article": "108",
-      "issue": "English item numbering inconsistent with its own paragraph cross-reference"
+      "issue": "English labels 1,1,2,3 (nested list) vs its own reference to paragraphs 2,3,4"
+    },
+    {
+      "article": "167",
+      "issue": "'this Part' (AR) vs 'this Chapter' (EN); Part 10 has no chapters"
+    },
+    {
+      "article": "187",
+      "issue": "'this Part' (AR) vs 'this Chapter' (EN); Part 12 has no chapters"
     }
   ],
-  "numbering_only": [
+  "discrepancy_categories": {
+    "SOURCE_ERROR": "an error in the wording of a published official text itself",
+    "TRANSLATION_DIFFERENCE": "the English wording departs from the Arabic (substantive or terminological)",
+    "FORMATTING_ANOMALY": "list labels or markup differ in a published source; wording corresponds",
+    "EXTRACTION_FAILURE": "ATTI's extraction does not reproduce the published text",
+    "VERSION_MISMATCH": "the two texts represent different legal versions"
+  },
+  "exclusion_rule": "Strict corpus: a pair is excluded when the English adds, drops or changes a legal element of the Arabic (negation, condition, threshold, scope, the identity of a sanction, the legal basis) or reflects a different legal version. A pair is retained when only list labels/markup differ with content corresponding one-to-one and in order, or when a term differs but its referent is unambiguous and unchanged. Neither official text is corrected.",
+  "discrepancy_matrix": [
+    {
+      "article": "15",
+      "originally_flagged": true,
+      "part": 1,
+      "category": "FORMATTING_ANOMALY",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=8"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9#heading-18",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9#heading-19"
+      },
+      "ar_excerpt": "list labels 4. … 8.",
+      "en_excerpt": "list labels 1. … 5.",
+      "boe_en_crosscheck": "labels 1-5",
+      "finding": "Five items correspond one-to-one and in order (establishment identity and address; licensed activity and registration; number of workers; responsible manager; other data). The Arabic labels 4-8 are printed in the PDF and encoded as <ol start=\"4\"> in the Arabic HTML; nothing is lost or reassigned. Not an extraction failure (checked against raw PDF text and HTML).",
+      "disposition": "RETAINED",
+      "proposed_status": "PROPOSED_PASS"
+    },
+    {
+      "article": "40",
+      "originally_flagged": true,
+      "part": 3,
+      "category": "VERSION_MISMATCH",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=15",
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=16"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86#heading-9",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86#heading-9"
+      },
+      "ar_excerpt": "غرامات يتسبب بها صاحب العمل",
+      "en_excerpt": "any penalties resulting from delays",
+      "boe_en_crosscheck": "BOE Arabic (pre-amendment) lacks the qualifier; BOE English 'the fines resulting from their delay'",
+      "finding": "PDF footnote 21 (p. 15): the article was amended by Royal Decree M/44 (8/2/1446 AH). The amended Arabic limits the employer's liability to delay fines the employer caused; the HRSD English matches the earlier, unqualified wording. Of the 25 selected articles whose HRSD Arabic differs from the BOE Arabic, this is the only one whose English does not carry the change.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "VERSION_MISMATCH",
+      "replaced_by": "35"
+    },
+    {
+      "article": "63",
+      "originally_flagged": true,
+      "part": 5,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=23"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-20",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-19"
+      },
+      "ar_excerpt": "مادة محرمة شرعاً",
+      "en_excerpt": "legally prohibited substance",
+      "boe_en_crosscheck": "'illegal substances' (same shift in the older BOE translation)",
+      "finding": "The basis of the prohibition changes from Sharia to law, so the set of substances covered need not coincide. The same English article renders the closing Sharia penalties as 'Sharia', so the shift is not a house convention for the term. Terminological, but it changes the legal basis.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "FAIL",
+      "replaced_by": "56"
+    },
+    {
+      "article": "64",
+      "originally_flagged": true,
+      "part": 5,
+      "category": "FORMATTING_ANOMALY",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=23"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84"
+      },
+      "ar_excerpt": "list labels 1. 2.",
+      "en_excerpt": "list labels 7. 8.",
+      "boe_en_crosscheck": "n/a (article amended)",
+      "finding": "The two obligations (service certificate with its contents and prohibition on harmful content; return of deposited documents) correspond in order. The English HTML encodes the list as <ol start=\"7\">, continuing an earlier article's numbering. Labels only; not an extraction failure.",
+      "disposition": "RETAINED",
+      "proposed_status": "PROPOSED_PASS"
+    },
+    {
+      "article": "66",
+      "originally_flagged": true,
+      "part": 5,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=24"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-25",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-22"
+      },
+      "ar_excerpt": "2. الغرامة",
+      "en_excerpt": "2. Penalty",
+      "boe_en_crosscheck": "'2. Fines.'",
+      "finding": "In a list of disciplinary penalties, item 2 'Penalty' no longer identifies the sanction (a monetary fine). The same HRSD English renders the word as 'fine' in Articles 70, 71 and 73.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "FAIL",
+      "replaced_by": "71",
+      "replacement_draws": [
+        "76 (rejected)",
+        "71"
+      ]
+    },
+    {
+      "article": "81",
+      "originally_flagged": true,
+      "part": 5,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=27",
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=28"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-44",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-38"
+      },
+      "ar_excerpt": "خطر جسيم",
+      "en_excerpt": "a danger in the workplace",
+      "boe_en_crosscheck": "'a serious hazard'",
+      "finding": "Case 6 lets the worker leave without notice only for a grave danger; the English drops the seriousness threshold, widening the right. Other six cases correspond.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "FAIL",
+      "replaced_by": "58"
+    },
+    {
+      "article": "108",
+      "originally_flagged": true,
+      "part": 6,
+      "category": "FORMATTING_ANOMALY",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=35"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87#heading-28",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87#heading-27"
+      },
+      "ar_excerpt": "items 1-4; الفقرات 2 ، 3 ، 4",
+      "en_excerpt": "items 1, 1, 2, 3; 'paragraphs 2, 3, and 4'",
+      "boe_en_crosscheck": "items 1-4",
+      "finding": "The English HTML nests items 2-4 as a sub-list inside item 1, so they display and extract as 1-3. The four items correspond in order, and the English closing cross-reference to paragraphs 2, 3 and 4 matches the Arabic and the intended flat list. Labels only. Caveat: a reader resolving the cross-reference by the displayed labels would misread it.",
+      "disposition": "RETAINED",
+      "proposed_status": "PROPOSED_PASS"
+    },
+    {
+      "article": "167",
+      "originally_flagged": true,
+      "part": 10,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=50"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB#heading-7",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB#heading-7"
+      },
+      "ar_excerpt": "في هذا الباب",
+      "en_excerpt": "in this Chapter",
+      "boe_en_crosscheck": "'in this Part'",
+      "finding": "Terminology only: Part 10 has no chapters in either language, so 'this Chapter' can only refer to Part 10. The HRSD English uses 'Chapter' for the Arabic chapter unit elsewhere (e.g. Article 47) and 'this Part' in Article 168; the term is inconsistent but the referent is unchanged. Exemptions, minimum age 14 and the three programmes correspond.",
+      "disposition": "RETAINED",
+      "proposed_status": "PROPOSED_PASS"
+    },
+    {
+      "article": "189",
+      "originally_flagged": true,
+      "part": 12,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=56"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-5",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-5"
+      },
+      "ar_excerpt": "والأشخاص الذين يحملون إذناً خاصاً",
+      "en_excerpt": "individuals who do not hold a special permit",
+      "boe_en_crosscheck": "'restricted to workers therein, persons authorized to inspect ..., and persons holding special permits'",
+      "finding": "Substantive negation conflict. The Arabic (PDF and HTML identical, unchanged from the BOE Arabic) has no negation; read literally it lists permit holders among those barred. The HRSD English negates the permit condition. The older BOE English reads the three groups as those allowed in, which differs from both. No authoritative source resolves the discrepancy; neither text is corrected. Semantically non-equivalent.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "FAIL",
+      "replaced_by": "187"
+    },
+    {
+      "article": "76",
+      "originally_flagged": false,
+      "part": 5,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=26"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-38",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84#heading-32"
+      },
+      "ar_excerpt": "على أكثر من ذلك",
+      "en_excerpt": "agree otherwise",
+      "boe_en_crosscheck": "n/a (article amended)",
+      "finding": "Not one of the 9 flagged pairs: first replacement draw for Article 66, rejected on review. The Arabic allows the parties to agree only on a larger payment; 'otherwise' also admits a smaller one.",
+      "disposition": "EXCLUDED",
+      "proposed_status": "FAIL"
+    },
+    {
+      "article": "187",
+      "originally_flagged": false,
+      "part": 12,
+      "category": "TRANSLATION_DIFFERENCE",
+      "sources": {
+        "ar_pdf": [
+          "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf#page=56"
+        ],
+        "ar_html": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-3",
+        "en_html": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1#heading-3"
+      },
+      "ar_excerpt": "يسري عليها هذا الباب",
+      "en_excerpt": "subject to this Chapter",
+      "boe_en_crosscheck": "'this Part'",
+      "finding": "Not one of the 9 flagged pairs: replacement for Article 189. Same terminology pattern as 167; Part 12 has no chapters, so the referent is unchanged. Otherwise corresponds.",
+      "disposition": "RETAINED",
+      "proposed_status": "PROPOSED_PASS"
+    }
+  ],
+  "no_extraction_failure_found": "For 15, 64 and 108 the label differences were checked against the raw PDF text and the raw HTML list markup (<ol start>, nested <ol>); ATTI reproduces the published labels. No discrepancy among the flagged pairs is an extraction failure.",
+  "excluded_after_review": {
+    "40": {
+      "proposed_status": "VERSION_MISMATCH",
+      "category": "VERSION_MISMATCH",
+      "issue": "PDF footnote 21 (p. 15): the article was amended by Royal Decree M/44 (8/2/1446 AH). The amended Arabic limits the employer's liability to delay fines the employer caused; the HRSD English matches the earlier, unqualified wording. Of the 25 selected articles whose HRSD Arabic differs from the BOE Arabic, this is the only one whose English does not carry the change.",
+      "replaced_by": "35"
+    },
+    "63": {
+      "proposed_status": "FAIL",
+      "category": "TRANSLATION_DIFFERENCE",
+      "issue": "The basis of the prohibition changes from Sharia to law, so the set of substances covered need not coincide. The same English article renders the closing Sharia penalties as 'Sharia', so the shift is not a house convention for the term. Terminological, but it changes the legal basis.",
+      "replaced_by": "56"
+    },
+    "66": {
+      "proposed_status": "FAIL",
+      "category": "TRANSLATION_DIFFERENCE",
+      "issue": "In a list of disciplinary penalties, item 2 'Penalty' no longer identifies the sanction (a monetary fine). The same HRSD English renders the word as 'fine' in Articles 70, 71 and 73.",
+      "replaced_by": "71"
+    },
+    "76": {
+      "proposed_status": "FAIL",
+      "category": "TRANSLATION_DIFFERENCE",
+      "issue": "Not one of the 9 flagged pairs: first replacement draw for Article 66, rejected on review. The Arabic allows the parties to agree only on a larger payment; 'otherwise' also admits a smaller one.",
+      "replaced_by": null
+    },
+    "81": {
+      "proposed_status": "FAIL",
+      "category": "TRANSLATION_DIFFERENCE",
+      "issue": "Case 6 lets the worker leave without notice only for a grave danger; the English drops the seriousness threshold, widening the right. Other six cases correspond.",
+      "replaced_by": "58"
+    },
+    "189": {
+      "proposed_status": "FAIL",
+      "category": "TRANSLATION_DIFFERENCE",
+      "issue": "Substantive negation conflict. The Arabic (PDF and HTML identical, unchanged from the BOE Arabic) has no negation; read literally it lists permit holders among those barred. The HRSD English negates the permit condition. The older BOE English reads the three groups as those allowed in, which differs from both. No authoritative source resolves the discrepancy; neither text is corrected. Semantically non-equivalent.",
+      "replaced_by": "187"
+    }
+  },
+  "priority_for_human": [
     "15",
-    "64"
+    "64",
+    "108",
+    "167",
+    "187"
   ]
 }

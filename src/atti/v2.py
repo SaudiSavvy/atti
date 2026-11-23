@@ -349,13 +349,18 @@ def tiebreak(k: str) -> str:
 
 
 def select(recs: dict[str, Record], excluded_after_review: dict[str, str], target: int = TARGET) -> dict:
-    """Token-blind: uses only Part, Arabic character length and a seeded hash."""
-    pool = {k: r for k, r in recs.items() if r.eligible and k not in excluded_after_review}
+    """Token-blind: uses only Part, Arabic character length and a seeded hash.
+
+    The base draw runs over the whole eligible pool, so review exclusions never reshuffle it: each
+    excluded pick is replaced by the next draw from the same Part, preferring its own length stratum
+    (then the following strata in cycle order). Excluded articles are never drawn as replacements.
+    """
+    pool = {k: r for k, r in recs.items() if r.eligible}
     by_part = collections.defaultdict(list)
     for k, r in pool.items():
         by_part[r.part].append(k)
     quota = allocate(by_part, target)
-    chosen, strata = [], {}
+    chosen, strata, replacements = [], {}, {}
     for part in sorted(by_part):
         ks = sorted(by_part[part], key=lambda k: (len(pool[k].ar_text), sort_key(k)))
         n = len(ks)
@@ -369,9 +374,24 @@ def select(recs: dict[str, Record], excluded_after_review: dict[str, str], targe
             if remaining[s]:
                 picked.append(remaining[s].pop(0))
             j += 1
-        chosen += picked
+        for k in picked:
+            if k not in excluded_after_review:
+                chosen.append(k)
+                continue
+            i = order.index(strata[k])
+            for s in order[i:] + order[:i]:
+                cand = [c for c in remaining[s] if c not in excluded_after_review]
+                if cand:
+                    remaining[s].remove(cand[0])
+                    replacements[k] = cand[0]
+                    chosen.append(cand[0])
+                    break
+            else:
+                replacements[k] = None  # Part exhausted: shortfall, never filled from another Part
     return {
         "seed": SEED, "target": target, "pool_size": len(pool),
+        "pool_size_after_review": len([k for k in pool if k not in excluded_after_review]),
+        "replacements": {k: replacements[k] for k in sorted(replacements, key=sort_key)},
         "quota_by_part": {str(p): q for p, q in sorted(quota.items())},
         "pool_by_part": {str(p): len(v) for p, v in sorted(by_part.items())},
         "selected": sorted(chosen, key=sort_key),
@@ -382,9 +402,19 @@ def select(recs: dict[str, Record], excluded_after_review: dict[str, str], targe
 
 # ----------------------------------------------------------------------------- manifest
 
-EXCLUDED_AFTER_REVIEW: dict[str, str] = {}  # pairs failing review: {key: reason}; none so far
+# Pairs excluded after AI review (Task 07, 2026-11-23); details and source references in the review
+# file (`excluded_after_review`, `discrepancy_matrix`). Neither official text is corrected.
+EXCLUDED_AFTER_REVIEW: dict[str, str] = {
+    "40": "VERSION_MISMATCH: English predates the M/44 amendment (liability qualifier missing)",
+    "63": "FAIL: legal basis changed (prohibited by Sharia -> legally prohibited)",
+    "66": "FAIL: sanction not identified (fine -> Penalty)",
+    "76": "FAIL: condition widened (agree on more -> agree otherwise); rejected replacement draw",
+    "81": "FAIL: threshold dropped (grave danger -> a danger)",
+    "189": "FAIL: negation conflict (English adds 'do not'); unresolved by authoritative evidence",
+}
 REVIEW_PATH = Path("manifest") / f"{CORPUS}_review.json"
 MANIFEST_PATH = Path("manifest") / f"{CORPUS}_manifest.json"
+DECISIONS_PATH = Path("review") / f"{CORPUS}_human_decisions.json"
 PROCEDURE = [
     "Pool: Arabic articles whose PDF text is confirmed character-for-character by the HRSD Arabic HTML "
     "(ignoring HTML-only tatweel/ZWNJ), not repealed, with exactly one correctly numbered English "
@@ -393,6 +423,8 @@ PROCEDURE = [
     "(largest remainder, ties by Part number); target 100",
     "Within a Part: articles sorted by Arabic character count and cut into thirds; picks cycle "
     "short -> medium -> long, each taking the lowest SHA-256(seed:key) remaining in that stratum",
+    "Review exclusions never reshuffle the draw: each excluded pick is replaced by the next draw (same "
+    "seed order) from the same Part, preferring its own stratum, then the following strata in cycle order",
     "Token counts, ratios and English length are never consulted",
 ]
 
@@ -661,15 +693,20 @@ def render_report(manifest: dict, rows: list[dict], summary: dict, review: dict,
                  "a different subset from expanded_v1's 30, so these do not sum exactly).")
     L.append(f"- v2 includes {len(mig['summary']['newly_included'])} articles that were in no earlier corpus. "
              "No statistical significance is claimed.\n")
+    L += _review_exclusions_section(sel, review)
     L += ["## Selection\n"] + [f"- {x}" for x in sel["procedure"]] + [
-        f"- Seed `{sel['seed']}`; pool {sel['pool_size']} eligible of {len(manifest['candidates'])} Arabic articles; "
+        f"- Seed `{sel['seed']}`; pool {sel['pool_size']} eligible ({sel['pool_size_after_review']} after review "
+        f"exclusions) of {len(manifest['candidates'])} Arabic articles; "
         f"quota by Part {sel['quota_by_part']}.",
         "- Excluded candidates and reasons: `manifest/current_law_v2_manifest.json` → `candidates`.\n",
         "## Source anomalies (reported, not repaired)\n",
         f"- English labels used twice: {manifest['anomalies']['en_duplicate_labels']}; English numbers missing: "
         f"{manifest['anomalies']['en_missing']} (Part 14 shows Article 210 twice and no Article 219; Part 6 labels "
         "Article 101 as 'Article 10'; Part 13 labels Article 197 as 'Article 194'; 79 bis is labelled 'Article 79').",
-        "- Clause numbering differs between languages in selected Articles 15, 64 and 108 (NEEDS_REVIEW).",
+        "- Clause numbering differs between languages in selected Articles "
+        + ", ".join(d["article"] for d in review.get("discrepancy_matrix", [])
+                    if d["category"] == "FORMATTING_ANOMALY" and d["disposition"] == "RETAINED")
+        + " (source list markup; content corresponds).",
         "- Arabic Article 181 contains a stray '0'; English Article 184 reads 'seafarer1' (both kept verbatim).\n",
         "## Recalculation\n",
         "All aggregates are recomputable from `results/current_law_v2.csv` (TTR = Σ ar_tokens / Σ en_tokens per "
@@ -677,6 +714,9 @@ def render_report(manifest: dict, rows: list[dict], summary: dict, review: dict,
         "## Limitations\n",
         f"- PROVISIONAL: AI-assisted review only; {manifest['review']['proposed_status_counts'].get('NEEDS_REVIEW', 0)} "
         "pairs NEEDS_REVIEW; no human approval.",
+        f"- {len(review['excluded_after_review'])} pairs were excluded after AI review under the strict rule above; "
+        "applying it is an AI judgement that a human reviewer may overturn. Priority items for human review: "
+        f"{', '.join(review['priority_for_human'])}.",
         "- The English is the ministry's published translation; its official status is not stated.",
         f"- {sum(1 for c in manifest['candidates'].values() if not c['eligible'])} of {len(manifest['candidates'])} "
         "Arabic articles were not eligible (" + ", ".join(
@@ -687,6 +727,52 @@ def render_report(manifest: dict, rows: list[dict], summary: dict, review: dict,
         "- One law; Part 14 absent (repealed).",
     ]
     return "\n".join(L) + "\n"
+
+
+def _review_exclusions_section(sel: dict, review: dict) -> list[str]:
+    L = ["## Review exclusions and replacements\n",
+         f"Rule: {review['exclusion_rule']}\n",
+         "| Excluded | Status | Category | Replaced by |", "|---:|---|---|---|"]
+    for k, v in review["excluded_after_review"].items():
+        if k in sel["replacements"]:
+            rb = sel["replacements"][k] or "none (Part exhausted)"
+        else:
+            rb = "n/a (rejected replacement draw, never selected)"
+        L.append(f"| {k} | {v['proposed_status']} | {v['category']} | {rb} |")
+    L += ["", "Per-article sources, excerpts and findings: `reports/current_law_v2_discrepancies.md`.\n"]
+    return L
+
+
+def render_discrepancy_matrix(review: dict, texts: dict | None = None) -> str:
+    """Committed matrix (short excerpts only). With `texts` ({key: (ar, en)}) it appends the full
+    texts: that variant is written only under git-ignored data/review/."""
+    L = [f"# ATTI {CORPUS}: discrepancy matrix (AI review, provisional)\n",
+         "> AI-assisted analysis, **not** human verification. Excerpts are short quotations for "
+         "identification; full texts stay in local, git-ignored files.\n",
+         f"Rule: {review['exclusion_rule']}\n",
+         "Categories: " + "; ".join(f"**{k}** = {v}" for k, v in review["discrepancy_categories"].items()) + ".\n",
+         f"{review['no_extraction_failure_found']}\n",
+         "| Art. | Part | Flagged | Category | Arabic excerpt | English excerpt | BOE English (cross-check) | Disposition |",
+         "|---:|---:|---|---|---|---|---|---|"]
+    for d in review["discrepancy_matrix"]:
+        disp = d["disposition"] + (f" → {d['replaced_by']}" if d.get("replaced_by") else "")
+        L.append(f"| {d['article']} | {d['part']} | {'yes' if d['originally_flagged'] else 'no'} | {d['category']} | "
+                 f"{d['ar_excerpt']} | {d['en_excerpt']} | {d['boe_en_crosscheck']} | {disp} ({d['proposed_status']}) |")
+    L.append("")
+    for d in review["discrepancy_matrix"]:
+        s = d["sources"]
+        L += [f"## Article {d['article']}: {d['category']}, {d['disposition']}\n",
+              "- Arabic PDF: " + ", ".join(f"<{u}>" for u in s["ar_pdf"]),
+              f"- Arabic HTML: <{s['ar_html']}>",
+              f"- English HTML: <{s['en_html']}>",
+              f"- Finding: {d['finding']}"]
+        if d.get("replacement_draws"):
+            L.append(f"- Replacement draws: {', '.join(d['replacement_draws'])}")
+        if texts and d["article"] in texts:
+            ar, en = texts[d["article"]]
+            L += ["", f'<div dir="rtl" lang="ar">{ar}</div>', "", en]
+        L.append("")
+    return "\n".join(L)
 
 
 def render_sources_report(manifest: dict) -> str:
@@ -721,6 +807,7 @@ OUTPUTS = {
     "report": Path("reports") / f"{CORPUS}.md",
     "sources_report": Path("reports") / f"{CORPUS}_sources.md",
     "migration": Path("manifest") / f"{CORPUS}_migration.json",
+    "discrepancies": Path("reports") / f"{CORPUS}_discrepancies.md",
 }
 
 
@@ -737,7 +824,18 @@ def curate(root: Path) -> dict:
     src = load(root / RAW)
     recs, anomalies = build_records(src)
     manifest = build_manifest(root, recs, anomalies, src)
+    dec_path = root / DECISIONS_PATH
+    if dec_path.exists():
+        recorded = [k for k, d in json.loads(dec_path.read_text())["decisions"].items() if d.get("decision")]
+        if recorded:
+            raise ValueError(f"human decisions are recorded for {recorded}; refusing to change the manifest "
+                             "under them (decisions are bound to the manifest hash)")
     (root / MANIFEST_PATH).write_text(dumps(manifest), encoding="utf-8")
+    if dec_path.exists():  # empty template only: re-bind it to the new manifest version
+        from atti import review as review_mod
+
+        tmpl = review_mod.decisions_template(CORPUS, manifest, review_mod.manifest_sha256(root / MANIFEST_PATH))
+        dec_path.write_text(json.dumps(tmpl, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return manifest
 
 
@@ -770,6 +868,7 @@ def run(root: Path) -> dict:
         ("report", render_report(manifest, rows, summary, review, historic, v1["rows"], mig)),
         ("sources_report", render_sources_report(manifest)),
         ("migration", dumps(mig)),
+        ("discrepancies", render_discrepancy_matrix(review)),
     ):
         path = root / OUTPUTS[key]
         path.parent.mkdir(exist_ok=True)

@@ -14,19 +14,19 @@
   "models": {
     "Qwen/Qwen2.5-3B-Instruct": {
       "articles": 100,
-      "ar_tokens_total": 10117,
-      "en_tokens_total": 7567,
-      "ttr": 1.3369895599312807,
-      "median_article_ratio": 1.3564217891054473,
+      "ar_tokens_total": 9811,
+      "en_tokens_total": 7293,
+      "ttr": 1.3452625805566982,
+      "median_article_ratio": 1.3559386973180076,
       "min_article_ratio": 0.8888888888888888,
       "max_article_ratio": 1.8846153846153846
     },
     "mistralai/Mistral-7B-Instruct-v0.3": {
       "articles": 100,
-      "ar_tokens_total": 24662,
-      "en_tokens_total": 8233,
-      "ttr": 2.9955058909267582,
-      "median_article_ratio": 2.974044227886057,
+      "ar_tokens_total": 23970,
+      "en_tokens_total": 7921,
+      "ttr": 3.0261330640070696,
+      "median_article_ratio": 3.0227390180878553,
       "min_article_ratio": 2.3125,
       "max_article_ratio": 4.696428571428571
     }
@@ -47,9 +47,9 @@
       },
       "3": {
         "articles": 4,
-        "ar_tokens_total": 347,
-        "en_tokens_total": 293,
-        "ttr": 1.1843003412969284
+        "ar_tokens_total": 249,
+        "en_tokens_total": 178,
+        "ttr": 1.398876404494382
       },
       "4": {
         "articles": 4,
@@ -59,9 +59,9 @@
       },
       "5": {
         "articles": 17,
-        "ar_tokens_total": 2154,
-        "en_tokens_total": 1732,
-        "ttr": 1.24364896073903
+        "ar_tokens_total": 1900,
+        "en_tokens_total": 1538,
+        "ttr": 1.2353706111833551
       },
       "6": {
         "articles": 13,
@@ -101,9 +101,9 @@
       },
       "12": {
         "articles": 5,
-        "ar_tokens_total": 302,
-        "en_tokens_total": 209,
-        "ttr": 1.444976076555024
+        "ar_tokens_total": 348,
+        "en_tokens_total": 244,
+        "ttr": 1.4262295081967213
       },
       "13": {
         "articles": 4,
@@ -139,9 +139,9 @@
       },
       "3": {
         "articles": 4,
-        "ar_tokens_total": 870,
-        "en_tokens_total": 313,
-        "ttr": 2.779552715654952
+        "ar_tokens_total": 597,
+        "en_tokens_total": 192,
+        "ttr": 3.109375
       },
       "4": {
         "articles": 4,
@@ -151,9 +151,9 @@
       },
       "5": {
         "articles": 17,
-        "ar_tokens_total": 5233,
-        "en_tokens_total": 1901,
-        "ttr": 2.752761704366123
+        "ar_tokens_total": 4693,
+        "en_tokens_total": 1677,
+        "ttr": 2.798449612403101
       },
       "6": {
         "articles": 13,
@@ -193,9 +193,9 @@
       },
       "12": {
         "articles": 5,
-        "ar_tokens_total": 783,
-        "en_tokens_total": 220,
-        "ttr": 3.559090909090909
+        "ar_tokens_total": 904,
+        "en_tokens_total": 253,
+        "ttr": 3.5731225296442686
       },
       "13": {
         "articles": 4,

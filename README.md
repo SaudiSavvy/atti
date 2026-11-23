@@ -53,7 +53,7 @@ The law is Royal Decree M/51 of 1426/08/23 AH (2005‑09‑27). Both sources rec
 | Corpus | Articles | Manifest | Results | Review status |
 |---|---:|---|---|---|
 | `pilot` | 10 | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | agent-reviewed, **not human-approved** |
-| `current_law_v2` | 100 (new sources) | `manifest/current_law_v2_manifest.json` | `results/current_law_v2.csv`, `reports/current_law_v2.md` | **PROVISIONAL**: AI-reviewed (91 PROPOSED_PASS, 9 NEEDS_REVIEW), human approval pending |
+| `current_law_v2` | 100 (new sources) | `manifest/current_law_v2_manifest.json` | `results/current_law_v2.csv`, `reports/current_law_v2.md` | **PROVISIONAL**: AI-reviewed (100 PROPOSED_PASS after 6 review exclusions and 5 replacements), human approval pending |
 | `expanded_v1` | 30 (the pilot 10 + 20) | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **PROVISIONAL**: agent-reviewed, human approval pending |
 
 **Review provenance.** Every pair in both corpora was reviewed side by side by an AI agent (Claude). No human has approved any pair. The published pilot report says "reviewed manually"; that review was agent-performed. The pilot report is kept byte-identical as a published artifact, so the wording is corrected here and in `manifest/review.json`. The `expanded_v1` manifest records the review provenance explicitly (`review_provenance`), and its report carries a PROVISIONAL banner.
@@ -121,6 +121,8 @@ Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 172 qualify. T
 **Review:**
 
 - `manifest/current_law_v2_review.json` holds the AI pair review: statuses PROPOSED_PASS, NEEDS_REVIEW, FAIL, MISSING_SOURCE and VERSION_MISMATCH, with evidence and the re-evaluation of v1's disputed Articles 45, 65, 108 and 134.
+- Review exclusions: pairs whose English adds, drops or changes a legal element (negation, condition, threshold, scope, sanction, legal basis) or reflects another legal version are excluded (`EXCLUDED_AFTER_REVIEW` in `src/atti/v2.py`). Each excluded pick is replaced by the next draw from the same Part and length stratum; no other selection moves. Sources, short excerpts and findings: `reports/current_law_v2_discrepancies.md`. `atti review-sheet --corpus current_law_v2` also writes a full-text version under git-ignored `data/review/`.
+- `atti v2-manifest` refuses to rebuild the manifest once any human decision is recorded, because decisions are bound to the manifest hash. While the template is empty, it is re-bound to the new manifest.
 - Human decisions go in `review/current_law_v2_human_decisions.json` (`uv run atti decide <key> <DECISION> --reviewer "Name" --corpus current_law_v2`).
 
 **Comparing with v1:** the migration record is `manifest/current_law_v2_migration.json`. The v2 report separates a *source* effect (the same 15 articles with old and new texts) from a *sample-composition* effect. Tokenizers are unchanged.

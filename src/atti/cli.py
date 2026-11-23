@@ -132,11 +132,19 @@ def cmd_review_sheet(args) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(review.render_sheet(manifest, pairs, parts, ai, dec, errors), encoding="utf-8")
     flagged = [k for k, v in ai["articles"].items() if v["proposed_status"] not in ("PASS", "PROPOSED_PASS")]
+    flagged += [k for k in ai.get("priority_for_human", []) if k not in flagged]
     flagged.sort(key=review._sort)
     page = out.with_name(f"{name}_review.html")
     page.write_text(review.render_html(manifest, pairs, parts, ai, dec, errors, flagged, sources), encoding="utf-8")
     s = review.summarize(ai, dec)
     print(f"wrote {out.relative_to(root)} and {page.relative_to(root)} (git-ignored; contain full legal texts)")
+    if name == "current_law_v2" and ai.get("discrepancy_matrix"):
+        all_recs, _ = v2.build_records(v2.load(root / v2.RAW))
+        texts = {d["article"]: (all_recs[d["article"]].ar_text, all_recs[d["article"]].en_text)
+                 for d in ai["discrepancy_matrix"]}
+        full = out.with_name(f"{name}_discrepancies_full.md")
+        full.write_text(v2.render_discrepancy_matrix(ai, texts), encoding="utf-8")
+        print(f"wrote {full.relative_to(root)} (git-ignored; full texts of the discrepancy pairs)")
     print(f"AI proposed: {s['ai_proposed']}")
     print(f"human decisions: {s['human']}; fully human-approved: {s['fully_human_approved']}")
     for e in errors:
