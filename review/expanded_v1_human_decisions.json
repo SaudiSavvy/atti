@@ -1,0 +1,199 @@
+{
+  "corpus": "expanded_v1",
+  "manifest_sha256": "001752ddf261dfbea32d30c2975b3260b11b655f2d4d2a4afd111e76c182c731",
+  "kind": "HUMAN decisions only. Do not fill in on behalf of a human; AI notes live in the separate *_ai_review.json file.",
+  "allowed_decisions": [
+    "APPROVE",
+    "REJECT",
+    "REQUEST_EXAMINATION"
+  ],
+  "instructions": [
+    "Open the review sheet (data/review/<corpus>_review_sheet.md) and read each pair side by side.",
+    "For each article, edit review/<corpus>_human_decisions.json and set decision to APPROVE, REJECT or REQUEST_EXAMINATION, with your name in reviewer, the ISO date (YYYY-MM-DD) in date, and a comment (required for REJECT and REQUEST_EXAMINATION).",
+    "The AI notes and proposed statuses are advisory; your decision is independent of them.",
+    "Run `uv run atti review-sheet` to validate the file and refresh the sheet. Decisions are only valid for the manifest version whose SHA-256 is recorded in the file.",
+    "Rejections do not change the corpus automatically: excluding an article requires a separate, reported change (selection.EXCLUDED + re-selection), which changes the expanded results."
+  ],
+  "decisions": {
+    "4": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "6": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "26": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "29": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "32": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "38": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "45": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "49": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "59": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "65": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "70": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "89": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "92": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "108": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "120": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "132": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "134": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "138": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "154": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "158": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "161": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "162": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "163": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "188": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "191": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "201": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "202": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "204": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "244": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "245": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    }
+  }
+}

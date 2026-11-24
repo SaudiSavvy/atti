@@ -1,0 +1,3704 @@
+{
+  "corpus": "current_law_v2",
+  "corpus_version": 2,
+  "status": "provisional",
+  "human_approval": "PENDING: no pair is human-approved; see review/current_law_v2_human_decisions.json",
+  "law": {
+    "name_en": "Labor Law",
+    "name_ar": "نظام العمل",
+    "instrument": "Royal Decree No. M/51 dated 1426/08/23 AH",
+    "version": "consolidated through Royal Decree No. M/44 dated 1446/02/08 AH, in force from 1446/08/20 AH"
+  },
+  "source_authority": {
+    "arabic": {
+      "publisher": "Ministry of Human Resources and Social Development (HRSD)",
+      "url": "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf",
+      "document": "نظام العمل, consolidated text; cover lists Royal Decree M/51 (1426/8/23) and amendments M/24, M/1, M/46, M/14, M/134, M/5, M/44 (1446/2/8)",
+      "pdf_metadata": "68 pages; created 2025-07-14 (Quartz PDFContext); HTTP Last-Modified 2025-11-03 (a file date, not a legislative date)",
+      "user_attachment": "~/Downloads/labor-law.pdf verified byte-identical (SHA-256) to the ministry-hosted file"
+    },
+    "english": {
+      "publisher": "HRSD, English knowledge-centre pages (16 Parts)",
+      "url": "https://www.hrsd.gov.sa/en/knowledge-centre/%D9%86%D8%B8%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "translation_status": "published by the competent ministry; the pages carry no statement that the translation is official or which version it reflects; HTTP Last-Modified headers are CDN render dates, not legislative dates",
+      "version_evidence": "contains M/44 provisions (Art. 2 Assignment/Resignation, Art. 75 30/60-day notice, Arts. 11 bis, 79 bis, 131 bis, 229 bis), M/134 (Art. 3) and M/5 (Art. 186); repealed-article set matches the Arabic PDF except where the English page mislabels article numbers"
+    },
+    "cross_check": {
+      "arabic_html": "HRSD Arabic pages (x-default alternates of each English Part page), used only to confirm the PDF extraction",
+      "boe_register": "laws.boe.gov.sa Labor Law page re-fetched 2026-11-23: latest amending instrument M/44 (1446/2/8), in force from 1446/8/20",
+      "official_gazette": "Umm Al-Qura entries p=25377 (Council of Ministers Decision 117, 02/02/1446) and p=25379 (amended text), both published 2024-08-23: the M/44 package; entry into force 180 days after publication",
+      "newer_amendments": "none found in the BOE register or the official gazette; a secondary website's claim of a 1447 H decree could not be substantiated"
+    }
+  },
+  "sources": {
+    "ar_pdf": {
+      "url": "https://www.hrsd.gov.sa/sites/default/files/2025-11/labor-law.pdf",
+      "sha256": "cfb8e0e6bb0176ebe045e38aed072fc4f7ce5c2f72ee796f4de0beb216c4b5d6",
+      "bytes": 1141447,
+      "last_modified_header": "Mon, 03 Nov 2025 08:50:22 GMT",
+      "retrieved_at_utc": "2026-11-23T13:14:27+00:00"
+    },
+    "en_index": {
+      "final_url": "https://www.hrsd.gov.sa/en/knowledge-centre/%D9%86%D8%B8%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "retrieved_at_utc": "2026-11-23T13:14:25+00:00"
+    },
+    "parts": [
+      {
+        "part": 1,
+        "title_en": "Definitions & General Provisions",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+        "en_page_sha256_at_curation": "fda68b12d975a7b77fe9832b7fbc7740114bcf13b7128c42cb24c40e5aa3cfb1",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+        "ar_html_page_sha256_at_curation": "41f64497af7b556663d4c70919edd4cda030a3516275775c83646cc0a04af028"
+      },
+      {
+        "part": 2,
+        "title_en": "Regulation of Recruitment Operations",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+        "en_page_sha256_at_curation": "3f6739eb45c9575903171ce932ee15e2a38eeff37a7aa30ea2a2f8d8396ed34c",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+        "ar_html_page_sha256_at_curation": "3965aeb0dfe80d9f4ebf9c19f03a3d918f86f47d7f19dffe0dd24494e1ce49ae"
+      },
+      {
+        "part": 3,
+        "title_en": "Employment of Non-Saudis",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+        "en_page_sha256_at_curation": "281647dbbef6fcbca8712dc6d053c9f1e547b300c617856a7e9f1d4e152475c2",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+        "ar_html_page_sha256_at_curation": "910e5ce0600267772cd7c02a3c7f70b3df8a245338781adcf178ee8f81fd3016"
+      },
+      {
+        "part": 4,
+        "title_en": "Training and Rehabilitation",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+        "en_page_sha256_at_curation": "2fed0117193c2b1f823e75ff490dc279cc16f53fbce32667c222d2e550d5627a",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+        "ar_html_page_sha256_at_curation": "e2516f04270b057bd297e0aa3039fa9bbd8dcc557bba9637a0a828465cac2582"
+      },
+      {
+        "part": 5,
+        "title_en": "Labor Relations",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+        "en_page_sha256_at_curation": "1291156fee6876128c085aded8e2c8eb622138a0e5bca3443d42d0bff7e032e8",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+        "ar_html_page_sha256_at_curation": "94f9f4b0cae418571beb42c3c4db1208f4d177f286cceac589946a51016a2343"
+      },
+      {
+        "part": 6,
+        "title_en": "Working Conditions and Terms of Employment",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+        "en_page_sha256_at_curation": "9c0fb9f59af7f5bbc0ebdd6771a0b8345947d0101b37e7a300672a491e052174",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+        "ar_html_page_sha256_at_curation": "f04518966dc5d60bc8710992f7458bd9b7fdf867752e05928b0e72df03c1d4af"
+      },
+      {
+        "part": 7,
+        "title_en": "Part-time work",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+        "en_page_sha256_at_curation": "d7269965c896d023a1a4ee958e1dd305c1cecc07795d76092c33fd772120e9dd",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+        "ar_html_page_sha256_at_curation": "0a54e6b5c534237e70d5c8413a518966e819919e41bb792e53c9ed3004724f34"
+      },
+      {
+        "part": 8,
+        "title_en": "Prevention of Occupational Hazards, Prevention of Major Industrial Accidents, Work Injuries, and Health and Social Services",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+        "en_page_sha256_at_curation": "8853ba74158e073b78aff69fd0cc2327137dcca163be5a6a75cd04bfd870e6bc",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+        "ar_html_page_sha256_at_curation": "3b82f961c7757be141842341d293f5f7db4696ad1621e796ad744cfd9f66da65"
+      },
+      {
+        "part": 9,
+        "title_en": "Women Employment",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+        "en_page_sha256_at_curation": "71c468300245692a0c32290d6f1ca64e905f3c5871a9429729445289334475c7",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+        "ar_html_page_sha256_at_curation": "cd6215b834d04ef02affda56383af744f1c92f984ef294d3fb6ebea91be79935"
+      },
+      {
+        "part": 10,
+        "title_en": "Employment of Juveniles",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+        "en_page_sha256_at_curation": "87b97ceb6657035e82c49a92c607a610d2f3b0ada4ac6399a074e00d4c9f7b67",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+        "ar_html_page_sha256_at_curation": "25e99133c8491093ad32bf41e4c4babc1c70d49252ecc4324ab3095b868bfaf7"
+      },
+      {
+        "part": 11,
+        "title_en": "Maritime Employment Contract",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+        "en_page_sha256_at_curation": "f2695a6a4405ecd485628056d87dca4da34631bf35f46b6c0179843508a70d67",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+        "ar_html_page_sha256_at_curation": "c103b67dbde12b5e07115d04b04b4a01d66a5e25cfc188b500b8bc8060180cd1"
+      },
+      {
+        "part": 12,
+        "title_en": "Work in Mines and Quarries",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+        "en_page_sha256_at_curation": "750271b237cb94c83fd2a47f36a7b4141febd6f7be94779b836633e743e49572",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+        "ar_html_page_sha256_at_curation": "408e0ce5c3039dc7b33351b009e6198ed743f68edee8905df65aadcabbc1b6cd"
+      },
+      {
+        "part": 13,
+        "title_en": "Labor Inspection",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+        "en_page_sha256_at_curation": "a4d7856605dbe143581bcc9a1975cd135a49871d4672dd24c71023f7c2aaf5de",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+        "ar_html_page_sha256_at_curation": "540275dc5f091b3cd2558d7ef300dd40bdf557693cca4fd114c38ce4ccd83a5a"
+      },
+      {
+        "part": 14,
+        "title_en": "Labor disagreement settlement Commissions",
+        "en_url": "https://www.hrsd.gov.sa/en/%D9%87%D9%8A%D8%A6%D8%A7%D8%AA-%D8%AA%D8%B3%D9%88%D9%8A%D8%A9-%D8%A7%D9%84%D8%AE%D9%84%D8%A7%D9%81%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D8%A7%D9%84%D9%8A%D8%A9",
+        "en_page_sha256_at_curation": "76c00420ce3bc4dc8c7bb1ef14ac2df1f4e17bebf4f0a6c0e6111c3230b3b403",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D9%87%D9%8A%D8%A6%D8%A7%D8%AA-%D8%AA%D8%B3%D9%88%D9%8A%D8%A9-%D8%A7%D9%84%D8%AE%D9%84%D8%A7%D9%81%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D8%A7%D9%84%D9%8A%D8%A9",
+        "ar_html_page_sha256_at_curation": "b6ecc649c6b922c9bea05d2c626e3cf70cc0dafe532705c4df3f961eba075398"
+      },
+      {
+        "part": 15,
+        "title_en": "Penalties",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+        "en_page_sha256_at_curation": "89d31ab181b20f43f1541e26bcae3881b8bf6ae8d6b17aea2625d3a896ef287b",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+        "ar_html_page_sha256_at_curation": "70dd5337b75425d6ef87d282198358cee52bf782128a42cabe06ef3ac4d000b5"
+      },
+      {
+        "part": 16,
+        "title_en": "Final Provisions",
+        "en_url": "https://www.hrsd.gov.sa/en/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+        "en_page_sha256_at_curation": "2ea63a7d0d923a2b657ab3f68a08dd03a0ecf918bf88658190b82a3de5272458",
+        "ar_html_url": "https://www.hrsd.gov.sa/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+        "ar_html_page_sha256_at_curation": "5c6d548d7b12345d6abf6a7e5eaba99877cd518c95c81a0d68b986ee5d8a6e51"
+      }
+    ],
+    "page_hash_note": "HTML page hashes are informational (pages may change cosmetically); per-article text hashes are authoritative. The PDF hash is pinned."
+  },
+  "extraction": {
+    "arabic_pdf": "PyMuPDF; lines classified by font size (13.9 headings, 12.0 body, 10.6 repealed marker, <9 footnotes/markers excluded, >=16 titles); blocks read top-to-bottom",
+    "arabic_cleanup": "presentation forms -> base letters (NFKC on those code points only); justification tatweel removed; mirrored ( ) [ ] { } swapped back",
+    "english_html": "selectolax; article = <h4>Article N:</h4> + following blocks until the next article or section title; <ol> numbers reconstructed as 'N.'",
+    "counting_normalization": "every whitespace run -> one space, ends stripped (unchanged from v1); applied after extraction cleanup",
+    "arabic_confirmation": "PDF text must equal the HRSD Arabic HTML text (ignoring HTML-only tatweel/ZWNJ); otherwise the article is excluded, not repaired"
+  },
+  "anomalies": {
+    "en_duplicate_labels": [
+      "10",
+      "194",
+      "210"
+    ],
+    "en_missing": [
+      "101",
+      "197",
+      "219"
+    ],
+    "en_bis_found": [
+      "11bis",
+      "79bis",
+      "131bis",
+      "229bis"
+    ],
+    "ar_pdf_numbering": {
+      "missing": [],
+      "duplicates": [],
+      "out_of_order": [],
+      "bis": [
+        11,
+        79,
+        131,
+        229
+      ]
+    }
+  },
+  "candidates": {
+    "1": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "2": {
+      "part": 1,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "3": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "4": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "5": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "6": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "7": {
+      "part": 1,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "8": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "9": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "10": {
+      "part": 1,
+      "eligible": false,
+      "reasons": [
+        "NUMBERING: English label used 2 times on the HRSD pages (not repaired)"
+      ]
+    },
+    "11": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "11bis": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "12": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "13": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "14": {
+      "part": 1,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "15": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "16": {
+      "part": 1,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "17": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "18": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "19": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "20": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "21": {
+      "part": 1,
+      "eligible": true,
+      "reasons": []
+    },
+    "22": {
+      "part": 2,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "23": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "24": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "25": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "26": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "27": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "28": {
+      "part": 2,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "29": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "30": {
+      "part": 2,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "31": {
+      "part": 2,
+      "eligible": true,
+      "reasons": []
+    },
+    "32": {
+      "part": 3,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "33": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "34": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "35": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "36": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "37": {
+      "part": 3,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "38": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "39": {
+      "part": 3,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "40": {
+      "part": 3,
+      "eligible": true,
+      "reasons": []
+    },
+    "41": {
+      "part": 3,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "42": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "43": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "44": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "45": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "46": {
+      "part": 4,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "47": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "48": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "49": {
+      "part": 4,
+      "eligible": true,
+      "reasons": []
+    },
+    "50": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "51": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "52": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "53": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "54": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "55": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "56": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "57": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "58": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "59": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "60": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "61": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "62": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "63": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "64": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "65": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "66": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "67": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "68": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "69": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "70": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "71": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "72": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "73": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "74": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "75": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "76": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "77": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "78": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "79": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "79bis": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "80": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "81": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "82": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "83": {
+      "part": 5,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "84": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "85": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "86": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "87": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "88": {
+      "part": 5,
+      "eligible": true,
+      "reasons": []
+    },
+    "89": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "90": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "91": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "92": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "93": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "94": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "95": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "96": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "97": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "98": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "99": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "100": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "101": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "MISSING_SOURCE: no English article carries this number"
+      ]
+    },
+    "102": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "103": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "104": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "105": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "106": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "107": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "108": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "109": {
+      "part": 6,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "110": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "111": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "112": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "113": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "114": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "115": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "116": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "117": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "118": {
+      "part": 6,
+      "eligible": true,
+      "reasons": []
+    },
+    "119": {
+      "part": 7,
+      "eligible": true,
+      "reasons": []
+    },
+    "120": {
+      "part": 7,
+      "eligible": true,
+      "reasons": []
+    },
+    "121": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "122": {
+      "part": 8,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "123": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "124": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "125": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "126": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "127": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "128": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "129": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "130": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "131": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "131bis": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "132": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "133": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "134": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "135": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "136": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "137": {
+      "part": 8,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "138": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "139": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "140": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "141": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "142": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "143": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "144": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "145": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "146": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "147": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "148": {
+      "part": 8,
+      "eligible": true,
+      "reasons": []
+    },
+    "149": {
+      "part": 9,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "150": {
+      "part": 9,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "151": {
+      "part": 9,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "152": {
+      "part": 9,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "153": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "154": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "155": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "156": {
+      "part": 9,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "157": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "158": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "159": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "160": {
+      "part": 9,
+      "eligible": true,
+      "reasons": []
+    },
+    "161": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "162": {
+      "part": 10,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "163": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "164": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "165": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "166": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "167": {
+      "part": 10,
+      "eligible": true,
+      "reasons": []
+    },
+    "168": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "169": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "170": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "171": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "172": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "173": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "174": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "175": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "176": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "177": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "178": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "179": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "180": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "181": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "182": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "183": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "184": {
+      "part": 11,
+      "eligible": true,
+      "reasons": []
+    },
+    "185": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "186": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "187": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "188": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "189": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "190": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "191": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "192": {
+      "part": 12,
+      "eligible": true,
+      "reasons": []
+    },
+    "193": {
+      "part": 12,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "194": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "NUMBERING: English label used 2 times on the HRSD pages (not repaired)"
+      ]
+    },
+    "195": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "196": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "197": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'",
+        "MISSING_SOURCE: no English article carries this number"
+      ]
+    },
+    "198": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "199": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "200": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "201": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "202": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "203": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "204": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "205": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "206": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "207": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "208": {
+      "part": 13,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "209": {
+      "part": 13,
+      "eligible": true,
+      "reasons": []
+    },
+    "210": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'",
+        "NUMBERING: English label used 2 times on the HRSD pages (not repaired)"
+      ]
+    },
+    "211": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "212": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "213": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "214": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "215": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "216": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "217": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "218": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "219": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'",
+        "MISSING_SOURCE: no English article carries this number"
+      ]
+    },
+    "220": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "221": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "222": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "223": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "224": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "225": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "226": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "227": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "228": {
+      "part": 14,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "229": {
+      "part": 15,
+      "eligible": true,
+      "reasons": []
+    },
+    "229bis": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "230": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "231": {
+      "part": 15,
+      "eligible": true,
+      "reasons": []
+    },
+    "232": {
+      "part": 15,
+      "eligible": true,
+      "reasons": []
+    },
+    "233": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "234": {
+      "part": 15,
+      "eligible": true,
+      "reasons": []
+    },
+    "235": {
+      "part": 15,
+      "eligible": true,
+      "reasons": []
+    },
+    "236": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "237": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "238": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "239": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "240": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "241": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'"
+      ]
+    },
+    "242": {
+      "part": 15,
+      "eligible": false,
+      "reasons": [
+        "REPEALED: Arabic text is '(ملغاة)'",
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "243": {
+      "part": 16,
+      "eligible": true,
+      "reasons": []
+    },
+    "244": {
+      "part": 16,
+      "eligible": false,
+      "reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "245": {
+      "part": 16,
+      "eligible": true,
+      "reasons": []
+    }
+  },
+  "selection": {
+    "procedure": [
+      "Pool: Arabic articles whose PDF text is confirmed character-for-character by the HRSD Arabic HTML (ignoring HTML-only tatweel/ZWNJ), not repealed, with exactly one correctly numbered English counterpart in the same Part",
+      "Quota per Part: floor of 2 (where available), remainder allocated proportionally to pool size (largest remainder, ties by Part number); target 100",
+      "Within a Part: articles sorted by Arabic character count and cut into thirds; picks cycle short -> medium -> long, each taking the lowest SHA-256(seed:key) remaining in that stratum",
+      "Review exclusions never reshuffle the draw: each excluded pick is replaced by the next draw (same seed order) from the same Part, preferring its own stratum, then the following strata in cycle order",
+      "Token counts, ratios and English length are never consulted",
+      "Frozen pool: articles that became eligible only after later parser fixes are recorded but kept out of the draw, so fixes that leave every selected text unchanged do not reshuffle the measured pairs"
+    ],
+    "seed": "atti-current-law-v2",
+    "target": 100,
+    "pool_size": 172,
+    "eligible_total": 175,
+    "eligible_outside_draw": {
+      "33": "eligible after PDF whitespace-span fix (2026-11-24); outside the frozen draw",
+      "79": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw",
+      "79bis": "eligible after English 'Article 79:(Bis)' heading fix (2026-11-24); outside the frozen draw"
+    },
+    "pool_size_after_review": 166,
+    "replacements": {
+      "40": "35",
+      "63": "56",
+      "66": "71",
+      "81": "58",
+      "189": "187"
+    },
+    "quota_by_part": {
+      "1": 9,
+      "2": 5,
+      "3": 4,
+      "4": 4,
+      "5": 17,
+      "6": 13,
+      "7": 2,
+      "8": 14,
+      "9": 4,
+      "10": 4,
+      "11": 9,
+      "12": 5,
+      "13": 4,
+      "15": 4,
+      "16": 2
+    },
+    "pool_by_part": {
+      "1": 17,
+      "2": 7,
+      "3": 5,
+      "4": 7,
+      "5": 32,
+      "6": 24,
+      "7": 2,
+      "8": 27,
+      "9": 7,
+      "10": 6,
+      "11": 17,
+      "12": 8,
+      "13": 6,
+      "15": 5,
+      "16": 2
+    },
+    "selected": [
+      "1",
+      "6",
+      "8",
+      "12",
+      "13",
+      "15",
+      "19",
+      "20",
+      "21",
+      "24",
+      "26",
+      "27",
+      "29",
+      "31",
+      "34",
+      "35",
+      "36",
+      "38",
+      "42",
+      "45",
+      "47",
+      "48",
+      "50",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "62",
+      "64",
+      "68",
+      "71",
+      "72",
+      "74",
+      "84",
+      "85",
+      "87",
+      "88",
+      "93",
+      "96",
+      "97",
+      "99",
+      "100",
+      "103",
+      "108",
+      "110",
+      "111",
+      "112",
+      "114",
+      "117",
+      "118",
+      "119",
+      "120",
+      "123",
+      "124",
+      "125",
+      "128",
+      "129",
+      "132",
+      "134",
+      "135",
+      "136",
+      "142",
+      "144",
+      "146",
+      "147",
+      "148",
+      "153",
+      "155",
+      "158",
+      "159",
+      "163",
+      "165",
+      "166",
+      "167",
+      "171",
+      "173",
+      "174",
+      "175",
+      "178",
+      "179",
+      "180",
+      "181",
+      "184",
+      "186",
+      "187",
+      "188",
+      "191",
+      "192",
+      "199",
+      "200",
+      "202",
+      "209",
+      "229",
+      "231",
+      "232",
+      "235",
+      "243",
+      "245"
+    ],
+    "stratum": {
+      "1": "short",
+      "6": "medium",
+      "8": "short",
+      "12": "medium",
+      "13": "long",
+      "15": "long",
+      "19": "long",
+      "20": "medium",
+      "21": "short",
+      "24": "medium",
+      "26": "long",
+      "27": "short",
+      "29": "medium",
+      "31": "short",
+      "34": "short",
+      "35": "medium",
+      "36": "short",
+      "38": "medium",
+      "42": "short",
+      "45": "short",
+      "47": "medium",
+      "48": "long",
+      "50": "short",
+      "53": "medium",
+      "54": "long",
+      "55": "long",
+      "56": "short",
+      "57": "short",
+      "58": "long",
+      "62": "short",
+      "64": "medium",
+      "68": "short",
+      "71": "medium",
+      "72": "long",
+      "74": "long",
+      "84": "medium",
+      "85": "medium",
+      "87": "short",
+      "88": "medium",
+      "93": "medium",
+      "96": "long",
+      "97": "long",
+      "99": "medium",
+      "100": "medium",
+      "103": "short",
+      "108": "long",
+      "110": "medium",
+      "111": "short",
+      "112": "short",
+      "114": "long",
+      "117": "short",
+      "118": "short",
+      "119": "short",
+      "120": "medium",
+      "123": "medium",
+      "124": "long",
+      "125": "medium",
+      "128": "long",
+      "129": "short",
+      "132": "short",
+      "134": "short",
+      "135": "short",
+      "136": "medium",
+      "142": "medium",
+      "144": "short",
+      "146": "long",
+      "147": "long",
+      "148": "medium",
+      "153": "short",
+      "155": "medium",
+      "158": "short",
+      "159": "long",
+      "163": "short",
+      "165": "medium",
+      "166": "short",
+      "167": "long",
+      "171": "long",
+      "173": "medium",
+      "174": "medium",
+      "175": "short",
+      "178": "long",
+      "179": "short",
+      "180": "short",
+      "181": "medium",
+      "184": "long",
+      "186": "short",
+      "187": "medium",
+      "188": "long",
+      "191": "short",
+      "192": "medium",
+      "199": "long",
+      "200": "short",
+      "202": "medium",
+      "209": "short",
+      "229": "long",
+      "231": "short",
+      "232": "short",
+      "235": "medium",
+      "243": "medium",
+      "245": "short"
+    },
+    "excluded_after_review": {
+      "40": "VERSION_MISMATCH: English predates the M/44 amendment (liability qualifier missing)",
+      "63": "FAIL: legal basis changed (prohibited by Sharia -> legally prohibited)",
+      "66": "FAIL: sanction not identified (fine -> Penalty)",
+      "76": "FAIL: condition widened (agree on more -> agree otherwise); rejected replacement draw",
+      "81": "FAIL: threshold dropped (grave danger -> a danger)",
+      "189": "FAIL: negation conflict (English adds 'do not'); unresolved by authoritative evidence"
+    }
+  },
+  "review": {
+    "file": "manifest/current_law_v2_review.json",
+    "proposed_status_counts": {
+      "NEEDS_REVIEW": 3,
+      "PROPOSED_PASS": 97
+    }
+  },
+  "tokenizers": [
+    {
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1"
+    },
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71"
+    }
+  ],
+  "articles": [
+    {
+      "id": "KSA-LL-v2-000001",
+      "key": "1",
+      "part": 1,
+      "ar_heading": "المادة الأولى:",
+      "en_label": "Article 1:",
+      "ar_sha256": "de50e2d4f97e3ab15b261c5e3a8550147e116dd54719f278d5bc4065d4359e53",
+      "en_sha256": "5122a3f8f254df9a8233fe1a9f1bda61ad49a3e7d4e6d12c6a94fada653e91a7",
+      "ar_chars": 27,
+      "en_chars": 38,
+      "ar_pdf_pages": [
+        5
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000006",
+      "key": "6",
+      "part": 1,
+      "ar_heading": "المادة السادسة:",
+      "en_label": "Article 6:",
+      "ar_sha256": "d4b714f2f48386b7fb5bc4a51e18ceb1e446eaf48ab1fba0182b9c780c4d0574",
+      "en_sha256": "28ae40d7c10eafd7c57fc866a502dfd0706d7b96d431ab0f2d8be27688ae6924",
+      "ar_chars": 272,
+      "en_chars": 328,
+      "ar_pdf_pages": [
+        7
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000008",
+      "key": "8",
+      "part": 1,
+      "ar_heading": "المادة الثامنة:",
+      "en_label": "Article 8:",
+      "ar_sha256": "ec651fb3f60927b10d0366d95ea69063992cfafae332f0063fe3a4564e78988d",
+      "en_sha256": "5ec11272f3d9ba04a7ea0c7cc01516ee62f6d12cb8d04fe6d130dd5d171f13d4",
+      "ar_chars": 160,
+      "en_chars": 270,
+      "ar_pdf_pages": [
+        8
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000012",
+      "key": "12",
+      "part": 1,
+      "ar_heading": "المادة الثانية عشرة:",
+      "en_label": "Article 12:",
+      "ar_sha256": "e849245e7e4549fbf5a510c44c59d5b116ef922b97b85ef30f856fb3e73ab171",
+      "en_sha256": "d0e4487de2a08a777f10d84a476dde3814ad9045177062e30cec1287bbb1c13f",
+      "ar_chars": 264,
+      "en_chars": 387,
+      "ar_pdf_pages": [
+        8
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000013",
+      "key": "13",
+      "part": 1,
+      "ar_heading": "المادة الثالثة عشرة:",
+      "en_label": "Article 13:",
+      "ar_sha256": "fe3684e91ebc23c8a8921a78f111e1e20b49f89d3e20c25d17c167773b168187",
+      "en_sha256": "232c795a20a4e4821b36b80e3563a384fd3565425717681619ea5a6471548cb1",
+      "ar_chars": 394,
+      "en_chars": 663,
+      "ar_pdf_pages": [
+        8
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000015",
+      "key": "15",
+      "part": 1,
+      "ar_heading": "المادة الخامسة عشرة:",
+      "en_label": "Article 15:",
+      "ar_sha256": "e33fb9a3697e9e2b7caefe2fa2b2ef15bd3e2b3239d676c9922283c81e63c905",
+      "en_sha256": "2295a7dba0d79306f3167cc2874e9cb44f972ebfa91b38b96f7fd8da2e549894",
+      "ar_chars": 432,
+      "en_chars": 683,
+      "ar_pdf_pages": [
+        8
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000019",
+      "key": "19",
+      "part": 1,
+      "ar_heading": "المادة التاسعة عشرة:",
+      "en_label": "Article 19:",
+      "ar_sha256": "4efec96b110215dd46554e9daeb10b647749fc7bc842939e27c600cf6c344348",
+      "en_sha256": "4f86df1a704edbda5b6b897627f882fdad51778c05aa06eb135b24e6b4c19163",
+      "ar_chars": 365,
+      "en_chars": 546,
+      "ar_pdf_pages": [
+        9
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000020",
+      "key": "20",
+      "part": 1,
+      "ar_heading": "المادة العشرون:",
+      "en_label": "Article 20:",
+      "ar_sha256": "795d8171fa00aac95ffd28a8ebcdf7a7b2cf7ecb2fa791281f0387d1bd48e151",
+      "en_sha256": "c23c4dced6e397dbd1e3ec73fed02c6c3081bbe292b7da2956c1838de2bb2220",
+      "ar_chars": 322,
+      "en_chars": 478,
+      "ar_pdf_pages": [
+        9
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000021",
+      "key": "21",
+      "part": 1,
+      "ar_heading": "المادة الحادية والعشرون:",
+      "en_label": "Article 21:",
+      "ar_sha256": "5290f96dc03223ae1315237bbf20e4d09e6999508078c0ec0300a906098b8583",
+      "en_sha256": "49e8cadcaffca8a0ba3df893a4bd88e4675a92ed7606e42a73a788d34758e4ed",
+      "ar_chars": 97,
+      "en_chars": 136,
+      "ar_pdf_pages": [
+        9
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D8%A7%D8%AA/%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000024",
+      "key": "24",
+      "part": 2,
+      "ar_heading": "المادة الرابعة والعشرون:",
+      "en_label": "Article 24:",
+      "ar_sha256": "05725e9df33567e51de9599f005f9fc6573eeb39477065dc6f11f84b22191b1b",
+      "en_sha256": "50d230315852aa906ed82c6f25197d72dd297e2cfd509359b0121bb0cd6217ff",
+      "ar_chars": 208,
+      "en_chars": 297,
+      "ar_pdf_pages": [
+        11
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000026",
+      "key": "26",
+      "part": 2,
+      "ar_heading": "المادة السادسة والعشرون:",
+      "en_label": "Article 26:",
+      "ar_sha256": "f6a46e149c08950bbc2f07de3fd00e496a93ebacd8c10934a3e0ee26cb97157f",
+      "en_sha256": "e15d601f26f0d0ad481556cb6382a8b76463eb6e7b43f65a4f3c64655af848a1",
+      "ar_chars": 460,
+      "en_chars": 674,
+      "ar_pdf_pages": [
+        11
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000027",
+      "key": "27",
+      "part": 2,
+      "ar_heading": "المادة السابعة والعشرون:",
+      "en_label": "Article 27:",
+      "ar_sha256": "1feca6372666494444c2a98211d68621be0d2953b123648630a6c11414e3e9f1",
+      "en_sha256": "656bb3d5c23f2d84767161bd3ff177bed21b7e014e714e926b65206c2a07e26d",
+      "ar_chars": 184,
+      "en_chars": 274,
+      "ar_pdf_pages": [
+        11
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000029",
+      "key": "29",
+      "part": 2,
+      "ar_heading": "المادة التاسعة والعشرون:",
+      "en_label": "Article 29:",
+      "ar_sha256": "567ba875d546e52bd7e41aa03994741a3c61a12b26152f6b735c01301bb08a58",
+      "en_sha256": "034260738d37ea17e69f325a5cde5bcc612420ec2d9fcd6fee2a60ab566ac0a7",
+      "ar_chars": 251,
+      "en_chars": 393,
+      "ar_pdf_pages": [
+        12
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000031",
+      "key": "31",
+      "part": 2,
+      "ar_heading": "المادة الحادية والثلاثون:",
+      "en_label": "Article 31:",
+      "ar_sha256": "0d586874dfa38c22badea98160ff50439c9d6f7a54b7925b2d3eb57d8823d9e7",
+      "en_sha256": "37e272569abd3d14892d1c30bd88fc8a0208a2435cfc53ace667e1dd4d146027",
+      "ar_chars": 167,
+      "en_chars": 211,
+      "ar_pdf_pages": [
+        13
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%86%D8%B8%D9%8A%D9%85-%D8%B9%D9%85%D9%84%D9%8A%D8%A7%D8%AA-%D8%A7%D9%84%D8%AA%D9%88%D8%B8%D9%8A%D9%81",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000034",
+      "key": "34",
+      "part": 3,
+      "ar_heading": "المادة الرابعة والثلاثون:",
+      "en_label": "Article 34:",
+      "ar_sha256": "d15f4a70949f53c340870a5024bc3795b5c1479f3783c083ca680984a0afbe7d",
+      "en_sha256": "805d48da0954a0b46435517b64a554eb425f014fe6515acf8063d691b04dca2f",
+      "ar_chars": 103,
+      "en_chars": 147,
+      "ar_pdf_pages": [
+        15
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "stratum": "short",
+      "review_status": "NEEDS_REVIEW"
+    },
+    {
+      "id": "KSA-LL-v2-000035",
+      "key": "35",
+      "part": 3,
+      "ar_heading": "المادة الخامسة والثلاثون:",
+      "en_label": "Article 35:",
+      "ar_sha256": "60d5efc10ba3ef47e6e3837bf5440b1c667f2fa9e1a73e2e6762aeb38cf9f50b",
+      "en_sha256": "af7af22a7a5de79fa89cd0a6c4c02d034690c07dd33b02194343108cd89f61a9",
+      "ar_chars": 343,
+      "en_chars": 492,
+      "ar_pdf_pages": [
+        15
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "stratum": "medium",
+      "review_status": "NEEDS_REVIEW"
+    },
+    {
+      "id": "KSA-LL-v2-000036",
+      "key": "36",
+      "part": 3,
+      "ar_heading": "المادة السادسة والثلاثون:",
+      "en_label": "Article 36:",
+      "ar_sha256": "2af057baa608fc86f6f08bfbf9191e74c77601277b745944d0dbffcdb50504ca",
+      "en_sha256": "811fbf01c46a727de41e3e3c59bdc4d3fe319c041e2bfdd31e574aaee64141a4",
+      "ar_chars": 84,
+      "en_chars": 113,
+      "ar_pdf_pages": [
+        15
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000038",
+      "key": "38",
+      "part": 3,
+      "ar_heading": "المادة الثامنة والثلاثون:",
+      "en_label": "Article 38:",
+      "ar_sha256": "d27b82e178612b96e210ccb9afcfe85fb185a8bebec7448aa53c7838cc0266d0",
+      "en_sha256": "a8afca67cff27419ea64e8fbe380b572b8c75a6c139c2a0254e240f2006337de",
+      "ar_chars": 158,
+      "en_chars": 257,
+      "ar_pdf_pages": [
+        15
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%88%D8%B8%D9%8A%D9%81-%D8%BA%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D8%B9%D9%88%D8%AF%D9%8A%D9%8A%D9%86",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000042",
+      "key": "42",
+      "part": 4,
+      "ar_heading": "المادة الثانية والأربعون:",
+      "en_label": "Article 42:",
+      "ar_sha256": "fb5f3a3ed0bdfdc36c931dc2a6facda64647a676d1572fb6626d715d0a864243",
+      "en_sha256": "d63e5a991276a7e25c901a980627b85b588ef24ed255ee4102d7719217dca12d",
+      "ar_chars": 174,
+      "en_chars": 279,
+      "ar_pdf_pages": [
+        18
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000045",
+      "key": "45",
+      "part": 4,
+      "ar_heading": "المادة الخامسة والأربعون:",
+      "en_label": "Article 45:",
+      "ar_sha256": "6798974a1edcf7f5338170a7c9fbca5fa168fec1978660f17a97fa2586687806",
+      "en_sha256": "fb33515c65c818ace0d4c0c822622777e9801a5f09fbc3ae72c07c1fcd2f31c2",
+      "ar_chars": 92,
+      "en_chars": 155,
+      "ar_pdf_pages": [
+        19
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000047",
+      "key": "47",
+      "part": 4,
+      "ar_heading": "المادة السابعة والأربعون:",
+      "en_label": "Article 47:",
+      "ar_sha256": "a8c6a604ea91db8c7a391c58e8c2008d094a8c224e1d8a305dd4fd5b2947e436",
+      "en_sha256": "c3f0dd877b19d7a2d4a5ae3c84ec1b619bcfad857df0d9eae851ad1314adb92f",
+      "ar_chars": 309,
+      "en_chars": 482,
+      "ar_pdf_pages": [
+        19
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000048",
+      "key": "48",
+      "part": 4,
+      "ar_heading": "المادة الثامنة والأربعون:",
+      "en_label": "Article 48:",
+      "ar_sha256": "7881c02e8b29349823aa966ef49b650959793a668295a553f88cc93528728e90",
+      "en_sha256": "aa6a1f324ffbe69b000692af5a8804761508d9c2125a3503b1c104e932976561",
+      "ar_chars": 793,
+      "en_chars": 1170,
+      "ar_pdf_pages": [
+        19
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8-%D9%88%D8%A7%D9%84%D8%AA%D8%A3%D9%87%D9%8A%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000050",
+      "key": "50",
+      "part": 5,
+      "ar_heading": "المادة الخمسون:",
+      "en_label": "Article 50:",
+      "ar_sha256": "92684128f4a4d848dc0dd7f6ac8194e96ead275b30d9c5cf72a727501250714d",
+      "en_sha256": "98bb72b9addb0fb03bae5892ff4ecb5b628251e8f0ad36905f63efd462786702",
+      "ar_chars": 113,
+      "en_chars": 192,
+      "ar_pdf_pages": [
+        21
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000053",
+      "key": "53",
+      "part": 5,
+      "ar_heading": "المادة الثالثة والخمسون:",
+      "en_label": "Article 53:",
+      "ar_sha256": "bffb934dd0d63882c8c111a31261a8616fa449c44294f3666f9788ac2cb5b9f2",
+      "en_sha256": "006215f709e00c200e2526b8366301e7c0d22aad5193ad5b6dddf22315a38efc",
+      "ar_chars": 299,
+      "en_chars": 478,
+      "ar_pdf_pages": [
+        21
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000054",
+      "key": "54",
+      "part": 5,
+      "ar_heading": "المادة الرابعة والخمسون:",
+      "en_label": "Article 54:",
+      "ar_sha256": "0247283b2a1c87266b43a075277df8259e43d3fd15e18044856ebbc558d980ca",
+      "en_sha256": "d4b6b3581ba79d8aaa5efeef871a316c41e2145d86f4bec62b004426d2864d92",
+      "ar_chars": 388,
+      "en_chars": 608,
+      "ar_pdf_pages": [
+        21
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000055",
+      "key": "55",
+      "part": 5,
+      "ar_heading": "المادة الخامسة والخمسون:",
+      "en_label": "Article 55:",
+      "ar_sha256": "794168c3736a572cabfb0511d3fbfa898802e22188eb5c2a268962cd25d40d58",
+      "en_sha256": "685a91e60809f7234594c788e4d5e7c58a7311c9e4d6bfe8c4063a2a2947f54f",
+      "ar_chars": 470,
+      "en_chars": 688,
+      "ar_pdf_pages": [
+        21
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000056",
+      "key": "56",
+      "part": 5,
+      "ar_heading": "المادة السادسة والخمسون:",
+      "en_label": "Article 56:",
+      "ar_sha256": "89c3df3b3c39a49bd041ffd84e3972a78ddc09a84283c3ed0d52faeda7a58fcf",
+      "en_sha256": "74ad18ecc11c430ffbc9c4b3020cfcc7db9b874b6c66ee1ad12ddb3361453e2f",
+      "ar_chars": 159,
+      "en_chars": 223,
+      "ar_pdf_pages": [
+        22
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000057",
+      "key": "57",
+      "part": 5,
+      "ar_heading": "المادة السابعة والخمسون:",
+      "en_label": "Article 57:",
+      "ar_sha256": "40b7f3f5f3d45fc11a885ea226f6226932e8c8fb2ad784350b1c98f3078afe48",
+      "en_sha256": "8fd2033b029beec048917f4494346999ba2870b4fe0eacd7542d6937e4e3351f",
+      "ar_chars": 77,
+      "en_chars": 122,
+      "ar_pdf_pages": [
+        22
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000058",
+      "key": "58",
+      "part": 5,
+      "ar_heading": "المادة الثامنة والخمسون:",
+      "en_label": "Article 58:",
+      "ar_sha256": "1c60a2d492a43701e3ad4907cdac4fba8c8eb5adcb291c6eba10e64c9a9a6c81",
+      "en_sha256": "c6b90bcb6ab14962132e11b0853ad7bb216eeae36de390d2358c90fb6aa4e91a",
+      "ar_chars": 364,
+      "en_chars": 529,
+      "ar_pdf_pages": [
+        22
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000062",
+      "key": "62",
+      "part": 5,
+      "ar_heading": "المادة الثانية والستون:",
+      "en_label": "Article 62:",
+      "ar_sha256": "5b6005d92755354221fd983cf1096c439116d032d248669a8c193c20171ac56a",
+      "en_sha256": "2093ea6014b9984f28f83efd6ae426ab8c964661f01163c5e60f01a1551d78b5",
+      "ar_chars": 192,
+      "en_chars": 300,
+      "ar_pdf_pages": [
+        23
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000064",
+      "key": "64",
+      "part": 5,
+      "ar_heading": "المادة الرابعة والستون:",
+      "en_label": "Article 64:",
+      "ar_sha256": "9dbc8ab0bf842a8bb9d0e13595327cd8e5da8c4b96a9e6c426cf485591ae7811",
+      "en_sha256": "1228c8759b6d7851880dff33fd4bda28fd58f4be2e2adba08849e8e160681e8e",
+      "ar_chars": 349,
+      "en_chars": 592,
+      "ar_pdf_pages": [
+        23
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000068",
+      "key": "68",
+      "part": 5,
+      "ar_heading": "المادة الثامنة والستون:",
+      "en_label": "Article 68:",
+      "ar_sha256": "c87bd180895e205bd7e284304f2bdf67fecbd976c8da0e492b8f022acbd16669",
+      "en_sha256": "69558c815aa4afdf34d692593846ab3a0c43588234a632442c4f0d33c6b50ffd",
+      "ar_chars": 159,
+      "en_chars": 206,
+      "ar_pdf_pages": [
+        24
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000071",
+      "key": "71",
+      "part": 5,
+      "ar_heading": "المادة الحادية والسبعون:",
+      "en_label": "Article 71:",
+      "ar_sha256": "be570436a81cb79bc53e99cd1a2f698492dde5ce94a16aceba8f48eb9deedfaf",
+      "en_sha256": "d97df49ad0ee89e8449bcbbb4b6cef6bb9a33d837e2e6e4c847d91e3982dd053",
+      "ar_chars": 309,
+      "en_chars": 470,
+      "ar_pdf_pages": [
+        25
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000072",
+      "key": "72",
+      "part": 5,
+      "ar_heading": "المادة الثانية والسبعون:",
+      "en_label": "Article 72:",
+      "ar_sha256": "63316f59749326aabd7a58c111b0ec31ebc11e2cb0a0d5ca6dca0c7d09d32637",
+      "en_sha256": "113943bab66a2e3087e7701b5b3f2e735426ad694d1bbbc9f70d7958539e9a17",
+      "ar_chars": 513,
+      "en_chars": 776,
+      "ar_pdf_pages": [
+        25
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000074",
+      "key": "74",
+      "part": 5,
+      "ar_heading": "المادة الرابعة والسبعون:",
+      "en_label": "Article 74:",
+      "ar_sha256": "6429b2896beee722a1327ccf9d85cd2c465b50c8f157ea48c1f5295865e11f1c",
+      "en_sha256": "63854bb4d453eb054dd95863e477caaf2c94d3a25c8be54b70dc4377b64f3a00",
+      "ar_chars": 760,
+      "en_chars": 1061,
+      "ar_pdf_pages": [
+        26
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000084",
+      "key": "84",
+      "part": 5,
+      "ar_heading": "المادة الرابعة والثمانون:",
+      "en_label": "Article 84:",
+      "ar_sha256": "e48f2022ddf6294599a72ff91389ac8dc164d225ab62c1caef15576146c5364e",
+      "en_sha256": "fe62b4a64198449c7b7f718305d9b28ef3bb7678b0446d69fbc8ce9a0871584e",
+      "ar_chars": 288,
+      "en_chars": 408,
+      "ar_pdf_pages": [
+        29
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000085",
+      "key": "85",
+      "part": 5,
+      "ar_heading": "المادة الخامسة والثمانون:",
+      "en_label": "Article 85:",
+      "ar_sha256": "a912375b3a97cb18caa8901f07fe919a22cad1563a99e73aa67bddf0085f528b",
+      "en_sha256": "294c23634fdc18addd3131e011c0fa2669fabecde738dfe6fce0d8d2bf921e09",
+      "ar_chars": 280,
+      "en_chars": 473,
+      "ar_pdf_pages": [
+        29
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000087",
+      "key": "87",
+      "part": 5,
+      "ar_heading": "المادة السابعة والثمانون:",
+      "en_label": "Article 87:",
+      "ar_sha256": "fc6f0700ce705a61d140500778bcbe4684a379757d062c24c145369d46d2580c",
+      "en_sha256": "6417b2723c0166e17e3b77bbff3a4733aa5a958ead6f1e58425169b79e0cf3db",
+      "ar_chars": 240,
+      "en_chars": 388,
+      "ar_pdf_pages": [
+        29
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000088",
+      "key": "88",
+      "part": 5,
+      "ar_heading": "المادة الثامنة والثمانون:",
+      "en_label": "Article 88:",
+      "ar_sha256": "ab4a268c8a998ad3067b986f09d631c1430ee7c2e289c46a1946b8b8599a2d42",
+      "en_sha256": "d20b3f9064c00631aa0d71c426c78152a33fec72f2f4ef3f8525effffe88ffbd",
+      "ar_chars": 306,
+      "en_chars": 488,
+      "ar_pdf_pages": [
+        29
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%84%D8%A7%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000093",
+      "key": "93",
+      "part": 6,
+      "ar_heading": "المادة الثالثة والتسعون:",
+      "en_label": "Article 93:",
+      "ar_sha256": "1f3bfbf2fcb08219a4618a967058f2095a62293fe817c21a8b5d354766d630ca",
+      "en_sha256": "3430e3117fe9c833a010ca53411fa4c1b93b8d9fc3eba6cbb7333c35a7a0fe37",
+      "ar_chars": 289,
+      "en_chars": 373,
+      "ar_pdf_pages": [
+        31
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000096",
+      "key": "96",
+      "part": 6,
+      "ar_heading": "المادة السادسة والتسعون:",
+      "en_label": "Article 96:",
+      "ar_sha256": "694c1e3c08e1bf09945efbeacfd780f087ff755ff826488cf928d6c52f210bc0",
+      "en_sha256": "8cc1999bef0e64e9979e1fc9667d3622725748b5181d8558b20ecaeeac3b6b68",
+      "ar_chars": 400,
+      "en_chars": 545,
+      "ar_pdf_pages": [
+        32
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000097",
+      "key": "97",
+      "part": 6,
+      "ar_heading": "المادة السابعة والتسعون:",
+      "en_label": "Article 97:",
+      "ar_sha256": "5252644256feb4f5f4a1fe2a5e68a6327fbdae2e33b0ddab926e38c3e3f55b10",
+      "en_sha256": "b590ae17668ee18675b4ea5f9822f4f24a08494f7ce9bc2e6bdf886d898b4bbe",
+      "ar_chars": 503,
+      "en_chars": 751,
+      "ar_pdf_pages": [
+        32
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000099",
+      "key": "99",
+      "part": 6,
+      "ar_heading": "المادة التاسعة والتسعون:",
+      "en_label": "Article 99:",
+      "ar_sha256": "6898d042a4901c7d41dc2c2725e5312bafba253d20240cc4bb052c9d0a3fab4b",
+      "en_sha256": "06f784e6c8d49304a9c86e63cd81601f7e398ba08bd24c6b3750321ed4140ec2",
+      "ar_chars": 373,
+      "en_chars": 465,
+      "ar_pdf_pages": [
+        33
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000100",
+      "key": "100",
+      "part": 6,
+      "ar_heading": "المادة المائة:",
+      "en_label": "Article 100:",
+      "ar_sha256": "d9c66bf53241aaf91a93a9c27c4e5ef0dcf1705550d3b193eb5eed6e3f4e2f44",
+      "en_sha256": "a944f5c34fd59763a4e7bb569051239a68f3acdcd279aa31f7cc51ce3f487b0e",
+      "ar_chars": 300,
+      "en_chars": 354,
+      "ar_pdf_pages": [
+        33
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000103",
+      "key": "103",
+      "part": 6,
+      "ar_heading": "المادة الثالثة بعد المائة:",
+      "en_label": "Article 103:",
+      "ar_sha256": "0ff7e6784c6847e33b51a6817f66539fcba5138e6d56658c7c1946e177a56fd0",
+      "en_sha256": "443abbb9392f49b492699190dc42d7182f020c6289400334414aaf975ebb4ffa",
+      "ar_chars": 235,
+      "en_chars": 363,
+      "ar_pdf_pages": [
+        34
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000108",
+      "key": "108",
+      "part": 6,
+      "ar_heading": "المادة الثامنة بعد المائة:",
+      "en_label": "Article 108:",
+      "ar_sha256": "eeecd57c9577690d401175c1c9f8c4be68c707e90ebd8b162f81271200b03685",
+      "en_sha256": "0caec618681606398642eef38ff43f82524da427fd11e75dbd55a8c11779d0d5",
+      "ar_chars": 524,
+      "en_chars": 651,
+      "ar_pdf_pages": [
+        35
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "long",
+      "review_status": "NEEDS_REVIEW"
+    },
+    {
+      "id": "KSA-LL-v2-000110",
+      "key": "110",
+      "part": 6,
+      "ar_heading": "المادة العاشرة بعد المائة:",
+      "en_label": "Article 110:",
+      "ar_sha256": "6a4db041096e9e7ccc2ad5b88822243fbffe5655ffdef5182dc6ba1b58a5e777",
+      "en_sha256": "070f1f22a4deb36685eeddb911bc221747e9401e161dc2904e4b5e545003257c",
+      "ar_chars": 344,
+      "en_chars": 511,
+      "ar_pdf_pages": [
+        36
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000111",
+      "key": "111",
+      "part": 6,
+      "ar_heading": "المادة الحادية عشرة بعد المائة:",
+      "en_label": "Article 111:",
+      "ar_sha256": "e15f32ea254e96483e1fc7fad2b242060f8f072f4fd011f062e1910865efc3ea",
+      "en_sha256": "d47d9c9b0af75e03e89c823ac46058e7bf78c0fd6233e445ddc45563aa15075b",
+      "ar_chars": 205,
+      "en_chars": 291,
+      "ar_pdf_pages": [
+        36
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000112",
+      "key": "112",
+      "part": 6,
+      "ar_heading": "المادة الثانية عشرة بعد المائة:",
+      "en_label": "Article 112:",
+      "ar_sha256": "280f883eaa82b35adbf30a709f69eaea672173006637bf5395585e6327ed18b5",
+      "en_sha256": "2657b1955bbcf16e41e60dc0932af1a07a2027b648fc1f458d928825dd3ab7b4",
+      "ar_chars": 76,
+      "en_chars": 110,
+      "ar_pdf_pages": [
+        36
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000114",
+      "key": "114",
+      "part": 6,
+      "ar_heading": "المادة الرابعة عشرة بعد المائة:",
+      "en_label": "Article 114:",
+      "ar_sha256": "e8c286c3d0d0ddcb42600761e4993b05d13a8f9e3bf1316bbc527dedff464d88",
+      "en_sha256": "28351fb7cfa5f6758def48dd574987906ed5422a8bd10c1c933a300ff0ef21ff",
+      "ar_chars": 383,
+      "en_chars": 528,
+      "ar_pdf_pages": [
+        36
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000117",
+      "key": "117",
+      "part": 6,
+      "ar_heading": "المادة السابعة عشرة بعد المائة:",
+      "en_label": "Article 117:",
+      "ar_sha256": "977e80af6406f0a1f8bfc534f36dc479829744b01a037e5dda917d396ae77dc6",
+      "en_sha256": "946bf4dad540374a050a4daac6357d2de4f5cb084a1757c47fc2da9dbca48567",
+      "ar_chars": 285,
+      "en_chars": 375,
+      "ar_pdf_pages": [
+        37
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000118",
+      "key": "118",
+      "part": 6,
+      "ar_heading": "المادة الثامنة عشرة بعد المائة:",
+      "en_label": "Article 118:",
+      "ar_sha256": "92c9d7b31160b3787f7aced014c7454ba2db7d64a5d85beba380b1ab2dbb9625",
+      "en_sha256": "70c4112bc2bca1005623135e02a554e2ddc600dd1a4e66c0184ee2d73471fdad",
+      "ar_chars": 218,
+      "en_chars": 285,
+      "ar_pdf_pages": [
+        37
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%B8%D8%B1%D9%88%D9%81%D9%87",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000119",
+      "key": "119",
+      "part": 7,
+      "ar_heading": "المادة التاسعة عشرة بعد المائة:",
+      "en_label": "Article 119:",
+      "ar_sha256": "aaf2649047ef05d7560c109372379ac2575605b5e20f3ebeb856aa62d10348b9",
+      "en_sha256": "ce2ad2828ed06e60809b561d2f2a18b00fc233013fdaad4e99ed233bfef53f76",
+      "ar_chars": 137,
+      "en_chars": 195,
+      "ar_pdf_pages": [
+        39
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000120",
+      "key": "120",
+      "part": 7,
+      "ar_heading": "المادة العشرون بعد المائة:",
+      "en_label": "Article 120:",
+      "ar_sha256": "ad4e3e1c00a50b783dc10fce60361cdf52e63962a9a7137fc84d89e07ff20227",
+      "en_sha256": "6b567b5825cf27273ca1dad5dff44f9d8190a7e402a24465394b6bb9a2ed3bc4",
+      "ar_chars": 299,
+      "en_chars": 389,
+      "ar_pdf_pages": [
+        39
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%84%D8%A8%D8%B9%D8%B6-%D8%A7%D9%84%D9%88%D9%82%D8%AA",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000123",
+      "key": "123",
+      "part": 8,
+      "ar_heading": "المادة الثالثة والعشرون بعد المائة:",
+      "en_label": "Article 123:",
+      "ar_sha256": "5c186ae1d37a4eda9a531934fcfcb1defaa4e5e9a87cfeff7aec9e8d65537032",
+      "en_sha256": "3db273a65bd527481c263488a56ccd8807cff2a0dc9b82be971b6c2d1b397059",
+      "ar_chars": 183,
+      "en_chars": 277,
+      "ar_pdf_pages": [
+        41
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000124",
+      "key": "124",
+      "part": 8,
+      "ar_heading": "المادة الرابعة والعشرون بعد المائة:",
+      "en_label": "Article 124:",
+      "ar_sha256": "80bcea470c02a34fe2a9e16d37c7ebd4760ef6a73ca3cedb2e5a9a68b8a587e4",
+      "en_sha256": "b5f21b0bf5da1dd56fd11a850fe0a52560f9a556f4f59630fc751d8a611f019f",
+      "ar_chars": 322,
+      "en_chars": 465,
+      "ar_pdf_pages": [
+        41
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000125",
+      "key": "125",
+      "part": 8,
+      "ar_heading": "المادة الخامسة والعشرون بعد المائة:",
+      "en_label": "Article 125:",
+      "ar_sha256": "75cfaed08f7e7bf8a71dba27cc1fd882cf7c58892eca45a9aa72398933f71073",
+      "en_sha256": "79820a6ad262ccae7b029110975933f67cbcc97a65aebe8191627bb3d20a17ca",
+      "ar_chars": 235,
+      "en_chars": 302,
+      "ar_pdf_pages": [
+        41
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000128",
+      "key": "128",
+      "part": 8,
+      "ar_heading": "المادة الثامنة والعشرون بعد المائة:",
+      "en_label": "Article 128:",
+      "ar_sha256": "1725c77e2e2f829c6f8f7d228ef38b286fdbaede2d6d109fc378d926d80aa889",
+      "en_sha256": "97f11bebbd51517b0eb23629b888999a7c8adba7234e80c65482deab0507682d",
+      "ar_chars": 668,
+      "en_chars": 903,
+      "ar_pdf_pages": [
+        42
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000129",
+      "key": "129",
+      "part": 8,
+      "ar_heading": "المادة التاسعة والعشرون بعد المائة:",
+      "en_label": "Article 129:",
+      "ar_sha256": "9f4633362cf8a51cb29c783582d88fa154136fcc7566800c4d11595580d3b7ff",
+      "en_sha256": "ee4315d934b1cb45b42377e49968f073896add014ec87f1d83aef7c636583c0a",
+      "ar_chars": 120,
+      "en_chars": 161,
+      "ar_pdf_pages": [
+        42
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000132",
+      "key": "132",
+      "part": 8,
+      "ar_heading": "المادة الثانية والثلاثون بعد المائة:",
+      "en_label": "Article 132:",
+      "ar_sha256": "49837b890f78d7442468123703ffe907b4ccae546c8d3d93c5eac797eba0a086",
+      "en_sha256": "33bfe1b0bd7741a58861d0eaf2fdfdb0645783aa15736c88926eefe60f6dba8e",
+      "ar_chars": 97,
+      "en_chars": 136,
+      "ar_pdf_pages": [
+        43
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000134",
+      "key": "134",
+      "part": 8,
+      "ar_heading": "المادة الرابعة والثلاثون بعد المائة:",
+      "en_label": "Article 134:",
+      "ar_sha256": "6c1ed2713b74a5ab3a8145528f162132151c46782cf0ea54525adf8c645cc894",
+      "en_sha256": "67a2528470f4de8e11b6e2ede56c269670a367a534f387ea6b2329eb4ee4284b",
+      "ar_chars": 174,
+      "en_chars": 278,
+      "ar_pdf_pages": [
+        43
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000135",
+      "key": "135",
+      "part": 8,
+      "ar_heading": "المادة الخامسة والثلاثون بعد المائة:",
+      "en_label": "Article 135:",
+      "ar_sha256": "e2af92ab2f246c8d65610a777474944196ca8590677dd1ed83f7a63d56312d96",
+      "en_sha256": "0afd6d3a5504279df41d15f4d0075cc00d1cec3e48351e9e3827d36fb1369f16",
+      "ar_chars": 123,
+      "en_chars": 243,
+      "ar_pdf_pages": [
+        43
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000136",
+      "key": "136",
+      "part": 8,
+      "ar_heading": "المادة السادسة والثلاثون بعد المائة:",
+      "en_label": "Article 136:",
+      "ar_sha256": "870cb4e868a4aeec804d5bcc060f2febd7684ba6fd0cead16b64b34aa8d088d7",
+      "en_sha256": "13ebb1185ca5a8152a60767bd3a985c4618357de6e8dbc3fd05fefaffa111cbe",
+      "ar_chars": 185,
+      "en_chars": 304,
+      "ar_pdf_pages": [
+        43
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000142",
+      "key": "142",
+      "part": 8,
+      "ar_heading": "المادة الثانية والأربعون بعد المائة:",
+      "en_label": "Article 142:",
+      "ar_sha256": "c11db6e4aee0fb1da4abc70599a85129c7a1f10b8077932d0075a6869f9e9922",
+      "en_sha256": "6d703cdc6db2f7b2374093da73e6bb7083509c5cf2d7d8619e3604cb8a817d3c",
+      "ar_chars": 275,
+      "en_chars": 391,
+      "ar_pdf_pages": [
+        45
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000144",
+      "key": "144",
+      "part": 8,
+      "ar_heading": "المادة الرابعة والأربعون بعد المائة:",
+      "en_label": "Article 144:",
+      "ar_sha256": "46bdc5e90a49377dd661cc6eaba6c57a92ff5c9cb41080784dd733e64dbbb1a6",
+      "en_sha256": "cc8eb812901f95c0f1cd5fca0113e7ac434289e61b9d4ae74d55e55a81b634d6",
+      "ar_chars": 147,
+      "en_chars": 217,
+      "ar_pdf_pages": [
+        45
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000146",
+      "key": "146",
+      "part": 8,
+      "ar_heading": "المادة السادسة والأربعون بعد المائة:",
+      "en_label": "Article 146:",
+      "ar_sha256": "77f28b390172b94accc45bdc848e2033184510e77fd74c7ee398e69f3c1b9ac0",
+      "en_sha256": "0c7d7cec79c8b6fccca6502dd7b1a66b9a2cdc88a12631a465acbd89bc8226eb",
+      "ar_chars": 692,
+      "en_chars": 1005,
+      "ar_pdf_pages": [
+        45
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000147",
+      "key": "147",
+      "part": 8,
+      "ar_heading": "المادة السابعة والأربعون بعد المائة:",
+      "en_label": "Article 147:",
+      "ar_sha256": "5fcb2982a9bdfbaa89bf511cb57738e65f1b39d82b5541820f13c52ef0478112",
+      "en_sha256": "5bc777a7c8e03c36dc62e88d17e934f55aa32a4b877e4508dfd01ee672eccdee",
+      "ar_chars": 392,
+      "en_chars": 576,
+      "ar_pdf_pages": [
+        45
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000148",
+      "key": "148",
+      "part": 8,
+      "ar_heading": "المادة الثامنة والأربعون بعد المائة:",
+      "en_label": "Article 148:",
+      "ar_sha256": "1a40a64bb1e45ee8ade91be11bcbc3c3e8869bc8bf88f2cdbafa59e8dce4fda1",
+      "en_sha256": "7cdb17ff4576091a449c4428ef17bf7fd38ce59b8940afebec4b24b90b238446",
+      "ar_chars": 209,
+      "en_chars": 268,
+      "ar_pdf_pages": [
+        45
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9-%D9%85%D9%86-%D9%85%D8%AE%D8%A7%D8%B7%D8%B1-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%88%D8%A7%D9%84%D9%88%D9%82%D8%A7%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000153",
+      "key": "153",
+      "part": 9,
+      "ar_heading": "المادة الثالثة والخمسون بعد المائة:",
+      "en_label": "Article 153:",
+      "ar_sha256": "2182e61611f6357d0b6f21247e98aaf2b68861e90c8b7ef8e2414ca36e8eec9b",
+      "en_sha256": "8726cd326f29605cef0ed79df0afdd8e82be4b27152a527c63a29ccc9c047dc2",
+      "ar_chars": 72,
+      "en_chars": 94,
+      "ar_pdf_pages": [
+        47
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000155",
+      "key": "155",
+      "part": 9,
+      "ar_heading": "المادة الخامسة والخمسون بعد المائة:",
+      "en_label": "Article 155:",
+      "ar_sha256": "cf3518645aea8a1b89d814bfbae701efe375dc926515feec43161601b16579a2",
+      "en_sha256": "3832212d746773b87ef170af4b50325aa2f05c2e764d7543126ce2e0cd0d3f38",
+      "ar_chars": 248,
+      "en_chars": 369,
+      "ar_pdf_pages": [
+        47
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000158",
+      "key": "158",
+      "part": 9,
+      "ar_heading": "المادة الثامنة والخمسون بعد المائة:",
+      "en_label": "Article 158:",
+      "ar_sha256": "5911733f0e1e9936e8f6d73bcc95810ac78b471c07f772097964abef3c0f4d79",
+      "en_sha256": "f5f99308695d12970644542bb9fd3f216af711a66e83bc59066dd9b43a9a6c73",
+      "ar_chars": 104,
+      "en_chars": 124,
+      "ar_pdf_pages": [
+        47
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000159",
+      "key": "159",
+      "part": 9,
+      "ar_heading": "المادة التاسعة والخمسون بعد المائة:",
+      "en_label": "Article 159:",
+      "ar_sha256": "26a3f1d18564b1f55ad5afb479fecab72c070efaa281da9c6dd40677bef0d2f5",
+      "en_sha256": "1aa1ef35a7dc948eaed2574884e51f96b2e0797c3e9ceeac672edfacd16b6feb",
+      "ar_chars": 597,
+      "en_chars": 824,
+      "ar_pdf_pages": [
+        47
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000163",
+      "key": "163",
+      "part": 10,
+      "ar_heading": "المادة الثالثة والستون بعد المائة:",
+      "en_label": "Article 163:",
+      "ar_sha256": "1e2cd994054cff6c038e872eaa775f230800616040c1bdf37dc10f73d8827d39",
+      "en_sha256": "0d3513e3aec0d19cfe20989a9a9b6d78e669560871654bc40f85f11e8d71a60f",
+      "ar_chars": 118,
+      "en_chars": 164,
+      "ar_pdf_pages": [
+        50
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000165",
+      "key": "165",
+      "part": 10,
+      "ar_heading": "المادة الخامسة والستون بعد المائة:",
+      "en_label": "Article 165:",
+      "ar_sha256": "df2fbb828ca73a332be91c8cb8663845f32010ed0855d305ab42d49d0e7ddb77",
+      "en_sha256": "0005c4f13d711def22620e6db9b44cd3f543283fa1f9f95f1159b7593a68253b",
+      "ar_chars": 272,
+      "en_chars": 383,
+      "ar_pdf_pages": [
+        50
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000166",
+      "key": "166",
+      "part": 10,
+      "ar_heading": "المادة السادسة والستون بعد المائة:",
+      "en_label": "Article 166:",
+      "ar_sha256": "1bfe0ac2916ec688746a9f2470c85465cc742a1ef406b4e9400ee586233bcce0",
+      "en_sha256": "a20b9edeb94eae400f95dd7838c11761e5329eb7502a411bc140f09f2f8db0a0",
+      "ar_chars": 212,
+      "en_chars": 313,
+      "ar_pdf_pages": [
+        50
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000167",
+      "key": "167",
+      "part": 10,
+      "ar_heading": "المادة السابعة والستون بعد المائة:",
+      "en_label": "Article 167:",
+      "ar_sha256": "837a9f8c967ecd257ace26713467e5c79fd99092edc249e23e0a8eaba7ce813c",
+      "en_sha256": "861f436607ad72d0ce271e20f70f5d7c6ba5eee854cb499b5b97178f1613ec72",
+      "ar_chars": 590,
+      "en_chars": 837,
+      "ar_pdf_pages": [
+        50
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000171",
+      "key": "171",
+      "part": 11,
+      "ar_heading": "المادة الحادية والسبعون بعد المائة:",
+      "en_label": "Article 171:",
+      "ar_sha256": "f2463c5ac87b4070e4ac7b804376cfec1a90e212a7eac7da2422a9b48a4c96ab",
+      "en_sha256": "08b3f06a3545e2b81ac1f5db715cb71aba1bcfbf4a6041dcb63c74e9a59db5f0",
+      "ar_chars": 545,
+      "en_chars": 789,
+      "ar_pdf_pages": [
+        52
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000173",
+      "key": "173",
+      "part": 11,
+      "ar_heading": "المادة الثالثة والسبعون بعد المائة:",
+      "en_label": "Article 173:",
+      "ar_sha256": "0d348944cdda7afa1d2ae66f34ff98941165b3f46b6312c023f4715bcb78f1a7",
+      "en_sha256": "b19f515621eb13d79535a8e1535646f5bc00f85bbb28bc4a275834576637ddb3",
+      "ar_chars": 156,
+      "en_chars": 194,
+      "ar_pdf_pages": [
+        52
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000174",
+      "key": "174",
+      "part": 11,
+      "ar_heading": "المادة الرابعة والسبعون بعد المائة:",
+      "en_label": "Article 174:",
+      "ar_sha256": "12eab042f5b5c1932774e51efb6935bd6781826abf6e9ba8b51928e19d9ab80b",
+      "en_sha256": "4a12ca18c66b54e1b6d6d85e193938c590dcfd0c0d3aa6c456392c17e0318e7c",
+      "ar_chars": 205,
+      "en_chars": 294,
+      "ar_pdf_pages": [
+        52
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000175",
+      "key": "175",
+      "part": 11,
+      "ar_heading": "المادة الخامسة والسبعون بعد المائة:",
+      "en_label": "Article 175:",
+      "ar_sha256": "b7dd2ab1e47200cbcc939dbe0ed11b544ded884586db94a21b778dd66ffdfd1c",
+      "en_sha256": "ee1a3edfa2cf14a9f3e0bdf666dd19861cd4d0a3b0fcbd55cff5bce72ce86a26",
+      "ar_chars": 153,
+      "en_chars": 207,
+      "ar_pdf_pages": [
+        52
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000178",
+      "key": "178",
+      "part": 11,
+      "ar_heading": "المادة الثامنة والسبعون بعد المائة:",
+      "en_label": "Article 178:",
+      "ar_sha256": "524870c1a0171f95e86e2f95a7b6164dd3640597c22dc1063567100d27295320",
+      "en_sha256": "670717638d4f22436860509402ca047c0d05ee073cd40c3bb75fda2074b86ca0",
+      "ar_chars": 650,
+      "en_chars": 940,
+      "ar_pdf_pages": [
+        53
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000179",
+      "key": "179",
+      "part": 11,
+      "ar_heading": "المادة التاسعة والسبعون بعد المائة:",
+      "en_label": "Article 179:",
+      "ar_sha256": "ab6474bfba60d7d37dcd123bb9393ca053a96e88130b99f231d2b7d7feb7bfef",
+      "en_sha256": "3ce361f3a030dd6ef0e21a6fcd7cfef3c1a6163f8854a268533ca722383c558e",
+      "ar_chars": 152,
+      "en_chars": 159,
+      "ar_pdf_pages": [
+        53
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000180",
+      "key": "180",
+      "part": 11,
+      "ar_heading": "المادة الثمانون بعد المائة:",
+      "en_label": "Article 180:",
+      "ar_sha256": "2f306442c6b8efb15b54a9d1984632ea84dbab4d26ed460e6a1b36a68d845d04",
+      "en_sha256": "92716ffb701700067e84b057fc16013abc2ba2660f74dcb544719016c81f09d8",
+      "ar_chars": 142,
+      "en_chars": 195,
+      "ar_pdf_pages": [
+        53
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000181",
+      "key": "181",
+      "part": 11,
+      "ar_heading": "المادة الحادية والثمانون بعد المائة:",
+      "en_label": "Article 181:",
+      "ar_sha256": "7a1673cc22e19a3f4d7435f1fd9555a7be4815179062981f2b7d0fa89a1d6a67",
+      "en_sha256": "c6f27aa6af01eb86b763852eb60c8f098a4d49e89b6414bbd2234c92d844bbf9",
+      "ar_chars": 360,
+      "en_chars": 466,
+      "ar_pdf_pages": [
+        53
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000184",
+      "key": "184",
+      "part": 11,
+      "ar_heading": "المادة الرابعة والثمانون بعد المائة:",
+      "en_label": "Article 184:",
+      "ar_sha256": "5d0e9e21bdbf8bf8c6365724f5b31f1197f0d70f5cc08df98adc685fd2feb513",
+      "en_sha256": "ff2e48ef753e6f949137ecb99f0cc9ccca403b638d8d3eae5feb808845ca9fca",
+      "ar_chars": 434,
+      "en_chars": 623,
+      "ar_pdf_pages": [
+        54
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%B9%D9%82%D8%AF-%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D8%A7%D9%84%D8%A8%D8%AD%D8%B1%D9%8A",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000186",
+      "key": "186",
+      "part": 12,
+      "ar_heading": "المادة السادسة والثمانون بعد المائة:",
+      "en_label": "Article 186:",
+      "ar_sha256": "4c91de562b31478bdf8f3ab5770c077fea31ae09dcc267a9f0a468177a4c9e8b",
+      "en_sha256": "5683dc8a52893d6efc6c921446f6573b4cc9b0170000313e48483b3d6531d061",
+      "ar_chars": 71,
+      "en_chars": 72,
+      "ar_pdf_pages": [
+        56
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000187",
+      "key": "187",
+      "part": 12,
+      "ar_heading": "المادة السابعة والثمانون بعد المائة:",
+      "en_label": "Article 187:",
+      "ar_sha256": "e0c2cefef4a89122d15136d7b25bfe7ba32116b878016eac996b552816afe0af",
+      "en_sha256": "b35e28ab2e6d92cc9ac03ff3a031d90ab9da0cbbbb9e633931a57c2b9586a88c",
+      "ar_chars": 293,
+      "en_chars": 424,
+      "ar_pdf_pages": [
+        56
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000188",
+      "key": "188",
+      "part": 12,
+      "ar_heading": "المادة الثامنة والثمانون بعد المائة:",
+      "en_label": "Article 188:",
+      "ar_sha256": "e9d2a62be4c25387b9c72f91e9736dd80a410658f880e3e1d5d7e0a1e4a3b14c",
+      "en_sha256": "2c825c042a386d518eee13c0e387cb855f204b5549412425e80a4f07ce360ac1",
+      "ar_chars": 331,
+      "en_chars": 431,
+      "ar_pdf_pages": [
+        56
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000191",
+      "key": "191",
+      "part": 12,
+      "ar_heading": "المادة الحادية والتسعون بعد المائة:",
+      "en_label": "Article 191:",
+      "ar_sha256": "19e9817c98167eef0285f917520c902eec06fc6f39ce4894ca632785ff0931aa",
+      "en_sha256": "5ee5a359dc05e10e814078e6a1f19dbc696a595c00c71d1585c423037b02d206",
+      "ar_chars": 90,
+      "en_chars": 115,
+      "ar_pdf_pages": [
+        56
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000192",
+      "key": "192",
+      "part": 12,
+      "ar_heading": "المادة الثانية والتسعون بعد المائة:",
+      "en_label": "Article 192:",
+      "ar_sha256": "aab8d91d3ed2fdc555e3b2195b04889ad7e9632f4f17be0d4b152c1f807b2aff",
+      "en_sha256": "e7b6f2edb78a49ec2191ad3f851bb8a573d4558b4b8bdfe3d0f35fb72e24b8ef",
+      "ar_chars": 245,
+      "en_chars": 313,
+      "ar_pdf_pages": [
+        56
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%85%D9%84-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%AC%D9%85-%D9%88%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AC%D8%B1",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000199",
+      "key": "199",
+      "part": 13,
+      "ar_heading": "المادة التاسعة والتسعون بعد المائة:",
+      "en_label": "Article 199:",
+      "ar_sha256": "69f6ff71a40b064c6077d6d5e388d3df3f53fc5ece188512a3e6b19791da5ede",
+      "en_sha256": "d6c0d693ff2d170d2d9c40e385dacc0a8c3c7357226a0350b6b6febe4874b38c",
+      "ar_chars": 283,
+      "en_chars": 324,
+      "ar_pdf_pages": [
+        58
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000200",
+      "key": "200",
+      "part": 13,
+      "ar_heading": "المادة المئتان:",
+      "en_label": "Article 200:",
+      "ar_sha256": "d335660ac35cfd1e5a15ad56493a8cf46e3a433b4df9b126fdc72b94f3e23a4f",
+      "en_sha256": "9dcdc6a4b1e18b8099e542c54db8c7902662810abcff567fc0b489de3217bc57",
+      "ar_chars": 125,
+      "en_chars": 154,
+      "ar_pdf_pages": [
+        58
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000202",
+      "key": "202",
+      "part": 13,
+      "ar_heading": "المادة الثانية بعد المائتين:",
+      "en_label": "Article 202:",
+      "ar_sha256": "32e7e6258d59da4d630983eceb6ae9ca9cbdd9ba3401c024091d2a5e4507f535",
+      "en_sha256": "3d4e99292c3db74f91bb265706a62dbacb730aab8c3a8c66d7f6bcfc495fd56c",
+      "ar_chars": 170,
+      "en_chars": 274,
+      "ar_pdf_pages": [
+        59
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000209",
+      "key": "209",
+      "part": 13,
+      "ar_heading": "المادة التاسعة بعد المائتين:",
+      "en_label": "Article 209:",
+      "ar_sha256": "d0d5225351c976abd27ab1330194e7719698c72b9739df878a1e407591d72abc",
+      "en_sha256": "598378e341d9cb43162ef2d80d6edf6af759f61e805ed328d1260bd6158465b1",
+      "ar_chars": 58,
+      "en_chars": 111,
+      "ar_pdf_pages": [
+        59
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%AA%D9%81%D8%AA%D9%8A%D8%B4-%D8%A7%D9%84%D8%B9%D9%85%D9%84",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000229",
+      "key": "229",
+      "part": 15,
+      "ar_heading": "المادة التاسعة والعشرون بعد المائتين:",
+      "en_label": "Article 229 :",
+      "ar_sha256": "21c44f3cc0ce590be5470c57420d849aea50b6cf3dbd8fa2942332c428594257",
+      "en_sha256": "a93272a975aaf0ccb4269554c1005cfe01fc0794f59a552cd58b6aaa70d0d297",
+      "ar_chars": 427,
+      "en_chars": 624,
+      "ar_pdf_pages": [
+        64
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "stratum": "long",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000231",
+      "key": "231",
+      "part": 15,
+      "ar_heading": "المادة الحادية والثلاثون بعد المائتين:",
+      "en_label": "Article 231:",
+      "ar_sha256": "a5527ea4734faae44ea161dfd5ef01a1e9f277a3a3b23045ef95d9155b73527f",
+      "en_sha256": "75a89e442d07cd5a62f75ae4140c9d6fe488bce180c1c6d2a1fa856b5267fe59",
+      "ar_chars": 102,
+      "en_chars": 195,
+      "ar_pdf_pages": [
+        64
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000232",
+      "key": "232",
+      "part": 15,
+      "ar_heading": "المادة الثانية والثلاثون بعد المائتين:",
+      "en_label": "Article 232 :",
+      "ar_sha256": "68a22a3174a60630ba84f52e7ca2f46c9034a1577a56f040403a4570f2d6ad5c",
+      "en_sha256": "3d26708117f9509fd25b4aa995b283ffb5b95c57485cb1314ff1ed0efb76d86e",
+      "ar_chars": 143,
+      "en_chars": 204,
+      "ar_pdf_pages": [
+        64
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000235",
+      "key": "235",
+      "part": 15,
+      "ar_heading": "المادة الخامسة والثلاثين بعد المائتين:",
+      "en_label": "Article 235 :",
+      "ar_sha256": "0b412a54b12ba19887e35d2ff481e97bef3cd1d2198aa977ee272fb7580f09b3",
+      "en_sha256": "c703862d264d9c7f98b474e9e4238e7ad8b4fcd1e4fcf5a70ea3e07b97097c7a",
+      "ar_chars": 168,
+      "en_chars": 244,
+      "ar_pdf_pages": [
+        65
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A7%D9%84%D8%B9%D9%82%D9%88%D8%A8%D8%A7%D8%AA-0",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000243",
+      "key": "243",
+      "part": 16,
+      "ar_heading": "المادة الثالثة والأربعون بعد المائتين:",
+      "en_label": "Article 243:",
+      "ar_sha256": "43f38a517f0e5aef26591a15ea6871a629c581ca3054e2f238a5da51ca396952",
+      "en_sha256": "f1c8353b362339966773b0c3b933b35823286fa2964dac598eadc8e3997c476e",
+      "ar_chars": 159,
+      "en_chars": 264,
+      "ar_pdf_pages": [
+        67
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+      "stratum": "medium",
+      "review_status": "PROPOSED_PASS"
+    },
+    {
+      "id": "KSA-LL-v2-000245",
+      "key": "245",
+      "part": 16,
+      "ar_heading": "المادة الخامسة والأربعون بعد المائتين:",
+      "en_label": "Article 245:",
+      "ar_sha256": "e8b7e310fe9f4b07a3df26b1429a911d8382745752d7fa0a6af27691a916cf5a",
+      "en_sha256": "0fd21660d7c3b6b5581563a993a95f580977f79a28114844e3903e09b9fad0e3",
+      "ar_chars": 81,
+      "en_chars": 146,
+      "ar_pdf_pages": [
+        67
+      ],
+      "en_url": "https://www.hrsd.gov.sa/en/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+      "ar_html_url": "https://www.hrsd.gov.sa/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%AE%D8%AA%D8%A7%D9%85%D9%8A%D8%A9",
+      "stratum": "short",
+      "review_status": "PROPOSED_PASS"
+    }
+  ]
+}

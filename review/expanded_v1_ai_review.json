@@ -1,0 +1,158 @@
+{
+  "corpus": "expanded_v1",
+  "kind": "AI-generated review notes (NOT human decisions; see review/expanded_v1_human_decisions.json)",
+  "reviewer": "Claude (AI agent, claude-opus-5-5), second-pass review on 2026-11-23",
+  "independence_caveat": "Performed by the same AI model that wrote the first review notes. It re-read the re-extracted texts rather than the first notes, but it is not an independent reviewer.",
+  "method": [
+    "re-extracted all 30 pairs from the pinned sources and verified the manifest SHA-256 hashes",
+    "side-by-side reading for completeness, numbered clauses and sub-clauses, exceptions, qualifiers, legal references",
+    "numbers including Arabic numbers written as words (e.g. 54,000 riyals, 180 days, 12 hours, one quarter) compared to English values",
+    "article references resolved from Arabic ordinals (e.g. Article 108 -> Articles 98 and 101)"
+  ],
+  "status_criteria": {
+    "PASS": "all clauses, list items, numbers, references and exceptions correspond; differences are translation style only",
+    "NEEDS_REVIEW": "structure and numbers correspond, but a qualifier, conjunction or term could change legal scope; a human should judge",
+    "FAIL": "a clause, list item, number, reference or exception is missing, added or contradictory"
+  },
+  "articles": {
+    "4": {
+      "proposed_status": "PASS",
+      "evidence": "Single obligation (adhere to Sharia when applying the Law) present on both sides; no qualifiers lost."
+    },
+    "6": {
+      "proposed_status": "PASS",
+      "evidence": "Same 9 listed areas in the same order; no list item missing or added."
+    },
+    "26": {
+      "proposed_status": "PASS",
+      "evidence": "Clauses 1-2 correspond; 75% identical; temporary-reduction exception and its two triggers present on both sides."
+    },
+    "29": {
+      "proposed_status": "PASS",
+      "evidence": "Condition, obligation, wage rule and compensation savings clause all present. AR 'other work than his previous work' vs EN 'another job': 'another' already implies a different job; judged not material."
+    },
+    "32": {
+      "proposed_status": "PASS",
+      "evidence": "Single prohibition with Ministry-approval exception; EN 'from abroad' renders the AR term for recruitment (istiqdam) rather than adding scope."
+    },
+    "38": {
+      "proposed_status": "PASS",
+      "evidence": "Both prohibitions (employer: profession on permit; worker: before legal change procedures) present."
+    },
+    "45": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Conjunction inverted in a definition: AR title 'qualification AND training contract' / body 'qualify OR train'; EN title 'training OR qualification' / body 'train AND qualify'. EN body can be read as requiring both activities, narrowing scope. Token impact: one word."
+    },
+    "49": {
+      "proposed_status": "PASS",
+      "evidence": "Same 7 listed areas plus Minister's decisions; none missing."
+    },
+    "59": {
+      "proposed_status": "PASS",
+      "evidence": "All four target pay categories (daily, weekly, piecework, hourly), written-consent exception and acquired-rights saving clause present."
+    },
+    "65": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Six items correspond in order. Two qualifier shifts: item 1 EN adds 'undue' and 'him' to the hazard condition (AR: execution involves no exposure to danger); item 5 EN 'examinations required' vs AR exams the employer 'wishes to conduct'. Item 2 AR 'unconsumed materials' = EN 'unused materials' (fine)."
+    },
+    "70": {
+      "proposed_status": "PASS",
+      "evidence": "Five limits present; 'five days' appears three times on both sides (fine cap, monthly deduction cap, monthly suspension cap); off-site exception (work, employer, responsible manager) present."
+    },
+    "89": {
+      "proposed_status": "PASS",
+      "evidence": "Council of Ministers may set minimum wage when necessary on Minister's proposal; complete."
+    },
+    "92": {
+      "proposed_status": "PASS",
+      "evidence": "Written-consent rule plus 6 exceptions in order; 10% and one-quarter caps match; judgment-override clause and debt priority (alimony, then food/clothing/housing) present. Item 3 AR 'and' vs EN 'or' within a list of permitted deductions: not material."
+    },
+    "108": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "References resolve to Articles 98 and 101 on both sides; 4 items and paragraphs 2-4 match. Item 1 qualifier: AR positions whose holders enjoy 'the employer's powers over workers'; EN 'authority over workers' drops 'employer's', a possible broadening of the exemption."
+    },
+    "120": {
+      "proposed_status": "PASS",
+      "evidence": "Minister's rule-making, obligations of both parties, limited applicability and the safety/health/work-injury exception present."
+    },
+    "132": {
+      "proposed_status": "PASS",
+      "evidence": "Non-application of 'this Chapter' to establishments under the social-insurance occupational-hazards branch; complete."
+    },
+    "134": {
+      "proposed_status": "NEEDS_REVIEW",
+      "evidence": "Three rules present (injury per Social Insurance Law; occupational disease = work injury; date rule). Date rule: AR 'first medical observation (مشاهدة) of the disease' vs EN 'first medical diagnosis', which can denote a later point in time."
+    },
+    "138": {
+      "proposed_status": "PASS",
+      "evidence": "Total disability/death: 3 years' wages, minimum 54,000 riyals (AR in words); partial disability formula via approved disability-percentage guide present."
+    },
+    "154": {
+      "proposed_status": "PASS",
+      "evidence": "Nursing break(s) max one hour per day, additional to general rest, counted as working time, no wage reduction; all present."
+    },
+    "158": {
+      "proposed_status": "PASS",
+      "evidence": "Seats for women's rest in all occupations and places; complete."
+    },
+    "161": {
+      "proposed_status": "PASS",
+      "evidence": "Prohibition (hazardous/harmful work; health, safety, morals; nature or conditions) and Minister's specification power present."
+    },
+    "162": {
+      "proposed_status": "PASS",
+      "evidence": "Clause 1 (age 15, entry to workplaces, Minister may raise by industry/area/category) and clause 2 (13-15 light work; sub-conditions 2/1 and 2/2 = 2.1 and 2.2) correspond."
+    },
+    "163": {
+      "proposed_status": "PASS",
+      "evidence": "Night period of at least 12 consecutive hours (AR in words) and Minister-decision exception present."
+    },
+    "188": {
+      "proposed_status": "PASS",
+      "evidence": "7 hours underground and 10 hours total (AR in words); travel-time inclusion rule present."
+    },
+    "191": {
+      "proposed_status": "PASS",
+      "evidence": "Employer or responsible manager issues list of public-safety orders and instructions; complete."
+    },
+    "201": {
+      "proposed_status": "PASS",
+      "evidence": "Instruction power with deadlines for health and safety, and immediate-measures power for imminent hazards, both present."
+    },
+    "202": {
+      "proposed_status": "PASS",
+      "evidence": "Absolute confidentiality of complaints (equipment shortage or violations) and non-disclosure to employer or representative present."
+    },
+    "204": {
+      "proposed_status": "PASS",
+      "evidence": "Four specialist categories participate as needed; director and inspectors may request executive bodies' assistance."
+    },
+    "244": {
+      "proposed_status": "PASS",
+      "evidence": "Supersedes Labor and Workers Law, Royal Decree M/21 dated 6/9/1389H (matches); repeal of conflicting provisions; regulations continue until amended."
+    },
+    "245": {
+      "proposed_status": "PASS",
+      "evidence": "Publication in Official Gazette; entry into force 180 days after publication (AR in words)."
+    }
+  },
+  "material_discrepancies": [
+    {
+      "article": 45,
+      "issue": "and/or inverted in title and body of a definition; EN body may require both training and qualification"
+    },
+    {
+      "article": 108,
+      "issue": "item 1 drops 'employer's' from 'the employer's powers over workers', possibly broadening an exemption from working-hours limits"
+    },
+    {
+      "article": 65,
+      "issue": "item 5 'required' vs exams the employer 'wishes to conduct'; item 1 adds 'undue' to the hazard condition"
+    },
+    {
+      "article": 134,
+      "issue": "date rule: 'first medical observation' (AR) vs 'first medical diagnosis' (EN) may denote different dates"
+    }
+  ],
+  "no_fail_found": "No pair has a missing or added clause, list item, number, reference or exception."
+}

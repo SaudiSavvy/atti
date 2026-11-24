@@ -185,6 +185,15 @@ def check_articles(manifest: dict, ar_articles, en_doc) -> tuple[list[ArticleSta
 
 def verify(manifest: dict, raw_dir: Path) -> list[ArticlePair]:
     """Re-extract every manifest article from ``raw_dir``; raise unless all are unchanged."""
+    arts = manifest.get("articles") if isinstance(manifest, dict) else None
+    if not isinstance(arts, list) or not arts:
+        raise VerificationError("malformed manifest: article list is missing or empty")
+    nums = [e.get("article") if isinstance(e, dict) else None for e in arts]
+    if any(type(n) is not int for n in nums):
+        raise VerificationError("malformed manifest: every entry needs an integer 'article'")
+    dups = sorted({n for n in nums if nums.count(n) > 1})
+    if dups:
+        raise VerificationError(f"malformed manifest: duplicate articles {dups}")
     pdf_hash = sha256_bytes((raw_dir / ENGLISH.filename).read_bytes())
     if pdf_hash != manifest["sources"]["en"]["pdf_sha256"]:
         raise VerificationError(

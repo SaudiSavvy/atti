@@ -1,0 +1,619 @@
+{
+  "corpus": "current_law_v2",
+  "manifest_sha256": "ee00910fa50935114f510dadcff509db33c2144d36b3c818af5502a9d07cb61a",
+  "kind": "HUMAN decisions only. Do not fill in on behalf of a human; AI notes live in the separate *_ai_review.json file.",
+  "allowed_decisions": [
+    "APPROVE",
+    "REJECT",
+    "REQUEST_EXAMINATION"
+  ],
+  "instructions": [
+    "Open the review sheet (data/review/<corpus>_review_sheet.md) and read each pair side by side.",
+    "For each article, edit review/<corpus>_human_decisions.json and set decision to APPROVE, REJECT or REQUEST_EXAMINATION, with your name in reviewer, the ISO date (YYYY-MM-DD) in date, and a comment (required for REJECT and REQUEST_EXAMINATION).",
+    "The AI notes and proposed statuses are advisory; your decision is independent of them.",
+    "Run `uv run atti review-sheet` to validate the file and refresh the sheet. Decisions are only valid for the manifest version whose SHA-256 is recorded in the file.",
+    "Rejections do not change the corpus automatically: excluding an article requires a separate, reported change (selection.EXCLUDED + re-selection), which changes the expanded results."
+  ],
+  "decisions": {
+    "1": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "6": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "8": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "12": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "13": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "15": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "19": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "20": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "21": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "24": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "26": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "27": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "29": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "31": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "34": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "35": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "36": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "38": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "42": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "45": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "47": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "48": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "50": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "53": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "54": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "55": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "56": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "57": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "58": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "62": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "64": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "68": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "71": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "72": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "74": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "84": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "85": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "87": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "88": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "93": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "96": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "97": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "99": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "100": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "103": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "108": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "110": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "111": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "112": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "114": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "117": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "118": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "119": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "120": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "123": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "124": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "125": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "128": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "129": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "132": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "134": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "135": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "136": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "142": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "144": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "146": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "147": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "148": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "153": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "155": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "158": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "159": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "163": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "165": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "166": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "167": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "171": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "173": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "174": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "175": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "178": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "179": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "180": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "181": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "184": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "186": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "187": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "188": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "191": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "192": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "199": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "200": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "202": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "209": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "229": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "231": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "232": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "235": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "243": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    },
+    "245": {
+      "decision": null,
+      "reviewer": null,
+      "date": null,
+      "comment": ""
+    }
+  }
+}

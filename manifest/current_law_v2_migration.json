@@ -1,0 +1,486 @@
+{
+  "from": "expanded_v1 (30 articles; includes the 10 pilot articles)",
+  "to": "current_law_v2",
+  "old_articles": [
+    {
+      "article": "4",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7961
+    },
+    {
+      "article": "6",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7055
+    },
+    {
+      "article": "26",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "wording differs",
+      "arabic_similarity": 0.9986,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.5897
+    },
+    {
+      "article": "29",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "identical",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7178
+    },
+    {
+      "article": "32",
+      "v2_status": "excluded",
+      "v2_exclusion_reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7039
+    },
+    {
+      "article": "38",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.8215
+    },
+    {
+      "article": "45",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "identical",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.6942
+    },
+    {
+      "article": "49",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.6576
+    },
+    {
+      "article": "59",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.5199
+    },
+    {
+      "article": "65",
+      "v2_status": "excluded",
+      "v2_exclusion_reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7839
+    },
+    {
+      "article": "70",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.6395
+    },
+    {
+      "article": "89",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.9059
+    },
+    {
+      "article": "92",
+      "v2_status": "excluded",
+      "v2_exclusion_reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7083
+    },
+    {
+      "article": "108",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7562
+    },
+    {
+      "article": "120",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.5094
+    },
+    {
+      "article": "132",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "near-identical",
+      "english_similarity": 0.9871
+    },
+    {
+      "article": "134",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7352
+    },
+    {
+      "article": "138",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.8131
+    },
+    {
+      "article": "154",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.5645
+    },
+    {
+      "article": "158",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.8103
+    },
+    {
+      "article": "161",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.6667
+    },
+    {
+      "article": "162",
+      "v2_status": "excluded",
+      "v2_exclusion_reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7532
+    },
+    {
+      "article": "163",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.587
+    },
+    {
+      "article": "188",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7666
+    },
+    {
+      "article": "191",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7166
+    },
+    {
+      "article": "201",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "wording differs",
+      "arabic_similarity": 0.9979,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7629
+    },
+    {
+      "article": "202",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.6444
+    },
+    {
+      "article": "204",
+      "v2_status": "eligible, not selected by the procedure",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7407
+    },
+    {
+      "article": "244",
+      "v2_status": "excluded",
+      "v2_exclusion_reasons": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "arabic_v1_boe_vs_v2_hrsd": "wording differs",
+      "arabic_similarity": 0.9815,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.7964
+    },
+    {
+      "article": "245",
+      "v2_status": "selected",
+      "v2_exclusion_reasons": [],
+      "arabic_v1_boe_vs_v2_hrsd": "same wording (typographic differences only: diacritics, hamza, spacing, punctuation)",
+      "arabic_similarity": 1.0,
+      "english_translation": "BOE official translation (2005 base text) -> HRSD English (consolidated); different translation",
+      "english_similarity": 0.8455
+    }
+  ],
+  "summary": {
+    "old_selected_in_v2": [
+      "6",
+      "26",
+      "29",
+      "38",
+      "45",
+      "108",
+      "120",
+      "132",
+      "134",
+      "158",
+      "163",
+      "188",
+      "191",
+      "202",
+      "245"
+    ],
+    "old_eligible_not_selected": [
+      "4",
+      "49",
+      "59",
+      "70",
+      "89",
+      "138",
+      "154",
+      "161",
+      "201",
+      "204"
+    ],
+    "old_excluded": {
+      "32": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "65": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "92": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "162": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ],
+      "244": [
+        "AR_UNCONFIRMED: PDF extraction differs from the independent Arabic HTML rendering (extraction artefact or edition difference; not repaired)"
+      ]
+    },
+    "arabic_identical_or_typographic_only": [
+      "4",
+      "6",
+      "29",
+      "32",
+      "38",
+      "45",
+      "49",
+      "59",
+      "65",
+      "70",
+      "89",
+      "92",
+      "108",
+      "120",
+      "132",
+      "134",
+      "138",
+      "154",
+      "158",
+      "161",
+      "162",
+      "163",
+      "188",
+      "191",
+      "202",
+      "204",
+      "245"
+    ],
+    "arabic_wording_differs": [
+      "26",
+      "201",
+      "244"
+    ],
+    "english_translation_changed": [
+      "4",
+      "6",
+      "26",
+      "29",
+      "32",
+      "38",
+      "45",
+      "49",
+      "59",
+      "65",
+      "70",
+      "89",
+      "92",
+      "108",
+      "120",
+      "134",
+      "138",
+      "154",
+      "158",
+      "161",
+      "162",
+      "163",
+      "188",
+      "191",
+      "201",
+      "202",
+      "204",
+      "244",
+      "245"
+    ],
+    "newly_included": [
+      "1",
+      "8",
+      "12",
+      "13",
+      "15",
+      "19",
+      "20",
+      "21",
+      "24",
+      "27",
+      "31",
+      "34",
+      "35",
+      "36",
+      "42",
+      "47",
+      "48",
+      "50",
+      "53",
+      "54",
+      "55",
+      "56",
+      "57",
+      "58",
+      "62",
+      "64",
+      "68",
+      "71",
+      "72",
+      "74",
+      "84",
+      "85",
+      "87",
+      "88",
+      "93",
+      "96",
+      "97",
+      "99",
+      "100",
+      "103",
+      "110",
+      "111",
+      "112",
+      "114",
+      "117",
+      "118",
+      "119",
+      "123",
+      "124",
+      "125",
+      "128",
+      "129",
+      "135",
+      "136",
+      "142",
+      "144",
+      "146",
+      "147",
+      "148",
+      "153",
+      "155",
+      "159",
+      "165",
+      "166",
+      "167",
+      "171",
+      "173",
+      "174",
+      "175",
+      "178",
+      "179",
+      "180",
+      "181",
+      "184",
+      "186",
+      "187",
+      "192",
+      "199",
+      "200",
+      "209",
+      "229",
+      "231",
+      "232",
+      "235",
+      "243"
+    ]
+  }
+}

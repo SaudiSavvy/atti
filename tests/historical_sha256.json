@@ -1,0 +1,13 @@
+{
+  "results/pilot.csv": "29ffe20172d9a82664573c3dd8269e5d9071be8eb33e71ad10f5adf0bf8a677c",
+  "results/pilot_summary.json": "ee6c899685027b3148c47a5d7a6d152a64ee75e3b80b723cb43340eab4d8e3c7",
+  "reports/pilot.md": "4018cc7c57429987034b33e98ef9d9c49191543d9709eb4ec8ea541cb0fdfe78",
+  "manifest/pilot_manifest.json": "d0c4aeb4f6d4a1257fae1904b39a19a30c9ab972fb3d81db1e2e303313faffd4",
+  "results/expanded_v1.csv": "94ce2054d048a7d505fd60a585eff94eb614579e187745bbb50c1ac02f50f9ca",
+  "results/expanded_v1_summary.json": "bfdee239b12a5f0db90b1de96eb0c6ddf0e42f6e0b039b316be98a773a850e62",
+  "reports/expanded_v1.md": "ca6ccdfb032360320a5ebe19ef85e52f94f2cf96f7417e2900f47aa5c4557f63",
+  "manifest/expanded_v1_manifest.json": "001752ddf261dfbea32d30c2975b3260b11b655f2d4d2a4afd111e76c182c731",
+  "manifest/review.json": "35e735a7cf8ff766905f1e887168d97e852b1c54efe0e315bf190c39892415df",
+  "manifest/expanded_v1_review.json": "1365fd8c167551808700a503e08c10b604c91819daee4cc5531b06307c74dc29",
+  "review/expanded_v1_ai_review.json": "27847c3db2dc27b348b8afa82c1cfc38fae3de0b40c9f53bff57d37c4009f7d8"
+}
