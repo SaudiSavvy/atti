@@ -18,6 +18,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import statistics
 import time
 from dataclasses import dataclass, field
@@ -48,6 +49,12 @@ class AssetIntegrityError(FrontierError):
 
 class ApiError(FrontierError):
     pass
+
+
+class CacheIntegrityError(RuntimeError):
+    """A cached API observation is invalid, stale, conflicting or unanchored. Deliberately not a
+    FrontierError: it aborts the whole run before any output is written instead of being reported
+    as a per-adapter BLOCKED status next to freshly published results."""
 
 
 # ----------------------------------------------------------------------------- specifications
@@ -380,15 +387,22 @@ class ApiCache:
 
     def __init__(self, path: Path):
         self.path = path
-        self.data = json.loads(path.read_text()) if path.exists() else {}
+        try:
+            self.data = json.loads(path.read_text()) if path.exists() else {}
+        except ValueError as exc:
+            raise CacheIntegrityError(f"{path.name}: not valid JSON ({exc})") from None
+        if not isinstance(self.data, dict):
+            raise CacheIntegrityError(f"{path.name}: top level is not an object")
 
     def get(self, sha: str):
         return self.data.get(sha)
 
     def put(self, sha: str, record: dict) -> None:
         if sha in self.data:
-            if self.data[sha]["input_tokens"] != record["input_tokens"]:
-                raise ApiError(f"cached count for {sha[:12]} differs from a new count; not overwritten")
+            if self.data[sha].get("input_tokens") != record["input_tokens"]:
+                raise CacheIntegrityError(f"stale or conflicting cache: {sha[:12]} holds "
+                                          f"{self.data[sha].get('input_tokens')!r}, new observation is "
+                                          f"{record['input_tokens']}; not overwritten")
             return
         self.data[sha] = record
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -414,16 +428,32 @@ class PilotResult:
     checks: dict = field(default_factory=dict)
     counts: dict = field(default_factory=dict)  # article -> [ar, en]
     error: str | None = None
+    replayed: bool = False  # True: recorded live pilot reused (offline replay), not re-observed
 
 
 def run_pilot(key: str, counter, texts: dict[str, tuple[str, str]], repeats: int = 2) -> PilotResult:
     """Count each text `repeats` times (live requests for APIs, bypassing the cache) and require equality."""
     res = PilotResult(key, False)
-    if isinstance(counter, CachedApiCounter) and counter.live is not None:
-        live = counter
-        counter = live.live  # repeated live requests test provider stability
-        for art, (ar, en) in texts.items():  # and seed the cache with the first answer
-            live.count(ar), live.count(en)
+    if isinstance(counter, CachedApiCounter):
+        if counter.live is None:
+            res.error = "no live requests available; a pilot is never re-run from cached values"
+            return res
+        try:
+            for art, (ar, en) in texts.items():
+                obs = []
+                for t in (ar, en):
+                    seen = [counter.live.count(t) for _ in range(repeats)]  # live, bypassing the cache
+                    if len(set(seen)) != 1:
+                        raise FrontierError(f"unstable count for article {art}: {seen}")
+                    obs.append(counter.observe(t, seen[0]))  # stale/conflicting cache -> CacheIntegrityError
+                res.counts[art] = obs
+        except FrontierError as exc:
+            res.error = str(exc)
+            return res
+        res.checks = {"arabic_and_english_counts_exist": True, "repeat_counts_identical": True,
+                      "repeats": repeats, "guards": "strict response validation"}
+        res.passed = True
+        return res
     try:
         for art, (ar, en) in texts.items():
             first = [counter.count(ar), counter.count(en)]
@@ -507,11 +537,90 @@ OFFICIAL_CROSSCHECK = {
 }
 
 
-class CachedApiCounter:
-    """Serve API counts from the write-once cache; fall back to live requests only when a key is set."""
+# ----------------------------------------------------------------------------- cache provenance
 
-    def __init__(self, spec: ApiSpec, cache: ApiCache, live: ApiCounter | None):
+CACHE_SCHEMA = 2
+COUNT_FIELD = {"anthropic": "input_tokens", "openai": "input_tokens", "google": "totalTokens"}
+_LEGACY_FIELDS = {"input_tokens", "measured_on", "model", "endpoint", "request_shape", "anthropic_version"}
+_SCHEMA2_FIELDS = _LEGACY_FIELDS | {"schema", "provider", "text_sha256", "adapter_version", "count_field",
+                                    "measurement_method"}
+_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+_SHA = re.compile(r"[0-9a-f]{64}")
+
+# Independent anchors for completed API measurements: SHA-256 over the sorted lines
+# "<text sha256> <count>\n" for the 200 article texts, computed from the committed results (not from the
+# local cache). Records written before cache schema 2 carry no provider, text-identity, adapter-version or
+# count-field fields; they are accepted only when the article counts reproduce these anchors, and the
+# missing fields are reported as a provenance limitation, never reconstructed.
+HISTORICAL_API_ANCHORS = {
+    "claude-opus-5-5": {"articles_sha256": "e838b01b436a4380272b8a70c6bcbe364787a0619042042f188fa583ffc6b7a9",
+                        "texts": 200, "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"},
+    "gpt-6.2-sol": {"articles_sha256": "79cf70ab77910c5374651d074a027295fc25a6d11c6fb62b9c7cecb6e49ff491",
+                    "texts": 200, "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"},
+}
+LEGACY_LIMITATION = ("cache records predate cache schema 2: provider, text-identity, adapter-version and "
+                     "count-field fields were not recorded at measurement time and are not reconstructed; "
+                     "the records are trusted only because their article counts reproduce the anchor above")
+
+
+def counts_digest(pairs) -> str:
+    return hashlib.sha256("".join(f"{s} {n}\n" for s, n in sorted(pairs)).encode("utf-8")).hexdigest()
+
+
+def validate_record(spec: ApiSpec, sha: str, rec, legacy_ok: bool) -> list[str]:
+    """Every field that identifies what was measured must match this adapter exactly."""
+    if not _SHA.fullmatch(sha if isinstance(sha, str) else ""):
+        return [f"key {sha!r} is not a text SHA-256"]
+    if not isinstance(rec, dict):
+        return [f"{sha[:12]}: record is not an object"]
+    e = []
+    n = rec.get("input_tokens")
+    if type(n) is not int or n <= 0:
+        e.append(f"input_tokens {n!r} is not a positive integer")
+    for f, want in (("model", spec.model), ("endpoint", spec.endpoint), ("request_shape", request_shape(spec))):
+        if rec.get(f) != want:
+            e.append(f"{f} {rec.get(f)!r} != expected {want!r}")
+    if not isinstance(rec.get("measured_on"), str) or not _DATE.fullmatch(rec["measured_on"]):
+        e.append(f"measured_on {rec.get('measured_on')!r} is not a date")
+    if spec.provider == "anthropic" and rec.get("anthropic_version") != ANTHROPIC_VERSION:
+        e.append(f"anthropic_version {rec.get('anthropic_version')!r} != {ANTHROPIC_VERSION}")
+    if spec.provider != "anthropic" and "anthropic_version" in rec:
+        e.append("anthropic_version present for a non-Anthropic adapter")
+    if rec.get("schema") == CACHE_SCHEMA:
+        unknown = set(rec) - _SCHEMA2_FIELDS
+        for f, want in (("provider", spec.provider), ("text_sha256", sha), ("adapter_version", ADAPTER_VERSION),
+                        ("count_field", COUNT_FIELD[spec.provider]), ("measurement_method", API_INPUT)):
+            if rec.get(f) != want:
+                e.append(f"{f} {rec.get(f)!r} != expected {want!r}")
+    else:
+        unknown = set(rec) - _LEGACY_FIELDS
+        if not legacy_ok:
+            e.append("record lacks schema-2 provenance and the adapter has no historical anchor")
+    if unknown:
+        e.append(f"unknown fields {sorted(unknown)}")
+    return [f"{sha[:12]}: {x}" for x in e]
+
+
+def new_record(spec: ApiSpec, sha: str, n: int) -> dict:
+    return {"schema": CACHE_SCHEMA, "input_tokens": n, "measured_on": utc_date(), "model": spec.model,
+            "provider": spec.provider, "endpoint": spec.endpoint, "request_shape": request_shape(spec),
+            "text_sha256": sha, "adapter_version": ADAPTER_VERSION, "count_field": COUNT_FIELD[spec.provider],
+            "measurement_method": API_INPUT,
+            **({"anthropic_version": ANTHROPIC_VERSION} if spec.provider == "anthropic" else {})}
+
+
+class CachedApiCounter:
+    """Serve API counts from the write-once cache; fall back to live requests only when a key is set.
+
+    Every record is validated when the counter is built, so no unvalidated record can be served.
+    """
+
+    def __init__(self, spec: ApiSpec, cache: ApiCache, live: ApiCounter | None, anchor: dict | None = None):
         self.spec, self.cache, self.live = spec, cache, live
+        self.anchor = anchor if anchor is not None else HISTORICAL_API_ANCHORS.get(spec.key)
+        errs = [x for sha, rec in cache.data.items() for x in validate_record(spec, sha, rec, self.anchor is not None)]
+        if errs:
+            raise CacheIntegrityError(f"{spec.key} cache rejected ({len(errs)} problems): " + "; ".join(errs[:5]))
 
     def count(self, text: str) -> int:
         sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -520,11 +629,40 @@ class CachedApiCounter:
             return hit["input_tokens"]
         if self.live is None:
             raise ApiError(f"{self.spec.env_var} is not set and no cached count exists")
-        n = self.live.count(text)
-        self.cache.put(sha, {"input_tokens": n, "measured_on": utc_date(), "model": self.spec.model,
-                             "endpoint": self.spec.endpoint, "request_shape": request_shape(self.spec),
-                             **({"anthropic_version": ANTHROPIC_VERSION} if self.spec.provider == "anthropic" else {})})
+        return self.observe(text, self.live.count(text))
+
+    def observe(self, text: str, n: int) -> int:
+        """Record a live observation; a cached value that disagrees is a controlled failure."""
+        sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        self.cache.put(sha, new_record(self.spec, sha, n))
         return n
+
+    def check_anchor(self, texts: list[str]) -> dict:
+        """Require the article counts to reproduce the pinned anchor; return the evidence statement."""
+        if self.anchor is None:
+            legacy = [s for s, r in self.cache.data.items() if r.get("schema") != CACHE_SCHEMA]
+            if legacy:
+                raise CacheIntegrityError(f"{self.spec.key}: unanchored legacy records {len(legacy)}")
+            return {"validation": "every cache record checked against model, provider, endpoint, request shape, "
+                                  "text SHA-256, adapter version and count field",
+                    "anchor": None, "provenance_limitations": []}
+        pairs = set()
+        for t in texts:
+            sha = hashlib.sha256(t.encode("utf-8")).hexdigest()
+            rec = self.cache.get(sha)
+            if rec is None:
+                raise CacheIntegrityError(f"{self.spec.key}: anchored measurement lacks a cached count for {sha[:12]}")
+            pairs.add((sha, rec["input_tokens"]))
+        if len(pairs) != self.anchor["texts"] or counts_digest(pairs) != self.anchor["articles_sha256"]:
+            raise CacheIntegrityError(f"{self.spec.key}: cached article counts do not reproduce the pinned anchor "
+                                      f"({self.anchor['source']})")
+        legacy = any(r.get("schema") != CACHE_SCHEMA for r in self.cache.data.values())
+        return {"validation": "every cache record checked against model, endpoint, request shape, date"
+                              + (" and Anthropic API version" if self.spec.provider == "anthropic" else "")
+                              + "; article counts reproduce the pinned anchor",
+                "anchor": {"articles_sha256": self.anchor["articles_sha256"], "texts": self.anchor["texts"],
+                           "source": self.anchor["source"]},
+                "provenance_limitations": [LEGACY_LIMITATION] if legacy else []}
 
     def meta(self) -> str:
         days = sorted({v["measured_on"] for v in self.cache.data.values()})
@@ -552,6 +690,8 @@ def run(root: Path, pilot_only: bool = False) -> dict:
         raise FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
     pkeys = pilot_keys(manifest)
     status, pilot, rows, counters = {}, {}, [], {}
+    all_texts = [t for r in records for t in (r.ar_text, r.en_text)]
+    prev = recorded_observations(root)
 
     for spec in ALL:
         st = {"key": spec.key, "display": spec.display, "measurement_method": spec.method, "status": "IMPLEMENTED"}
@@ -569,18 +709,23 @@ def run(root: Path, pilot_only: bool = False) -> dict:
                 live = ApiCounter(spec) if os.environ.get(spec.env_var) else None
                 if live is None and not cache.data:
                     raise ApiError(f"{spec.env_var} is not set in the environment; no request was made")
-                counter = CachedApiCounter(spec, cache, live)
+                counter = CachedApiCounter(spec, cache, live)  # validates every record or raises
                 if live is not None:
-                    st["access_check"] = {"text": "Hello", "input_tokens": counter.count("Hello")}
-                    st["framing_probe"] = {"text": "a", "input_tokens": counter.count("a"),
+                    st["access_check"] = {"text": "Hello", "input_tokens": counter.observe("Hello", live.count("Hello"))}
+                    st["framing_probe"] = {"text": "a", "input_tokens": counter.observe("a", live.count("a")),
                                            "note": "recorded only; never subtracted from article counts"}
                 meta = None
         except FrontierError as exc:
             st.update(status="BLOCKED", blocked_reason=str(exc))
             status[spec.key] = st
             continue
-        p = run_pilot(spec.key, counter, _texts(records, pkeys), repeats=2)
-        pilot[spec.key] = {"passed": p.passed, "checks": p.checks, "counts": p.counts, "error": p.error}
+        if isinstance(spec, ApiSpec) and counter.live is None:
+            # offline replay: the pilot and probes are records of live requests; keep them verbatim
+            p = replay_pilot(spec, counter, prev, _texts(records, pkeys), st)
+        else:
+            p = run_pilot(spec.key, counter, _texts(records, pkeys), repeats=2)
+        pilot[spec.key] = prev["pilot"][spec.key] if p.passed and p.replayed else \
+            {"passed": p.passed, "checks": p.checks, "counts": p.counts, "error": p.error}
         if not p.passed:
             st.update(status="BLOCKED", blocked_reason=f"pilot failed: {p.error}")
         else:
@@ -588,7 +733,11 @@ def run(root: Path, pilot_only: bool = False) -> dict:
             if not pilot_only:
                 try:
                     if meta is None:
+                        if counter.anchor is not None:
+                            st["cache_evidence"] = counter.check_anchor(all_texts)
                         rows_m = measure_rows(spec, counter, records, manifest, "")
+                        if counter.anchor is None:
+                            st["cache_evidence"] = counter.check_anchor(all_texts)
                         meta = counter.meta()
                         for r in rows_m:
                             r["measurement_meta"] = meta
@@ -609,6 +758,41 @@ def run(root: Path, pilot_only: bool = False) -> dict:
         (root / OUTPUTS[k]).parent.mkdir(parents=True, exist_ok=True)
         (root / OUTPUTS[k]).write_text(content, encoding="utf-8")
     return status
+
+
+def recorded_observations(root: Path) -> dict:
+    """Pilot and adapter records already published (read once, before anything is rewritten)."""
+    out = {"pilot": {}, "adapters": {}}
+    for k, path in (("pilot", OUTPUTS["pilot"]), ("adapters", OUTPUTS["manifest"])):
+        f = root / path
+        if f.exists():
+            out[k] = json.loads(f.read_text(encoding="utf-8")).get("adapters", {})
+    return out
+
+
+def replay_pilot(spec: ApiSpec, counter: CachedApiCounter, prev: dict, texts: dict, st: dict) -> PilotResult:
+    """Reuse the recorded live pilot and probe observations after checking them against the cache."""
+    rec, adapter = prev["pilot"].get(spec.key), prev["adapters"].get(spec.key, {})
+    res = PilotResult(spec.key, False)
+    if not rec or not rec.get("passed"):
+        res.error = "no recorded passing live pilot to replay; a pilot is never re-run from cached values"
+        return res
+    if sorted(rec["counts"]) != sorted(texts):
+        raise CacheIntegrityError(f"{spec.key}: recorded pilot covers {sorted(rec['counts'])}, expected {sorted(texts)}")
+    for art, (ar, en) in texts.items():
+        cached = [counter.count(ar), counter.count(en)]
+        if rec["counts"][art] != cached:
+            raise CacheIntegrityError(f"{spec.key}: recorded pilot count {rec['counts'][art]} for article {art} "
+                                      f"disagrees with the cache {cached}")
+    for field in ("access_check", "framing_probe"):
+        if field in adapter:
+            obs = adapter[field]
+            hit = counter.cache.get(hashlib.sha256(obs["text"].encode("utf-8")).hexdigest())
+            if hit is not None and hit["input_tokens"] != obs["input_tokens"]:
+                raise CacheIntegrityError(f"{spec.key}: recorded {field} disagrees with the cache")
+            st[field] = obs
+    res.passed, res.counts, res.checks, res.replayed = True, rec["counts"], rec["checks"], True
+    return res
 
 
 def dumps(obj) -> str:
@@ -722,4 +906,12 @@ def render_report(summary: dict, fm: dict) -> str:
           "- One law, one document type, one translation; the English is the ministry's published translation.",
           "- No statistical significance is claimed for differences between models.",
           f"- Common article set across all reported models: {summary['common_article_set']}."]
+    lim = {st["display"]: st["cache_evidence"] for st in fm["adapters"].values() if st.get("cache_evidence")}
+    for name, ev in lim.items():
+        if ev.get("anchor"):
+            L.append(f"- {name}: API counts are replayed from a local cache whose 200 article counts reproduce an "
+                     f"anchor pinned from {ev['anchor']['source']}."
+                     + (" Its records predate cache schema 2, so provider, text-identity, adapter-version and "
+                        "count-field metadata were never recorded; they are not reconstructed."
+                        if ev.get("provenance_limitations") else ""))
     return "\n".join(L) + "\n"

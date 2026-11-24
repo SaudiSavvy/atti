@@ -159,7 +159,7 @@ def test_api_cache_is_write_once_and_credential_free(tmp_path):
     assert cc.count("abc") == 11 and cc.count("abc") == 11  # second served from cache
     assert len(live._client.calls) == 1 and KEY not in (tmp_path / "c.json").read_text()
     sha = hashlib.sha256(b"abc").hexdigest()
-    with pytest.raises(F.ApiError, match="not overwritten"):
+    with pytest.raises(F.CacheIntegrityError, match="not overwritten"):  # fatal, not a per-adapter BLOCKED
         cache.put(sha, {"input_tokens": 12})
     offline = F.CachedApiCounter(F.CLAUDE, F.ApiCache(tmp_path / "empty.json"), None)
     with pytest.raises(F.ApiError, match="no cached count"):
@@ -311,3 +311,191 @@ def test_local_rows_reproduce_byte_for_byte(outputs):
         meta = committed[0]["measurement_meta"]
         fresh = F.measure_rows(spec, F.load_local(spec, ROOT / F.HF_CACHE), records, m, meta)
         assert [{k: str(v) for k, v in r.items()} for r in fresh] == committed
+
+
+# ---------------------------------------------------------------- P1: cache integrity, pilot, replay
+
+def _sha(t):
+    return hashlib.sha256(t.encode("utf-8")).hexdigest()
+
+
+def _legacy(spec, n=5, **over):
+    r = {"input_tokens": n, "measured_on": "2026-11-24", "model": spec.model, "endpoint": spec.endpoint,
+         "request_shape": F.request_shape(spec)}
+    if spec.provider == "anthropic":
+        r["anthropic_version"] = F.ANTHROPIC_VERSION
+    return {**r, **over}
+
+
+@pytest.mark.parametrize("over,msg", [
+    ({"model": "WRONG", "input_tokens": 123456}, "model 'WRONG'"),
+    ({"endpoint": "https://evil.example/count"}, "endpoint"),
+    ({"request_shape": {"model": "gpt-6.2-sol", "input": "x"}}, "request_shape"),
+    ({"input_tokens": 0}, "positive integer"),
+    ({"input_tokens": True}, "positive integer"),
+    ({"input_tokens": "12"}, "positive integer"),
+    ({"measured_on": "yesterday"}, "measured_on"),
+    ({"anthropic_version": "2020-01-01"}, "anthropic_version"),
+    ({"extra": 1}, "unknown fields"),
+])
+def test_invalid_cache_records_rejected(over, msg):
+    errs = F.validate_record(F.GPT, _sha("t"), _legacy(F.GPT, **over), legacy_ok=True)
+    assert any(msg in e for e in errs), errs
+
+
+@pytest.mark.parametrize("over,msg", [
+    ({"provider": "anthropic"}, "provider"), ({"text_sha256": "0" * 64}, "text_sha256"),
+    ({"adapter_version": "0.9"}, "adapter_version"), ({"count_field": "totalTokens"}, "count_field"),
+    ({"measurement_method": F.RAW_CONTENT}, "measurement_method"),
+])
+def test_schema2_records_checked_for_identity(over, msg):
+    rec = {**F.new_record(F.GPT, _sha("t"), 5), **over}
+    assert any(msg in e for e in F.validate_record(F.GPT, _sha("t"), rec, legacy_ok=False))
+    assert F.validate_record(F.GPT, _sha("t"), F.new_record(F.GPT, _sha("t"), 5), legacy_ok=False) == []
+
+
+def test_unanchored_legacy_records_are_not_trusted():
+    spec = F.ApiSpec("x-model", "X", "openai", "x-model", "https://api.openai.com/v1/responses/input_tokens", "X_KEY", "d")
+    assert any("no historical anchor" in e for e in F.validate_record(spec, _sha("t"), _legacy(spec), legacy_ok=False))
+
+
+def test_corrupted_cache_entry_fails_before_anything_is_served(tmp_path):
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("t"): _legacy(F.CLAUDE, model="WRONG", input_tokens=123456)}))
+    with pytest.raises(F.CacheIntegrityError, match="model 'WRONG'"):
+        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None)
+    path.write_text("{not json")
+    with pytest.raises(F.CacheIntegrityError, match="not valid JSON"):
+        F.ApiCache(path)
+
+
+def test_anchor_detects_well_formed_but_altered_counts(tmp_path):
+    texts = ["alpha", "beta"]
+    anchor = {"articles_sha256": F.counts_digest({(_sha("alpha"), 3), (_sha("beta"), 4)}), "texts": 2, "source": "t"}
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 3), _sha("beta"): _legacy(F.CLAUDE, 4)}))
+    ev = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor).check_anchor(texts)
+    assert ev["anchor"]["articles_sha256"] == anchor["articles_sha256"] and ev["provenance_limitations"]
+    path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 3), _sha("beta"): _legacy(F.CLAUDE, 123456)}))
+    with pytest.raises(F.CacheIntegrityError, match="do not reproduce the pinned anchor"):
+        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor).check_anchor(texts)
+
+
+def test_historical_anchors_pinned():
+    assert set(F.HISTORICAL_API_ANCHORS) == {"claude-opus-5-5", "gpt-6.2-sol"}
+    for a in F.HISTORICAL_API_ANCHORS.values():
+        assert re.fullmatch(r"[0-9a-f]{64}", a["articles_sha256"]) and a["texts"] == 200
+
+
+def test_anchor_reproduces_committed_results(outputs):
+    rows = outputs[0]
+    for key, a in F.HISTORICAL_API_ANCHORS.items():
+        pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows if r["model_key"] == key for l in ("ar", "en")}
+        assert F.counts_digest(pairs) == a["articles_sha256"] and len(pairs) == a["texts"]
+
+
+def _live(spec, answers):
+    it = iter(answers)
+
+    class C:
+        def post(self, url, headers=None, json=None):
+            return Resp(200, {"input_tokens": next(it), "object": "response.input_tokens"})
+    return F.ApiCounter(spec, key=KEY, client=C(), sleep=lambda s: None, clock=lambda: 0.0)
+
+
+def test_pilot_stale_cache_7_then_live_9_9_fails_controlled(tmp_path):
+    """Exact audit regression: cached 7, two live observations of 9 -> controlled failure, cache unchanged."""
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7)}))
+    before = path.read_bytes()
+    cc = F.CachedApiCounter(F.GPT, F.ApiCache(path), _live(F.GPT, [9, 9, 4, 4]))
+    with pytest.raises(F.CacheIntegrityError, match="stale or conflicting cache.*holds 7.*observation is 9"):
+        F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    assert path.read_bytes() == before
+
+
+def test_pilot_observation_is_what_gets_published(tmp_path):
+    cc = F.CachedApiCounter(F.GPT, F.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 9, 4, 4]))
+    p = F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    assert p.passed and p.counts == {"1": [9, 4]}
+    assert (cc.count("ar"), cc.count("en")) == (9, 4)  # served from the cache, equal to the pilot
+    assert json.loads((tmp_path / "c.json").read_text())[_sha("ar")]["schema"] == F.CACHE_SCHEMA
+
+
+def test_pilot_unstable_live_counts_fail(tmp_path):
+    cc = F.CachedApiCounter(F.GPT, F.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 10]))
+    p = F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    assert not p.passed and "unstable" in p.error and not (tmp_path / "c.json").exists()
+
+
+def test_pilot_never_rerun_from_cache(tmp_path):
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7)}))
+    p = F.run_pilot("gpt-6.2-sol", F.CachedApiCounter(F.GPT, F.ApiCache(path), None), {"1": ("ar", "en")})
+    assert not p.passed and "never re-run" in p.error
+
+
+def test_replay_rejects_recorded_pilot_that_disagrees_with_cache(tmp_path):
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7),
+                                _sha("en"): F.new_record(F.GPT, _sha("en"), 4)}))
+    cc = F.CachedApiCounter(F.GPT, F.ApiCache(path), None)
+    prev = {"pilot": {"gpt-6.2-sol": {"passed": True, "checks": {}, "counts": {"1": [9, 4]}, "error": None}},
+            "adapters": {}}
+    with pytest.raises(F.CacheIntegrityError, match="disagrees with the cache"):
+        F.replay_pilot(F.GPT, cc, prev, {"1": ("ar", "en")}, {})
+    prev["pilot"]["gpt-6.2-sol"]["counts"]["1"] = [7, 4]
+    st = {}
+    prev["adapters"]["gpt-6.2-sol"] = {"access_check": {"text": "Hello", "input_tokens": 7}}
+    assert F.replay_pilot(F.GPT, cc, prev, {"1": ("ar", "en")}, st).replayed and st["access_check"]["input_tokens"] == 7
+    assert not F.replay_pilot(F.GPT, cc, {"pilot": {}, "adapters": {}}, {"1": ("ar", "en")}, {}).passed
+
+
+# ---------------------------------------------------------------- P1: end-to-end on the real local caches
+
+LOCAL_CACHES = all((ROOT / F.API_CACHE / f"{k}.json").exists() for k in F.HISTORICAL_API_ANCHORS)
+
+
+def _sandbox(tmp_path):
+    import shutil
+
+    from atti import v2
+
+    for rel in [v2.MANIFEST_PATH, v2.OUTPUTS["csv"], *F.OUTPUTS.values()]:
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(ROOT / rel, tmp_path / rel)
+    (tmp_path / "data").mkdir(exist_ok=True)
+    for d in ("raw_v2", "hf_frontier"):
+        (tmp_path / "data" / d).symlink_to(ROOT / "data" / d, target_is_directory=True)
+    shutil.copytree(ROOT / F.API_CACHE, tmp_path / F.API_CACHE)
+    return tmp_path
+
+
+@pytest.mark.network
+@pytest.mark.skipif(not LOCAL_CACHES, reason="historical API caches are local, untracked files")
+def test_offline_replay_regenerates_every_frontier_artifact_byte_for_byte(tmp_path, monkeypatch):
+    for v in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+        monkeypatch.delenv(v, raising=False)
+    root = _sandbox(tmp_path)
+    F.run(root)
+    for k, rel in F.OUTPUTS.items():
+        assert (root / rel).read_bytes() == (ROOT / rel).read_bytes(), rel
+
+
+@pytest.mark.network
+@pytest.mark.skipif(not LOCAL_CACHES, reason="historical API caches are local, untracked files")
+@pytest.mark.parametrize("corrupt", [{"model": "WRONG", "input_tokens": 123456}, {"input_tokens": 123456}])
+def test_corrupted_historical_cache_aborts_without_publishing(tmp_path, monkeypatch, corrupt):
+    for v in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+        monkeypatch.delenv(v, raising=False)
+    root = _sandbox(tmp_path)
+    path = root / F.API_CACHE / "claude-opus-5-5.json"
+    data = json.loads(path.read_text())
+    row = next(r for r in csv.DictReader((ROOT / F.OUTPUTS["csv"]).open(encoding="utf-8"))
+               if r["model_key"] == "claude-opus-5-5")
+    data[row["ar_sha256"]].update(corrupt)
+    path.write_text(json.dumps(data))
+    with pytest.raises(F.CacheIntegrityError):
+        F.run(root)
+    for rel in F.OUTPUTS.values():
+        assert (root / rel).read_bytes() == (ROOT / rel).read_bytes()  # nothing published
