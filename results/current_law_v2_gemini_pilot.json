@@ -1,0 +1,70 @@
+{
+  "corpus": "current_law_v2",
+  "pilot_articles": [
+    "6",
+    "15",
+    "50",
+    "57",
+    "100",
+    "134",
+    "166",
+    "175",
+    "178",
+    "181"
+  ],
+  "selection": "the ten frontier pilot articles (Arabic-length decile midpoints, token-blind)",
+  "repeats": 2,
+  "requests": "live; each text counted twice",
+  "adapter": {
+    "passed": true,
+    "checks": {
+      "arabic_and_english_counts_exist": true,
+      "repeat_counts_identical": true,
+      "repeats": 2,
+      "guards": "strict response validation"
+    },
+    "counts": {
+      "6": [
+        117,
+        90
+      ],
+      "15": [
+        181,
+        161
+      ],
+      "50": [
+        70,
+        67
+      ],
+      "57": [
+        59,
+        59
+      ],
+      "100": [
+        119,
+        104
+      ],
+      "134": [
+        83,
+        84
+      ],
+      "166": [
+        97,
+        91
+      ],
+      "175": [
+        86,
+        74
+      ],
+      "178": [
+        244,
+        191
+      ],
+      "181": [
+        152,
+        137
+      ]
+    },
+    "error": null
+  }
+}
