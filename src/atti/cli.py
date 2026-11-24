@@ -253,6 +253,9 @@ def cmd_gemini(args) -> int:
     except gemini.GeminiBlocked as exc:
         print(f"Gemini 4 Neon: BLOCKED ({exc})", file=sys.stderr)
         return EXIT_BLOCKED
+    except frontier.CacheIntegrityError as exc:
+        print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
+        return EXIT_VERIFICATION
     except sources.NetworkError as exc:
         return _network_error(exc)
     except v2.VerificationError as exc:

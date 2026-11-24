@@ -44,4 +44,5 @@ Short-input counts are reported as observed. A non-zero count for a one-characte
 
 - Google's documentation does not state whether countTokens includes framing, whether it is exact, or its rate limits.
 - A hosted model's tokenizer can change without a version change; counts are dated, not pinned.
+- Counts are replayed from a local cache whose 200 article counts reproduce an anchor pinned from results/current_law_v2_gemini.csv sha256:e668ea7d7bdfaf9c83691df294af80074f308a81c67c3ff30e3cafdd7640d00c. Its records predate cache schema 2, so provider, text-identity, adapter-version and count-field metadata were never recorded; they are not reconstructed.
 - One law, one translation; the corpus is provisional and documents source-alignment limitations.

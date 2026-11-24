@@ -208,9 +208,110 @@ def test_mocked_end_to_end_writes_only_gemini_outputs(sandbox):
     assert "Methodological warning" in report and "raw_content_tokens" in report
     raw_rank = json.loads((sandbox / G.FRONTIER_SUMMARY).read_text())["models"]
     assert "gemini-4-neon" not in raw_rank
-    # offline regeneration from the cache is byte-identical, with no requests
+    # offline regeneration from the cache is byte-identical, with no requests, when bound to an anchor
+    # pinned from these (mocked) results; the production anchor rejects this cache
     snapshot = {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()}
     n = len(client.calls)
-    G.run(sandbox, key="")
+    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):
+        G.run(sandbox, key="")
+    assert {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()} == snapshot  # nothing published
+    pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows for l in ("ar", "en")}
+    own = {"articles_sha256": F.counts_digest(pairs), "texts": len(pairs), "source": "mocked run"}
+    G.run(sandbox, key="", anchor=own)
     assert len(client.calls) == n
-    assert {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()} == snapshot
+    produced = {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()}
+    assert {k: v for k, v in produced.items() if k not in ("manifest", "report")} == \
+        {k: v for k, v in snapshot.items() if k not in ("manifest", "report")}
+    man2 = json.loads(produced["manifest"])
+    assert man2["cache_evidence"]["anchor"]["source"] == "mocked run"  # replay states its anchor
+    assert {k: v for k, v in man2.items() if k != "cache_evidence"} == \
+        {k: v for k, v in json.loads(snapshot["manifest"]).items() if k != "cache_evidence"}
+
+
+# ---------------------------------------------------------------- P1 regressions on the Gemini runner
+
+def test_gemini_anchor_reproduces_committed_results():
+    import csv
+
+    rows = list(csv.DictReader((ROOT / G.OUTPUTS["csv"]).open(encoding="utf-8")))
+    pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows for l in ("ar", "en")}
+    assert F.counts_digest(pairs) == G.GEMINI_ANCHOR["articles_sha256"] and len(pairs) == 200
+
+
+def _real_sandbox(tmp_path):
+    from atti import v2
+
+    for rel in [v2.MANIFEST_PATH, G.FRONTIER_PILOT, G.FRONTIER_SUMMARY, *G.OUTPUTS.values()]:
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(ROOT / rel, tmp_path / rel)
+    (tmp_path / "data").mkdir()
+    (tmp_path / v2.RAW).symlink_to(ROOT / v2.RAW, target_is_directory=True)
+    (tmp_path / G.CACHE).parent.mkdir(parents=True)
+    shutil.copy(ROOT / G.CACHE, tmp_path / G.CACHE)
+    return tmp_path
+
+
+REAL_CACHE = (ROOT / G.CACHE).exists()
+
+
+@pytest.mark.network
+@pytest.mark.skipif(not REAL_CACHE, reason="the Gemini cache is a local, untracked file")
+def test_gemini_offline_replay_is_byte_identical(tmp_path, monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    root = _real_sandbox(tmp_path)
+    assert G.run(root)["status"] == "MEASURED"
+    for rel in G.OUTPUTS.values():
+        assert (root / rel).read_bytes() == (ROOT / rel).read_bytes(), rel
+
+
+@pytest.mark.network
+@pytest.mark.skipif(not REAL_CACHE, reason="the Gemini cache is a local, untracked file")
+@pytest.mark.parametrize("corrupt,msg", [({"model": "WRONG", "input_tokens": 123456}, "model 'WRONG'"),
+                                         ({"input_tokens": 123456}, "pinned anchor|disagrees")])
+def test_gemini_corrupted_cache_fails_without_publishing(tmp_path, monkeypatch, corrupt, msg):
+    """Audit regression: model=WRONG, input_tokens=123456 was published as MEASURED."""
+    import csv
+
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    root = _real_sandbox(tmp_path)
+    data = json.loads((root / G.CACHE).read_text())
+    row = next(csv.DictReader((ROOT / G.OUTPUTS["csv"]).open(encoding="utf-8")))
+    data[row["ar_sha256"]].update(corrupt)
+    (root / G.CACHE).write_text(json.dumps(data))
+    with pytest.raises(F.CacheIntegrityError, match=msg):
+        G.run(root)
+    for rel in G.OUTPUTS.values():
+        assert (root / rel).read_bytes() == (ROOT / rel).read_bytes()  # nothing published
+
+
+@pytest.mark.network
+def test_gemini_pilot_stale_7_live_9_9_is_a_controlled_failure(sandbox):
+    """Audit regression: pilot saw 9, 9 while the cache (and so the publication) held 7."""
+    import hashlib
+
+    from atti import v2
+
+    m = json.loads((sandbox / v2.MANIFEST_PATH).read_text())
+    recs = {r.key: r for r in v2.verify(m, sandbox / v2.RAW)}
+    text = recs[G.pilot_articles(sandbox, m)[0]].ar_text
+    sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    (sandbox / G.CACHE).parent.mkdir(parents=True, exist_ok=True)
+    (sandbox / G.CACHE).write_text(json.dumps({sha: F.new_record(G.GEMINI, sha, 7)}))
+    client = Client(fn=lambda url, h, j: ok(9))
+    with pytest.raises(F.CacheIntegrityError, match="holds 7, new observation is 9"):
+        G.run(sandbox, client=client, key=KEY, sleep=lambda s: None)
+    assert not any((sandbox / p).exists() for p in G.OUTPUTS.values())  # nothing published
+    assert json.loads((sandbox / G.CACHE).read_text())[sha]["input_tokens"] == 7  # not overwritten
+
+
+@pytest.mark.network
+def test_gemini_published_values_equal_pilot_observations(sandbox):
+    import csv
+
+    G.run(sandbox, client=Client(fn=fake_google), key=KEY, sleep=lambda s: None)
+    pilot = json.loads((sandbox / G.OUTPUTS["pilot"]).read_text())["adapter"]["counts"]
+    rows = {r["article"]: r for r in csv.DictReader((sandbox / G.OUTPUTS["csv"]).open(encoding="utf-8"))}
+    for art, (ar, en) in pilot.items():
+        assert [int(rows[art]["ar_tokens"]), int(rows[art]["en_tokens"])] == [ar, en]
+    man = json.loads((sandbox / G.OUTPUTS["manifest"]).read_text())
+    assert man["cache_evidence"]["anchor"] is None and man["cache_evidence"]["provenance_limitations"] == []
