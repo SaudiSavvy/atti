@@ -264,3 +264,61 @@ def test_malformed_nested_structures_give_clear_errors(name):
     assert errs and all(isinstance(e, str) and e for e in errs), name
     with pytest.raises(v2.VerificationError, match="malformed manifest"):
         v2.verify(m, NOWHERE)
+
+
+# ---------------------------------------------------------------- selection fields (empty-parent gap)
+
+def _sel(**fields):
+    """Set selection children; a value of ... deletes the field."""
+    def f(m):
+        for k, v in fields.items():
+            if v is ...:
+                m["selection"].pop(k, None)
+            else:
+                m["selection"][k] = v
+    return f
+
+
+SELECTION_CASES = {
+    "selection empty": (lambda m: m.__setitem__("selection", {}), "selection.selected"),
+    "selection missing": (lambda m: m.pop("selection"), "selection: missing"),
+    "selection None": (lambda m: m.__setitem__("selection", None), "selection: missing"),
+    "selection list": (lambda m: m.__setitem__("selection", []), "selection: missing"),
+    "selection string": (lambda m: m.__setitem__("selection", "frozen"), "selection: missing"),
+    "selected missing": (_sel(selected=...), "selection.selected"),
+    "selected None": (_sel(selected=None), "selection.selected"),
+    "selected string": (_sel(selected="1,2,3"), "selection.selected"),
+    "selected dict": (_sel(selected={}), "selection.selected"),
+    "selected empty": (_sel(selected=[]), "does not match selection.selected"),
+    "excluded missing": (_sel(excluded_after_review=...), "selection.excluded_after_review"),
+    "excluded None": (_sel(excluded_after_review=None), "selection.excluded_after_review"),
+    "excluded list": (_sel(excluded_after_review=[]), "selection.excluded_after_review"),
+    "excluded empty": (_sel(excluded_after_review={}), "differs from EXCLUDED_AFTER_REVIEW"),
+    "excluded altered": (_sel(excluded_after_review={"40": "x"}), "differs from EXCLUDED_AFTER_REVIEW"),
+    "outside-draw missing": (_sel(eligible_outside_draw=...), "selection.eligible_outside_draw"),
+    "outside-draw empty": (_sel(eligible_outside_draw={}), "differs from OUTSIDE_DRAW"),
+    "outside-draw string": (_sel(eligible_outside_draw="33"), "selection.eligible_outside_draw"),
+}
+
+
+@pytest.mark.parametrize("name", SELECTION_CASES)
+def test_selection_fields_required_and_typed(name):
+    edit, expected = SELECTION_CASES[name]
+    m = mutated(edit)
+    errs = v2.validate_manifest(m)  # must not raise
+    assert any(expected in e for e in errs), errs
+    with pytest.raises(v2.VerificationError, match="malformed manifest"):
+        v2.verify(m, NOWHERE)
+
+
+def test_empty_selection_reports_every_required_child():
+    """The reviewed gap: `selection = {}` (falsy) skipped all child checks and passed verify()."""
+    errs = v2.validate_manifest(mutated(lambda m: m.__setitem__("selection", {})))
+    for field in ("selection.selected", "selection.excluded_after_review", "selection.eligible_outside_draw"):
+        assert any(e.startswith(field + ":") for e in errs), (field, errs)
+
+
+def test_committed_selection_matches_curation_constants():
+    sel = MANIFEST["selection"]
+    assert sel["excluded_after_review"] == v2.EXCLUDED_AFTER_REVIEW
+    assert sel["eligible_outside_draw"] == v2.OUTSIDE_DRAW

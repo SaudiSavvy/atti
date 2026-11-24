@@ -568,9 +568,17 @@ def validate_manifest(manifest) -> list[str]:
     pdf_hash = _get(manifest, "sources.ar_pdf.sha256", str, errs)
     if pdf_hash is not None and not _HEX64.fullmatch(pdf_hash):
         errs.append("sources.ar_pdf.sha256 malformed")
-    sel = _get(manifest, "selection", dict, errs) or {}
-    selected = _get(manifest, "selection.selected", list, errs) if sel else None
-    excluded = _get(manifest, "selection.excluded_after_review", dict, errs) if sel else None
+    # Child fields are required whenever `selection` is an object, including an empty one ({} is falsy;
+    # gating on truthiness let `selection = {}` skip every selection check).
+    sel = _get(manifest, "selection", dict, errs)
+    selected = _get(manifest, "selection.selected", list, errs) if sel is not None else None
+    excluded = _get(manifest, "selection.excluded_after_review", dict, errs) if sel is not None else None
+    outside = _get(manifest, "selection.eligible_outside_draw", dict, errs) if sel is not None else None
+    # the exclusion records must state exactly what the curation code applied
+    if excluded is not None and excluded != EXCLUDED_AFTER_REVIEW:
+        errs.append("selection.excluded_after_review differs from EXCLUDED_AFTER_REVIEW")
+    if outside is not None and outside != OUTSIDE_DRAW:
+        errs.append("selection.eligible_outside_draw differs from OUTSIDE_DRAW")
     cands = _get(manifest, "candidates", dict, errs)
     keys, ids = [], []
     for i, e in enumerate(arts):
