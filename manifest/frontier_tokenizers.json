@@ -1,0 +1,178 @@
+{
+  "corpus": "current_law_v2",
+  "corpus_manifest": "manifest/current_law_v2_manifest.json",
+  "corpus_status": "provisional",
+  "adapter_version": "1.0",
+  "status_definitions": {
+    "IMPLEMENTED": "adapter code and offline tests exist",
+    "VALIDATED": "10-pair pilot passed (counts present, stable on repeat, guards held)",
+    "MEASURED": "all 100 pairs measured in both languages",
+    "BLOCKED": "not measured; reason recorded; no value published"
+  },
+  "measurement_methods": {
+    "raw_content_tokens": "locally reproduced encoding of the article text only: no special tokens, no chat template, no truncation; decode(encode(text)) == text verified per text",
+    "api_input_tokens": "input_tokens returned by the provider's official counting endpoint for one user message whose content is the article text; no system prompt, instructions or tools; includes provider framing, which is not removed"
+  },
+  "official_crosscheck": {
+    "date": "2026-11-24",
+    "texts": "all 200 corpus texts (100 Arabic, 100 English) plus 4 synthetic edge cases",
+    "reference": "official implementations in an isolated environment: transformers 5.22.2 AutoTokenizer (DeepSeek, GLM: encode(add_special_tokens=False)); Kimi's own TikTokenTokenizer via trust_remote_code, encode(allow_special_tokens=False); tiktoken 0.14.0, tokenizers 0.23.3",
+    "result": "token ids identical for every text and model (0 mismatches of 204 per model)",
+    "default_call_check": "default encode('x') returns one token for all three: no BOS or chat markers added",
+    "fixture": "tests/frontier_reference_ids.json (synthetic, non-legal strings)"
+  },
+  "baseline_models": [
+    {
+      "model": "Qwen/Qwen2.5-3B-Instruct",
+      "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+      "measurement_method": "raw_content_tokens"
+    },
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+      "measurement_method": "raw_content_tokens"
+    }
+  ],
+  "adapters": {
+    "deepseek-v4.1-flash-1017": {
+      "key": "deepseek-v4.1-flash-1017",
+      "display": "DeepSeek V4.1 Flash 1017",
+      "measurement_method": "raw_content_tokens",
+      "status": "MEASURED",
+      "repo_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "revision": "08c8657f02291e11b6f6b63e0e16014f8e748518",
+      "adapter": "tokenizers",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+          "bytes": 6367257
+        },
+        "tokenizer_config.json": {
+          "sha256": "6ac8c8dc065ed118161d02dd532749ae3f52c243deac27872134fae2f50d8547",
+          "bytes": 801
+        }
+      },
+      "source_note": "Released tokenizer.json of this repository (byte-level BPE, 128,000 base tokens + 1,283 added; empty normalizer; ByteLevel post-processor adds no tokens). The official encoding/encoding.py renders messages as a string that this tokenizer encodes; message text is inserted verbatim. tokenizer_config.json: add_bos_token=false, add_eos_token=false. No older DeepSeek tokenizer is used."
+    },
+    "glm-5.3-flash": {
+      "key": "glm-5.3-flash",
+      "display": "GLM-5.3 Flash",
+      "measurement_method": "raw_content_tokens",
+      "status": "MEASURED",
+      "repo_id": "zai-org/GLM-5.3-Flash",
+      "revision": "46a050bec13002ad29ee795c16e61cf4fa3c4a9c",
+      "adapter": "tokenizers",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "19e773648cb4e65de8660ea6365e10acca112d42a854923df93db4a6f333a82d",
+          "bytes": 20217442
+        },
+        "tokenizer_config.json": {
+          "sha256": "98b1271574f41abf89427ae2dda030d94dc9478f0edc5a8bd240db213c6fd5fc",
+          "bytes": 761
+        }
+      },
+      "source_note": "Released tokenizer.json (byte-level BPE, 154,820 base tokens, ignore_merges=true; no normalizer; ByteLevel post-processor, no template). Chat markers such as [gMASK]<sop> and <|user|> come only from chat_template.jinja, which is not applied. Note: like the official encode, the runtime maps literal control strings in the text (e.g. [gMASK], <|user|>) to control ids even without add_special_tokens; ATTI refuses such content rather than counting it. None of the 200 corpus texts contains one."
+    },
+    "kimi-k3.1-pro": {
+      "key": "kimi-k3.1-pro",
+      "display": "Kimi K3.1 Pro",
+      "measurement_method": "raw_content_tokens",
+      "status": "MEASURED",
+      "repo_id": "moonshotai/Kimi-K3.1-Pro",
+      "revision": "d9e99b0792a5e93b78ea9bea62a68167e36ddd9e",
+      "adapter": "kimi_tiktoken",
+      "assets": {
+        "tiktoken.model": {
+          "sha256": "b6c497a7469b33ced9c38afb1ad6e47f03f5e5dc05f15930799210ec050c5103",
+          "bytes": 2795286
+        },
+        "tokenizer_config.json": {
+          "sha256": "9fc322181b8ec44236e148916aea4b6c2467b66ded7bfaff0efe623ad750b852",
+          "bytes": 3448
+        }
+      },
+      "source_note": "tiktoken.model shipped in the K3.1 Pro repository itself (no other checkpoint's vocabulary is used). Pre-tokenization regex, the 400,000/25,000-character split rule and the 256 reserved special ids are reproduced from this revision's tokenization_kimi.py (SHA-256 204ee39fbf13a6d6608b0d3ca1b4b04a14ac5f0a062a7fdee02e61f5d936f9c6). encoding_k3.py encodes message text with allow_special=False, i.e. disallowed_special=(); counts here use the same call. Token-for-token identity with the official TikTokenTokenizer was checked on all 200 corpus texts."
+    },
+    "claude-opus-5-5": {
+      "key": "claude-opus-5-5",
+      "display": "Claude Opus 5.5",
+      "measurement_method": "api_input_tokens",
+      "status": "MEASURED",
+      "provider": "anthropic",
+      "api_model": "claude-opus-5-5",
+      "endpoint": "https://api.anthropic.com/v1/messages/count_tokens",
+      "docs": "https://platform.claude.com/docs/en/build-with-claude/token-counting",
+      "credential_env_var": "ANTHROPIC_API_KEY",
+      "request_shape": {
+        "model": "claude-opus-5-5",
+        "messages": [
+          {
+            "role": "user",
+            "content": "<article body>"
+          }
+        ]
+      },
+      "access_check": {
+        "text": "Hello",
+        "input_tokens": 11
+      },
+      "framing_probe": {
+        "text": "a",
+        "input_tokens": 9,
+        "note": "recorded only; never subtracted from article counts"
+      },
+      "cache_evidence": {
+        "validation": "every cache record checked against model, endpoint, request shape, date and Anthropic API version; article counts reproduce the pinned anchor",
+        "anchor": {
+          "articles_sha256": "e838b01b436a4380272b8a70c6bcbe364787a0619042042f188fa583ffc6b7a9",
+          "texts": 200,
+          "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"
+        },
+        "provenance_limitations": [
+          "cache records predate cache schema 2: provider, text-identity, adapter-version and count-field fields were not recorded at measurement time and are not reconstructed; the records are trusted only because their article counts reproduce the anchor above"
+        ]
+      }
+    },
+    "gpt-6.2-sol": {
+      "key": "gpt-6.2-sol",
+      "display": "GPT-6.2 Sol",
+      "measurement_method": "api_input_tokens",
+      "status": "MEASURED",
+      "provider": "openai",
+      "api_model": "gpt-6.2-sol",
+      "endpoint": "https://api.openai.com/v1/responses/input_tokens",
+      "docs": "https://developers.openai.com/api/reference/resources/responses/subresources/input_tokens",
+      "credential_env_var": "OPENAI_API_KEY",
+      "request_shape": {
+        "model": "gpt-6.2-sol",
+        "input": [
+          {
+            "role": "user",
+            "content": "<article body>"
+          }
+        ]
+      },
+      "access_check": {
+        "text": "Hello",
+        "input_tokens": 7
+      },
+      "framing_probe": {
+        "text": "a",
+        "input_tokens": 7,
+        "note": "recorded only; never subtracted from article counts"
+      },
+      "cache_evidence": {
+        "validation": "every cache record checked against model, endpoint, request shape, date; article counts reproduce the pinned anchor",
+        "anchor": {
+          "articles_sha256": "79cf70ab77910c5374651d074a027295fc25a6d11c6fb62b9c7cecb6e49ff491",
+          "texts": 200,
+          "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"
+        },
+        "provenance_limitations": [
+          "cache records predate cache schema 2: provider, text-identity, adapter-version and count-field fields were not recorded at measurement time and are not reconstructed; the records are trusted only because their article counts reproduce the anchor above"
+        ]
+      }
+    }
+  }
+}

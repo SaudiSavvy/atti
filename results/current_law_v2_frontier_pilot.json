@@ -1,0 +1,278 @@
+{
+  "corpus": "current_law_v2",
+  "pilot_articles": [
+    "6",
+    "15",
+    "50",
+    "57",
+    "100",
+    "134",
+    "166",
+    "175",
+    "178",
+    "181"
+  ],
+  "selection": "token-blind: articles at the 10 Arabic-length decile midpoints",
+  "adapters": {
+    "deepseek-v4.1-flash-1017": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          92,
+          56
+        ],
+        "15": [
+          165,
+          127
+        ],
+        "50": [
+          42,
+          34
+        ],
+        "57": [
+          27,
+          25
+        ],
+        "100": [
+          100,
+          68
+        ],
+        "134": [
+          50,
+          48
+        ],
+        "166": [
+          76,
+          56
+        ],
+        "175": [
+          56,
+          40
+        ],
+        "178": [
+          237,
+          161
+        ],
+        "181": [
+          125,
+          103
+        ]
+      },
+      "error": null
+    },
+    "glm-5.3-flash": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          102,
+          56
+        ],
+        "15": [
+          171,
+          128
+        ],
+        "50": [
+          44,
+          34
+        ],
+        "57": [
+          28,
+          25
+        ],
+        "100": [
+          115,
+          68
+        ],
+        "134": [
+          63,
+          49
+        ],
+        "166": [
+          84,
+          56
+        ],
+        "175": [
+          67,
+          40
+        ],
+        "178": [
+          258,
+          164
+        ],
+        "181": [
+          139,
+          103
+        ]
+      },
+      "error": null
+    },
+    "kimi-k3.1-pro": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "no truncation/special ids; decode round-trip (local)"
+      },
+      "counts": {
+        "6": [
+          127,
+          56
+        ],
+        "15": [
+          205,
+          127
+        ],
+        "50": [
+          53,
+          34
+        ],
+        "57": [
+          35,
+          25
+        ],
+        "100": [
+          141,
+          68
+        ],
+        "134": [
+          80,
+          48
+        ],
+        "166": [
+          102,
+          56
+        ],
+        "175": [
+          72,
+          41
+        ],
+        "178": [
+          304,
+          162
+        ],
+        "181": [
+          162,
+          103
+        ]
+      },
+      "error": null
+    },
+    "claude-opus-5-5": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "strict response validation"
+      },
+      "counts": {
+        "6": [
+          174,
+          111
+        ],
+        "15": [
+          287,
+          192
+        ],
+        "50": [
+          87,
+          58
+        ],
+        "57": [
+          57,
+          44
+        ],
+        "100": [
+          205,
+          110
+        ],
+        "134": [
+          120,
+          88
+        ],
+        "166": [
+          147,
+          91
+        ],
+        "175": [
+          112,
+          72
+        ],
+        "178": [
+          398,
+          283
+        ],
+        "181": [
+          239,
+          162
+        ]
+      },
+      "error": null
+    },
+    "gpt-6.2-sol": {
+      "passed": true,
+      "checks": {
+        "arabic_and_english_counts_exist": true,
+        "repeat_counts_identical": true,
+        "repeats": 2,
+        "guards": "strict response validation"
+      },
+      "counts": {
+        "6": [
+          86,
+          62
+        ],
+        "15": [
+          145,
+          133
+        ],
+        "50": [
+          41,
+          40
+        ],
+        "57": [
+          27,
+          31
+        ],
+        "100": [
+          86,
+          74
+        ],
+        "134": [
+          49,
+          54
+        ],
+        "166": [
+          67,
+          62
+        ],
+        "175": [
+          54,
+          47
+        ],
+        "178": [
+          205,
+          168
+        ],
+        "181": [
+          125,
+          109
+        ]
+      },
+      "error": null
+    }
+  }
+}
