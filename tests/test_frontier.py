@@ -499,3 +499,18 @@ def test_corrupted_historical_cache_aborts_without_publishing(tmp_path, monkeypa
         F.run(root)
     for rel in F.OUTPUTS.values():
         assert (root / rel).read_bytes() == (ROOT / rel).read_bytes()  # nothing published
+
+
+def test_anchor_binds_offline_replay_even_for_schema2_records(tmp_path):
+    """Forged but well-formed schema-2 records cannot be replayed as the historical measurement."""
+    path = tmp_path / "c.json"
+    path.write_text(json.dumps({_sha("alpha"): F.new_record(F.CLAUDE, _sha("alpha"), 123456)}))
+    anchor = {"articles_sha256": F.counts_digest({(_sha("alpha"), 3)}), "texts": 1, "source": "t"}
+    offline = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor)
+    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):
+        offline.check_anchor(["alpha"])
+    live = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor)
+    assert live.anchor is None and live.check_anchor(["alpha"])["anchor"] is None  # new measurement, not anchored
+    path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 123456)}))
+    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):  # legacy records: anchored even when live
+        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor).check_anchor(["alpha"])

@@ -617,7 +617,12 @@ class CachedApiCounter:
 
     def __init__(self, spec: ApiSpec, cache: ApiCache, live: ApiCounter | None, anchor: dict | None = None):
         self.spec, self.cache, self.live = spec, cache, live
-        self.anchor = anchor if anchor is not None else HISTORICAL_API_ANCHORS.get(spec.key)
+        known = anchor if anchor is not None else HISTORICAL_API_ANCHORS.get(spec.key)
+        legacy = any(not (isinstance(r, dict) and r.get("schema") == CACHE_SCHEMA) for r in cache.data.values())
+        # The anchor binds any cache holding legacy records and every offline replay (which claims to
+        # reproduce the historical measurement). A live re-measurement writing schema-2 records is
+        # validated record by record and reports no anchor.
+        self.anchor = known if known is not None and (legacy or live is None) else None
         errs = [x for sha, rec in cache.data.items() for x in validate_record(spec, sha, rec, self.anchor is not None)]
         if errs:
             raise CacheIntegrityError(f"{spec.key} cache rejected ({len(errs)} problems): " + "; ".join(errs[:5]))
