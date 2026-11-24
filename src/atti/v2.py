@@ -528,6 +528,31 @@ def entry_id(key: str) -> str:
     return f"KSA-LL-v2-{key.zfill(6) if not key.endswith('bis') else key[:-3].zfill(3) + 'bis'}"
 
 
+# Independent anchor for the frozen corpus: SHA-256 over the ordered "key ar_sha256 en_sha256" lines of
+# the 100 pairs measured since the corpus freeze (also pinned in tests/current_law_v2_pairs_frozen.json). It does
+# not depend on the manifest, so a manifest edited consistently in several places is still rejected.
+FROZEN_PAIRS = 100
+FROZEN_PAIRS_SHA256 = "29a5bf02582f834817f9a094fa8ff73ea82b4a39b086e40e95752dfdf9ad4e13"
+
+
+def pairs_digest(triples) -> str:
+    return hashlib.sha256("".join(f"{k} {a} {e}\n" for k, a, e in triples).encode("utf-8")).hexdigest()
+
+
+def _get(obj, path: str, kind: type, errs: list[str]):
+    """Typed lookup along a dotted path; records a clear error instead of raising."""
+    cur = obj
+    for part in path.split("."):
+        if not isinstance(cur, dict):
+            errs.append(f"{path}: parent of {part!r} is not an object")
+            return None
+        cur = cur.get(part)
+    if not isinstance(cur, kind) or isinstance(cur, bool) and kind is not bool:
+        errs.append(f"{path}: missing or not {kind.__name__ if isinstance(kind, type) else kind}")
+        return None
+    return cur
+
+
 def validate_manifest(manifest) -> list[str]:
     """Structural checks that need no sources: a manifest failing any of them is never measured."""
     if not isinstance(manifest, dict):
@@ -538,9 +563,15 @@ def validate_manifest(manifest) -> list[str]:
     arts = manifest.get("articles")
     if not isinstance(arts, list) or not arts:
         return errs + ["article list is missing or empty"]
-    pdf_hash = (manifest.get("sources") or {}).get("ar_pdf", {}).get("sha256")
-    if not isinstance(pdf_hash, str) or not _HEX64.fullmatch(pdf_hash):
-        errs.append("sources.ar_pdf.sha256 missing or malformed")
+    if len(arts) != FROZEN_PAIRS:
+        errs.append(f"article list has {len(arts)} entries; the frozen corpus has exactly {FROZEN_PAIRS}")
+    pdf_hash = _get(manifest, "sources.ar_pdf.sha256", str, errs)
+    if pdf_hash is not None and not _HEX64.fullmatch(pdf_hash):
+        errs.append("sources.ar_pdf.sha256 malformed")
+    sel = _get(manifest, "selection", dict, errs) or {}
+    selected = _get(manifest, "selection.selected", list, errs) if sel else None
+    excluded = _get(manifest, "selection.excluded_after_review", dict, errs) if sel else None
+    cands = _get(manifest, "candidates", dict, errs)
     keys, ids = [], []
     for i, e in enumerate(arts):
         if not isinstance(e, dict):
@@ -569,17 +600,21 @@ def validate_manifest(manifest) -> list[str]:
         dups = sorted({x for x in seq if seq.count(x) > 1})
         if dups:
             errs.append(f"duplicate article {name}s: {dups}")
-    sel = manifest.get("selection") or {}
-    if sel.get("selected") != keys:
+    if selected is not None and selected != keys:
         errs.append("article list does not match selection.selected (order and membership)")
-    excluded = set(sel.get("excluded_after_review") or {})
-    if excluded & set(keys):
-        errs.append(f"articles excluded after review are listed: {sorted(excluded & set(keys))}")
-    cands = manifest.get("candidates") or {}
-    for e in arts:
+    if excluded is not None and set(excluded) & set(keys):
+        errs.append(f"articles excluded after review are listed: {sorted(set(excluded) & set(keys))}")
+    triples = [(e["key"], e["ar_sha256"], e["en_sha256"]) for e in arts
+               if isinstance(e, dict) and all(isinstance(e.get(f), str) for f in ("key", "ar_sha256", "en_sha256"))]
+    if pairs_digest(triples) != FROZEN_PAIRS_SHA256:
+        errs.append("ordered article identities (key, Arabic hash, English hash) differ from the frozen "
+                    "100-pair anchor")
+    for e in arts if cands is not None else []:
         if isinstance(e, dict) and isinstance(e.get("key"), str):
             c = cands.get(e["key"])
-            if not c or not c.get("eligible"):
+            if not isinstance(c, dict):
+                errs.append(f"{e['key']}: candidate record missing or not an object")
+            elif c.get("eligible") is not True:
                 errs.append(f"{e['key']}: not an eligible candidate in this manifest")
             elif c.get("part") != e.get("part"):
                 errs.append(f"{e['key']}: part {e.get('part')} disagrees with candidates ({c.get('part')})")
@@ -596,6 +631,9 @@ def verify(manifest: dict, raw: Path = RAW) -> list[Record]:
     if sha256_bytes(pdf.read_bytes()) != manifest["sources"]["ar_pdf"]["sha256"]:
         raise VerificationError("Arabic PDF differs from the pinned SHA-256")
     recs, _ = build_records(load(raw))
+    drawn = curated_selection(recs)["selected"]
+    if drawn != [e["key"] for e in manifest["articles"]]:
+        raise VerificationError("article list differs from the frozen draw recomputed from the sources")
     bad, out = [], []
     for e in manifest["articles"]:
         r = recs.get(e["key"])

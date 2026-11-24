@@ -101,8 +101,15 @@ def test_verify_rejects_metadata_inconsistent_with_sources():
         v2.verify(m)
 
 
+def test_text_hash_tampering_rejected_by_anchor():
+    m = mutated(lambda m: m["articles"][0].update(ar_sha256="0" * 64))
+    with pytest.raises(v2.VerificationError, match="frozen 100-pair anchor"):
+        v2.verify(m, NOWHERE)
+
+
 @pytest.mark.network
-def test_verify_rejects_text_hash_mismatch():
+def test_verify_rejects_text_hash_mismatch_at_source_layer(monkeypatch):
+    monkeypatch.setattr(v2, "validate_manifest", lambda m: [])  # isolate the source comparison
     m = mutated(lambda m: m["articles"][0].update(ar_sha256="0" * 64))
     with pytest.raises(v2.VerificationError, match="hash mismatch"):
         v2.verify(m)
@@ -179,3 +186,81 @@ def test_selection_reproduces_with_frozen_pool():
     recs, anomalies = v2.build_records(v2.load(ROOT / v2.RAW))
     assert v2.curated_selection(recs) == {k: MANIFEST["selection"][k] for k in v2.curated_selection(recs)}
     assert anomalies == MANIFEST["anomalies"]
+
+
+# ---------------------------------------------------------------- P1: coordinated edits and nested structure
+
+def _coordinated_delete(i=37):
+    def f(m):
+        k = m["articles"].pop(i)["key"]
+        m["selection"]["selected"].remove(k)
+    return f
+
+
+def _coordinated_reorder(m):
+    m["articles"][0], m["articles"][1] = m["articles"][1], m["articles"][0]
+    s = m["selection"]["selected"]
+    s[0], s[1] = s[1], s[0]
+
+
+def _coordinated_substitute(m):
+    # replace one pair with an eligible article outside the draw, consistently everywhere
+    old = m["articles"][0]
+    new = {**old, "key": "33", "id": v2.entry_id("33"), "part": m["candidates"]["33"]["part"],
+           "ar_sha256": "1" * 64, "en_sha256": "2" * 64}
+    m["articles"][0] = new
+    m["selection"]["selected"][0] = "33"
+
+
+def test_frozen_anchor_matches_pinned_pairs():
+    pinned = json.loads((ROOT / "tests" / "current_law_v2_pairs_frozen.json").read_text())
+    assert v2.pairs_digest(pinned) == v2.FROZEN_PAIRS_SHA256 and len(pinned) == v2.FROZEN_PAIRS == 100
+
+
+@pytest.mark.parametrize("edit", [_coordinated_delete(), _coordinated_delete(0), _coordinated_reorder,
+                                  _coordinated_substitute], ids=["delete-37", "delete-0", "reorder", "substitute"])
+def test_coordinated_manifest_edits_rejected(edit):
+    m = mutated(edit)
+    assert m["selection"]["selected"] == [a["key"] for a in m["articles"]]  # internally consistent
+    errs = v2.validate_manifest(m)
+    assert any("frozen" in e for e in errs), errs
+    with pytest.raises(v2.VerificationError, match="malformed manifest"):
+        v2.verify(m, NOWHERE)
+
+
+def test_coordinated_deletion_reports_count():
+    errs = v2.validate_manifest(mutated(_coordinated_delete()))
+    assert "article list has 99 entries; the frozen corpus has exactly 100" in errs
+
+
+@pytest.mark.network
+def test_recomputed_draw_rejects_coordinated_deletion_independently(monkeypatch):
+    """Second, source-based layer: even with structural validation bypassed, the draw recomputed from
+    the sources rejects a manifest whose article and selection lists were both reduced."""
+    monkeypatch.setattr(v2, "validate_manifest", lambda m: [])
+    with pytest.raises(v2.VerificationError, match="frozen draw"):
+        v2.verify(mutated(_coordinated_delete()))
+
+
+NESTED = {
+    "selection is a list": lambda m: m.__setitem__("selection", ["1"]),
+    "selection.selected is a dict": lambda m: m["selection"].__setitem__("selected", {}),
+    "excluded_after_review is a string": lambda m: m["selection"].__setitem__("excluded_after_review", "40"),
+    "sources is a string": lambda m: m.__setitem__("sources", "x"),
+    "sources.ar_pdf is a list": lambda m: m["sources"].__setitem__("ar_pdf", ["x"]),
+    "ar_pdf.sha256 is an int": lambda m: m["sources"]["ar_pdf"].__setitem__("sha256", 5),
+    "candidates is a list": lambda m: m.__setitem__("candidates", ["1"]),
+    "candidate entry is a string": lambda m: m["candidates"].__setitem__(m["articles"][0]["key"], "yes"),
+    "candidate eligible is a string": lambda m: m["candidates"][m["articles"][0]["key"]].__setitem__("eligible", "true"),
+    "article entry is a list": lambda m: m["articles"].__setitem__(0, ["1"]),
+    "selected contains a dict": lambda m: m["selection"]["selected"].__setitem__(0, {}),
+}
+
+
+@pytest.mark.parametrize("name", NESTED)
+def test_malformed_nested_structures_give_clear_errors(name):
+    m = mutated(NESTED[name])
+    errs = v2.validate_manifest(m)  # must not raise
+    assert errs and all(isinstance(e, str) and e for e in errs), name
+    with pytest.raises(v2.VerificationError, match="malformed manifest"):
+        v2.verify(m, NOWHERE)
