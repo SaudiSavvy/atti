@@ -149,6 +149,18 @@ Nothing is repaired. Of the 249 Arabic articles (245 plus 4 bis), 175 qualify. T
 - **Credentials:** keys are read from the environment only. API counts are cached write-once in git-ignored `data/api_cache/`; the cache holds counts, never keys.
 - **Missing values:** an adapter without credentials or access is reported BLOCKED, with no value.
 
+## Gemini 4 Neon (provider API count)
+
+`uv run atti gemini --pilot-only` runs the repeatability pilot: the same ten articles as the frontier pilot, each text counted twice, plus short-input observations. `uv run atti gemini` then measures all 100 pairs.
+
+- **Request:** Google's `POST https://generativelanguage.googleapis.com/v1beta/models/gemini-4-neon:countTokens` with one user message holding one text part, and no system instruction or tools: `{"contents": [{"role": "user", "parts": [{"text": ...}]}]}`.
+- **Credentials:** the key comes from `GEMINI_API_KEY` and is sent only in the `x-goog-api-key` header, so it never appears in a URL, log, cache or output.
+- **Method:** `api_input_tokens`. Google's `totalTokens` is recorded as reported, with no overhead subtracted. Short-input counts are recorded as observations only.
+- **Request handling:** strict response validation, at least 1 s between requests, and up to 6 retries with exponential backoff on 429, 5xx and transport errors. 401, 403 and 404 fail immediately.
+- **Cache and offline regeneration:** counts are cached write-once in git-ignored `data/api_cache/gemini-4-neon.json`, which holds no credentials. Without a key, the outputs regenerate byte for byte from that cache, and the recorded live pilot is kept.
+- **Isolation:** the command never calls the Anthropic or OpenAI APIs, and never writes the frontier or historical outputs.
+- **Outputs:** `results/current_law_v2_gemini*.{csv,json}`, `reports/current_law_v2_gemini.md` and `manifest/gemini_4_neon.json`.
+
 ## Human validation (expanded_v1)
 
 `expanded_v1` stays **provisional** until a human has recorded a decision for every pair. The validation material lives in three separate places:

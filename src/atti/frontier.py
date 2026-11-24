@@ -255,6 +255,8 @@ def request_shape(spec: ApiSpec) -> dict:
     """The exact JSON body sent, with the article text as a placeholder (no system, tools, instructions)."""
     if spec.provider == "anthropic":
         return {"model": spec.model, "messages": [{"role": "user", "content": "<article body>"}]}
+    if spec.provider == "google":
+        return {"contents": [{"role": "user", "parts": [{"text": "<article body>"}]}]}
     return {"model": spec.model, "input": [{"role": "user", "content": "<article body>"}]}
 
 
@@ -262,27 +264,55 @@ def _body(spec: ApiSpec, text: str) -> dict:
     if not text:
         raise ApiError("refusing to count an empty text")
     b = json.loads(json.dumps(request_shape(spec)))
-    (b["messages"] if spec.provider == "anthropic" else b["input"])[0]["content"] = text
+    if spec.provider == "google":
+        b["contents"][0]["parts"][0]["text"] = text
+    else:
+        (b["messages"] if spec.provider == "anthropic" else b["input"])[0]["content"] = text
     return b
 
 
 def _headers(spec: ApiSpec, key: str) -> dict:
     if spec.provider == "anthropic":
         return {"x-api-key": key, "anthropic-version": ANTHROPIC_VERSION, "content-type": "application/json"}
+    if spec.provider == "google":  # header, not ?key=, so the key never appears in a URL or request log
+        return {"x-goog-api-key": key, "Content-Type": "application/json"}
     return {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
 
 def parse_count(spec: ApiSpec, status: int, payload) -> int:
     """Validate a provider response strictly; anything unexpected is an error, never a zero."""
     if status != 200:
-        raise ApiError(f"{spec.provider}: HTTP {status}")
+        detail = ""
+        if isinstance(payload, dict) and isinstance(payload.get("error"), dict):
+            st = payload["error"].get("status")  # e.g. PERMISSION_DENIED; provider messages are not echoed
+            detail = f" ({st})" if isinstance(st, str) and st.isupper() else ""
+        raise ApiError(f"{spec.provider}: HTTP {status}{detail}")
     if not isinstance(payload, dict):
         raise ApiError(f"{spec.provider}: malformed response (not a JSON object)")
+    if spec.provider == "google":
+        return _parse_google(payload)
     if spec.provider == "openai" and payload.get("object") != "response.input_tokens":
         raise ApiError(f"{spec.provider}: unexpected object {payload.get('object')!r}")
     n = payload.get("input_tokens")
     if type(n) is not int or n <= 0:
         raise ApiError(f"{spec.provider}: missing or invalid input_tokens {n!r}")
+    return n
+
+
+def _parse_google(payload: dict) -> int:
+    n = payload.get("totalTokens")
+    if type(n) is not int or n <= 0:
+        raise ApiError(f"google: missing or invalid totalTokens {n!r}")
+    cached = payload.get("cachedContentTokenCount", 0)
+    if cached not in (0, None):
+        raise ApiError(f"google: unexpected cachedContentTokenCount {cached!r} (no cached content is sent)")
+    details = payload.get("promptTokensDetails")
+    if details is not None:
+        if not isinstance(details, list) or not all(isinstance(d, dict) for d in details):
+            raise ApiError("google: malformed promptTokensDetails")
+        mods = {d.get("modality") for d in details}
+        if mods - {"TEXT"}:
+            raise ApiError(f"google: non-text modalities reported for a text-only request: {sorted(map(str, mods))}")
     return n
 
 
@@ -293,7 +323,8 @@ class ApiCounter:
     RETRIES = 4
 
     def __init__(self, spec: ApiSpec, key: str | None = None, client=None,
-                 sleep: Callable[[float], None] = time.sleep, clock: Callable[[], float] = time.monotonic):
+                 sleep: Callable[[float], None] = time.sleep, clock: Callable[[], float] = time.monotonic,
+                 min_interval_s: float | None = None, retries: int | None = None):
         key = key if key is not None else os.environ.get(spec.env_var)
         if not key:
             raise ApiError(f"{spec.env_var} is not set")
@@ -303,6 +334,10 @@ class ApiCounter:
 
             client = httpx.Client(timeout=60.0)  # TLS verification stays on (httpx default)
         self._client, self._sleep, self._clock, self._last = client, sleep, clock, None
+        if min_interval_s is not None:
+            self.MIN_INTERVAL_S = min_interval_s
+        if retries is not None:
+            self.RETRIES = retries
         self.log: list[dict] = []  # status and attempt only; never headers or bodies
 
     def __repr__(self):  # never expose the key

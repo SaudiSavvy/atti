@@ -239,6 +239,31 @@ def cmd_frontier(args) -> int:
     return 0
 
 
+EXIT_BLOCKED = 4
+
+
+def cmd_gemini(args) -> int:
+    from atti import frontier, gemini, sources, v2
+
+    try:
+        st = gemini.run(_root(), pilot_only=args.pilot_only)
+    except gemini.GeminiBlocked as exc:
+        print(f"Gemini 4 Neon: BLOCKED ({exc})", file=sys.stderr)
+        return EXIT_BLOCKED
+    except sources.NetworkError as exc:
+        return _network_error(exc)
+    except v2.VerificationError as exc:
+        print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    except frontier.ApiError as exc:
+        print(f"Gemini 4 Neon: API ERROR ({exc}); nothing written for the failed step", file=sys.stderr)
+        return EXIT_NETWORK
+    print(f"Gemini 4 Neon: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))
+    written = [p for k, p in gemini.OUTPUTS.items() if (_root() / p).exists()]
+    print("wrote/kept " + ", ".join(map(str, written)))
+    return 0 if st["status"] in ("VALIDATED", "MEASURED") else EXIT_BLOCKED
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="atti", description="Arabic Token Tax Index")
     sub = p.add_subparsers(dest="command", required=True)
@@ -281,6 +306,11 @@ def main(argv: list[str] | None = None) -> int:
                         "pairs (tokenizer assets only; API adapters need ANTHROPIC_API_KEY / OPENAI_API_KEY)")
     fr.add_argument("--pilot-only", action="store_true", help="run the 10-pair pilot only")
     fr.set_defaults(func=cmd_frontier)
+    gm = sub.add_parser("gemini", help="pilot and measure Gemini 4 Neon (Google countTokens) on the 100 "
+                        "current_law_v2 pairs; needs GEMINI_API_KEY unless counts are cached; never calls "
+                        "the Anthropic or OpenAI APIs")
+    gm.add_argument("--pilot-only", action="store_true", help="run the 10-pair repeatability pilot only")
+    gm.set_defaults(func=cmd_gemini)
     args = p.parse_args(argv)
     return args.func(args)
 
