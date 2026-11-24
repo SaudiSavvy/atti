@@ -42,3 +42,5 @@ These are tokenizer measurements of input text. They do not measure inference sp
 - One law, one document type, one translation; the English is the ministry's published translation.
 - No statistical significance is claimed for differences between models.
 - Common article set across all reported models: True.
+- Claude Opus 5.5: API counts are replayed from a local cache whose 200 article counts reproduce an anchor pinned from results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4. Its records predate cache schema 2, so provider, text-identity, adapter-version and count-field metadata were never recorded; they are not reconstructed.
+- GPT-6.2 Sol: API counts are replayed from a local cache whose 200 article counts reproduce an anchor pinned from results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4. Its records predate cache schema 2, so provider, text-identity, adapter-version and count-field metadata were never recorded; they are not reconstructed.

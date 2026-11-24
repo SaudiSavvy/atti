@@ -226,6 +226,9 @@ def cmd_frontier(args) -> int:
 
     try:
         status = frontier.run(_root(), pilot_only=args.pilot_only)
+    except frontier.CacheIntegrityError as exc:
+        print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
+        return EXIT_VERIFICATION
     except sources.NetworkError as exc:
         return _network_error(exc)
     except v2.VerificationError as exc:

@@ -121,6 +121,17 @@
         "text": "a",
         "input_tokens": 9,
         "note": "recorded only; never subtracted from article counts"
+      },
+      "cache_evidence": {
+        "validation": "every cache record checked against model, endpoint, request shape, date and Anthropic API version; article counts reproduce the pinned anchor",
+        "anchor": {
+          "articles_sha256": "e838b01b436a4380272b8a70c6bcbe364787a0619042042f188fa583ffc6b7a9",
+          "texts": 200,
+          "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"
+        },
+        "provenance_limitations": [
+          "cache records predate cache schema 2: provider, text-identity, adapter-version and count-field fields were not recorded at measurement time and are not reconstructed; the records are trusted only because their article counts reproduce the anchor above"
+        ]
       }
     },
     "gpt-6.2-sol": {
@@ -150,6 +161,17 @@
         "text": "a",
         "input_tokens": 7,
         "note": "recorded only; never subtracted from article counts"
+      },
+      "cache_evidence": {
+        "validation": "every cache record checked against model, endpoint, request shape, date; article counts reproduce the pinned anchor",
+        "anchor": {
+          "articles_sha256": "79cf70ab77910c5374651d074a027295fc25a6d11c6fb62b9c7cecb6e49ff491",
+          "texts": 200,
+          "source": "results/current_law_v2_frontier.csv sha256:d1c06e8c7d2b5c4cb415da65a1cc153475142cb878e92e7b69e3b392efbe3db4"
+        },
+        "provenance_limitations": [
+          "cache records predate cache schema 2: provider, text-identity, adapter-version and count-field fields were not recorded at measurement time and are not reconstructed; the records are trusted only because their article counts reproduce the anchor above"
+        ]
       }
     }
   }
