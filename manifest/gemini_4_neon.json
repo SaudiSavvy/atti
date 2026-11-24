@@ -1,0 +1,80 @@
+{
+  "key": "gemini-4-neon",
+  "display": "Gemini 4 Neon",
+  "provider": "google",
+  "api_model": "gemini-4-neon",
+  "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-4-neon:countTokens",
+  "docs": "https://aistudio.google.com/api-reference/tokens/count-tokens",
+  "http_method": "POST",
+  "auth": "x-goog-api-key header (value from GEMINI_API_KEY; never stored)",
+  "credential_env_var": "GEMINI_API_KEY",
+  "request_shape": {
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": "<article body>"
+          }
+        ]
+      }
+    ]
+  },
+  "measurement_method": "api_input_tokens",
+  "count_field": "totalTokens",
+  "rate_limit": {
+    "min_interval_s": 1.0,
+    "retries": 6,
+    "backoff": "Retry-After if given, else 2**attempt s; on 429, 5xx, transport errors"
+  },
+  "adapter_version": "1.0",
+  "status": "MEASURED",
+  "framing_observations": {
+    "inputs": [
+      {
+        "text": "a",
+        "chars": 1,
+        "total_tokens": [
+          35,
+          35
+        ]
+      },
+      {
+        "text": "a a",
+        "chars": 3,
+        "total_tokens": [
+          36,
+          36
+        ]
+      },
+      {
+        "text": "Hello",
+        "chars": 5,
+        "total_tokens": [
+          35,
+          35
+        ]
+      },
+      {
+        "text": "مرحبا",
+        "chars": 5,
+        "total_tokens": [
+          36,
+          36
+        ]
+      },
+      {
+        "text": "مرحبا بالعالم",
+        "chars": 13,
+        "total_tokens": [
+          38,
+          38
+        ]
+      }
+    ],
+    "note": "Short-input counts are reported as observed. A non-zero count for a one-character input is consistent with request framing, but its size is not assumed constant across inputs and nothing is subtracted from article counts."
+  },
+  "measured_on": [
+    "2026-11-24"
+  ]
+}
