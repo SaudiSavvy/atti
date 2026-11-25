@@ -91,3 +91,7 @@ The project started with a 10-article pilot and a 30-article `expanded_v1`. Both
 - **API counts have weaker provenance.** The committed Claude, GPT and Gemini counts predate the current cache format. They are replayed from a cache whose counts must reproduce the committed CSVs, but provider, adapter-version and text-identity metadata were never recorded for them and are not reconstructed.
 - **API counts are a snapshot.** Hosted tokenizers can change without a version change. The Gemini counts are dated 2026-11-24; no date was recorded for the Claude and GPT counts.
 - **Narrow scope.** One law, one document type, and one translation. The English is the ministry's published translation, whose official status is not stated. No statistical significance is claimed for differences between models.
+
+## License
+
+The code is released under the [MIT License](LICENSE). It covers this project's own code, documentation, token counts and derived results. It does not cover the Saudi legal texts, which belong to their publishers and are never redistributed here, or third-party tokenizer files and model weights, which keep their own licenses.
