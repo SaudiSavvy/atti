@@ -131,13 +131,13 @@ ANTHROPIC_VERSION = "2026-10-21"
 
 # ----------------------------------------------------------------------------- local adapters
 
-def fetch_assets(spec: LocalSpec, cache_dir: Path) -> dict[str, Path]:
+def fetch_assets(spec: LocalSpec, cache_dir: Path, allowlist=ASSET_ALLOWLIST) -> dict[str, Path]:
     """Download allow-listed tokenizer assets at the pinned revision and verify their SHA-256."""
     from huggingface_hub import hf_hub_download
 
     out = {}
     for name, digest in spec.assets.items():
-        if name not in ASSET_ALLOWLIST or name.endswith(WEIGHT_SUFFIXES):
+        if name not in allowlist or name.endswith(WEIGHT_SUFFIXES):
             raise AssetIntegrityError(f"{name} is not an allow-listed tokenizer asset")
         path = Path(hf_hub_download(spec.repo_id, name, revision=spec.revision,
                                     cache_dir=str(cache_dir), token=False))
