@@ -109,11 +109,15 @@
     "35",
     "108"
   ],
+  "separate_ranking_rule": "English tokens per 1,000 characters above 1.5x the median of all reported tokenizers",
   "models": {
     "humain-ai/ALLaM-7B-Instruct-preview": {
       "display": "ALLaM 7B Instruct (preview)",
       "model_key": "allam-7b-instruct-preview",
-      "country": "Saudi Arabia",
+      "model_country": "Saudi Arabia",
+      "tokenizer_name": "ALLaM tokenizer",
+      "tokenizer_developer": "NCAI/SDAIA",
+      "tokenizer_origin": "NCAI/SDAIA, released with the model",
       "source": "results/current_law_v2_regional.csv",
       "articles": 100,
       "measurement_method": "raw_content_tokens",
@@ -131,12 +135,16 @@
         "qwen": -40.716799305433845,
         "mistral": -73.64574859625327
       },
-      "en_tokens_per_1000_chars_vs_median": 1.0502816320923203
+      "en_tokens_per_1000_chars_vs_median": 1.0502816320923203,
+      "ranking": "primary"
     },
     "inception42/Jais-3-375B-A23B": {
       "display": "Jais 3 375B-A23B",
       "model_key": "jais-3-375b-a23b",
-      "country": "United Arab Emirates",
+      "model_country": "United Arab Emirates, with Cerebras Systems (United States)",
+      "tokenizer_name": "K2 Horizon tokenizer",
+      "tokenizer_developer": "IFM, MBZUAI",
+      "tokenizer_origin": "IFM (MBZUAI), from K2 Horizon; files byte-identical to IFM/K2-Horizon-375B-A23B",
       "source": "results/current_law_v2_regional.csv",
       "articles": 100,
       "measurement_method": "raw_content_tokens",
@@ -154,12 +162,16 @@
         "qwen": -37.91660579906073,
         "mistral": -72.40092708220737
       },
-      "en_tokens_per_1000_chars_vs_median": 0.9894216238494299
+      "en_tokens_per_1000_chars_vs_median": 0.9894216238494299,
+      "ranking": "primary"
     },
     "QCRI/Fanar-2-27B-Instruct": {
       "display": "Fanar 2 27B Instruct",
       "model_key": "fanar-2-27b-instruct",
-      "country": "Qatar",
+      "model_country": "Qatar",
+      "tokenizer_name": "Gemma 3 tokenizer",
+      "tokenizer_developer": "Google",
+      "tokenizer_origin": "Google (Gemma 3), unchanged",
       "source": "results/current_law_v2_regional.csv",
       "articles": 100,
       "measurement_method": "raw_content_tokens",
@@ -177,12 +189,16 @@
         "qwen": -10.336490316802106,
         "mistral": -60.14023115742688
       },
-      "en_tokens_per_1000_chars_vs_median": 1.0
+      "en_tokens_per_1000_chars_vs_median": 1.0,
+      "ranking": "primary"
     },
     "aubmindlab/aragpt2-mega": {
       "display": "AraGPT2 Mega",
       "model_key": "aragpt2-mega",
-      "country": "Lebanon",
+      "model_country": "Lebanon",
+      "tokenizer_name": "AraGPT2 tokenizer",
+      "tokenizer_developer": "American University of Beirut",
+      "tokenizer_origin": "American University of Beirut, trained for AraGPT2 (paper section 3.2)",
       "source": "results/current_law_v2_regional.csv",
       "articles": 100,
       "measurement_method": "raw_content_tokens",
@@ -201,7 +217,7 @@
         "mistral": -85.76716413541475
       },
       "en_tokens_per_1000_chars_vs_median": 1.8953152905618902,
-      "flag": "English costs 1.90x the median tokens per character, so its TTR below 1 reflects inefficient English, not efficient Arabic"
+      "ranking": "separate"
     }
   },
   "reference_models": {
@@ -297,6 +313,9 @@
       "display": "Jais 3 375B-A23B",
       "members": [
         "k2-horizon-375b-a23b"
+      ],
+      "scope": [
+        "identical tokenizer files"
       ]
     },
     {
@@ -304,6 +323,9 @@
       "display": "Qwen2.5-3B-Instruct",
       "members": [
         "acegpt-v2-32b"
+      ],
+      "scope": [
+        "same token ids on the 200 corpus texts only; tokenizer files differ"
       ]
     }
   ]

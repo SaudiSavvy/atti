@@ -1,15 +1,17 @@
-"""Arabic-focused and Arab-developed tokenizers: pins, provenance, equivalence, guards, reproducibility."""
+"""Arabic-focused and Arab-developed tokenizers: pins, provenance, equivalence, guards, failure handling,
+reproducibility."""
 
 import csv
 import json
 import re
 import shutil
 import statistics
-import struct
+from dataclasses import replace
 from fractions import Fraction
 
 import pytest
 
+from atti import cli
 from atti import frontier as F
 from atti import regional as R
 from atti import tokenization, v2
@@ -23,9 +25,13 @@ def test_specs_pinned_and_tokenizer_files_only():
                                         "fanar-2-27b-instruct", "aragpt2-mega", "acegpt-v2-32b", "arabiangpt-08b-v2"]
     for s in R.SPECS:
         assert re.fullmatch(r"[0-9a-f]{40}", s.revision) and s.method == F.RAW_CONTENT
-        assert s.assets and all(re.fullmatch(r"[0-9a-f]{64}", d) for d in s.assets.values())
-        assert set(s.assets) <= R.ASSET_ALLOWLIST and not any(n.endswith(F.WEIGHT_SUFFIXES) for n in s.assets)
-        assert s.country and s.developers and s.license and s.tokenizer_type
+        for assets in (s.assets, s.crosscheck_assets):
+            assert all(re.fullmatch(r"[0-9a-f]{64}", d) for d in assets.values())
+            assert set(assets) <= R.ASSET_ALLOWLIST and not any(n.endswith(F.WEIGHT_SUFFIXES) for n in assets)
+        assert s.assets and s.kind in ("sentencepiece", "tokenizers")
+        for f in ("model_country", "model_developers", "model_license", "tokenizer_name", "tokenizer_developer",
+                  "tokenizer_type", "tokenizer_origin", "tokenizer_terms"):
+            assert getattr(s, f), (s.key, f)
     assert R.ASSET_ALLOWLIST == {"tokenizer.json", "tokenizer.model", "tokenizer_config.json"}
 
 
@@ -41,8 +47,16 @@ def test_existing_pins_untouched_and_disjoint():
     assert not {s.key for s in F.ALL} & {s.key for s in R.SPECS}
 
 
-def test_jais3_and_k2_horizon_ship_the_same_files():
+def test_model_and_tokenizer_provenance_kept_apart():
     assert R.JAIS3.assets == R.K2_HORIZON.assets
+    assert R.JAIS3.tokenizer_name == R.K2_HORIZON.tokenizer_name == "K2 Horizon tokenizer"
+    assert "unchanged" in R.JAIS3.source_note and "K2 Horizon" in R.JAIS3.tokenizer_origin
+    assert (R.FANAR2.tokenizer_name, R.FANAR2.tokenizer_developer) == ("Gemma 3 tokenizer", "Google")
+    assert R.FANAR2.model_country == "Qatar" and "gemma" in R.FANAR2.tokenizer_terms
+    assert (R.ACEGPT2.tokenizer_name, R.ACEGPT2.tokenizer_developer) == ("Qwen1.5 tokenizer", "Alibaba Qwen team")
+    assert "tongyi-qianwen-research" in R.ACEGPT2.tokenizer_terms
+    assert R.ACEGPT2.model_license.startswith("apache-2.0")  # downstream declaration, recorded separately
+    assert "unresolved" in R.ALLAM.tokenizer_terms  # LICENSE file referenced by the card is absent
 
 
 def test_falcon_h1_arabic_not_substituted():
@@ -51,12 +65,18 @@ def test_falcon_h1_arabic_not_substituted():
 
 
 def test_outputs_separate_from_published_artifacts():
-    published = set(json.loads((ROOT / "tests" / "historical_sha256.json").read_text()))
-    published |= {str(p) for p in (*F.OUTPUTS.values(), *v2.OUTPUTS.values())}
     from atti import gemini
-    published |= {str(p) for p in gemini.OUTPUTS.values()}
+
+    published = set(json.loads((ROOT / "tests" / "historical_sha256.json").read_text()))
+    published |= {str(p) for p in (*F.OUTPUTS.values(), *v2.OUTPUTS.values(), *gemini.OUTPUTS.values())}
     assert not {str(p) for p in R.OUTPUTS.values()} & published
     assert all("regional" in str(p) for p in R.OUTPUTS.values())
+
+
+def test_custom_sentencepiece_reader_removed():
+    for name in ("parse_spm", "SentencePieceBpeCounter", "_fields", "_varint"):
+        assert not hasattr(R, name)
+    assert R.ALLAM.kind == "sentencepiece" and R.SENTENCEPIECE_VERSION == "0.2.1"
 
 
 def test_weight_and_unlisted_assets_refused(tmp_path, monkeypatch):
@@ -70,54 +90,12 @@ def test_weight_and_unlisted_assets_refused(tmp_path, monkeypatch):
         R.load(R.ALLAM, tmp_path)
 
 
-# ---------------------------------------------------------------- SentencePiece reader (synthetic model)
+def test_sentencepiece_runtime_version_is_pinned(tmp_path, monkeypatch):
+    import sentencepiece
 
-def _pb(num, wire, payload):
-    def varint(n):
-        out = bytearray()
-        while True:
-            b, n = n & 0x7F, n >> 7
-            out.append(b | (0x80 if n else 0))
-            if not n:
-                return bytes(out)
-    key = varint(num << 3 | wire)
-    if wire == 0:
-        return key + varint(payload)
-    if wire == 5:
-        return key + struct.pack("<f", payload)
-    return key + varint(len(payload)) + payload
-
-
-def _spm_model(tmp_path, **norm):
-    pieces = [("<unk>", 0.0, 2), ("<s>", 0.0, 3), ("</s>", 0.0, 3), ("1", 0.0, 4)]
-    pieces += [(f"<0x{b:02X}>", 0.0, 6) for b in range(256)]
-    pieces += [("▁", -1.0, 1), ("a", -2.0, 1), ("b", -3.0, 1), ("▁a", -4.0, 1), ("▁ab", -5.0, 1)]
-    body = b"".join(_pb(1, 2, _pb(1, 2, p.encode()) + _pb(2, 5, s) + _pb(3, 0, t)) for p, s, t in pieces)
-    body += _pb(2, 2, _pb(3, 0, 2) + _pb(35, 0, 1) + _pb(40, 0, 0))
-    ns = {"name": "identity", "remove_extra_whitespaces": 0, **norm}
-    body += _pb(3, 2, _pb(1, 2, ns["name"].encode()) + _pb(4, 0, ns["remove_extra_whitespaces"]))
-    path = tmp_path / "tokenizer.model"
-    path.write_bytes(body)
-    return path
-
-
-def test_spm_reader_normalizes_once_and_splits_user_symbols(tmp_path):
-    c = R.SentencePieceBpeCounter(R.ALLAM, _spm_model(tmp_path))
-    piece = lambda text: [c.pieces[i] for i in c.encode(text)[0]]  # noqa: E731
-    assert piece("ab") == ["▁ab"]
-    assert piece("1 ab") == ["▁", "1", "▁ab"]  # dummy prefix before a leading user symbol
-    assert piece("a1 ab") == ["▁a", "1", "▁ab"]  # no second dummy prefix after a user symbol
-    assert piece("é") == ["▁", "<0xC3>", "<0xA9>"]  # byte fallback, never <unk>
-    assert c.encode("") == ([], [])
-    for t in ("1 ab", "a  b", " a", "é a1"):
-        assert c.decode(c.ids(t)) == t
-
-
-def test_spm_reader_refuses_unsupported_configuration(tmp_path):
-    with pytest.raises(F.AssetIntegrityError, match="unsupported SentencePiece"):
-        R.SentencePieceBpeCounter(R.ALLAM, _spm_model(tmp_path, name="nmt_nfkc"))
-    with pytest.raises(F.AssetIntegrityError, match="unsupported SentencePiece"):
-        R.SentencePieceBpeCounter(R.ALLAM, _spm_model(tmp_path, remove_extra_whitespaces=1))
+    monkeypatch.setattr(sentencepiece, "__version__", "0.2.0")
+    with pytest.raises(F.AssetIntegrityError, match="pinned 0.2.1"):
+        R.sentencepiece_processor(tmp_path / "tokenizer.model")
 
 
 def test_tokenizer_json_with_unknown_normalizer_refused(tmp_path):
@@ -125,6 +103,48 @@ def test_tokenizer_json_with_unknown_normalizer_refused(tmp_path):
     p.write_text(json.dumps({"normalizer": {"type": "Lowercase"}}))
     with pytest.raises(F.AssetIntegrityError, match="normalizer"):
         R.TokenizerJsonCounter(R.JAIS3, p)
+
+
+# ---------------------------------------------------------------- failure handling (no corpus needed)
+
+def _published_manifest(root, adapters):
+    (root / "manifest").mkdir(parents=True, exist_ok=True)
+    (root / R.OUTPUTS["manifest"]).write_text(json.dumps({"adapters": adapters}))
+
+
+def test_evidence_guard_protects_equivalence_and_exclusion(tmp_path):
+    old = {"k2": {"status": "EQUIVALENT", "equivalent_to": "jais", "checks": {"ids_sha256": "a" * 64}},
+           "ag": {"status": "EXCLUDED", "checks": {"failed_texts": 48, "failures": {"ar x": 48}}}}
+    _published_manifest(tmp_path, old)
+    R.protect_evidence(tmp_path, json.loads(json.dumps(old)))  # reproduced exactly: allowed
+    for change, msg in [
+        ({"k2": {**old["k2"], "status": "BLOCKED"}}, "would become BLOCKED"),
+        ({"k2": {**old["k2"], "equivalent_to": "qwen"}}, "equivalence would change"),
+        ({"k2": {**old["k2"], "checks": {"ids_sha256": "b" * 64}}}, "evidence would change"),
+        ({"ag": {**old["ag"], "checks": {"failed_texts": 0, "failures": {}}}}, "evidence would change"),
+        ({"k2": None}, "would be removed")]:
+        new = {**json.loads(json.dumps(old)), **change}
+        new = {k: v for k, v in new.items() if v is not None}
+        with pytest.raises(F.PublishedResultsError, match=msg):
+            R.protect_evidence(tmp_path, new)
+
+
+@pytest.mark.parametrize("exc,code,msg", [
+    (R.RegionalError("k2: AssetIntegrityError"), 2, "no output was written"),
+    (F.PublishedResultsError("k2: evidence would change"), 4, "nothing was written")])
+def test_cli_failed_verification_exits_nonzero(monkeypatch, capsys, exc, code, msg):
+    def fail(root):
+        raise exc
+    monkeypatch.setattr(R, "run", fail)
+    assert cli.main(["regional"]) == code
+    assert msg in capsys.readouterr().err
+
+
+def test_offline_cache_miss_is_described():
+    from huggingface_hub.errors import LocalEntryNotFoundError
+
+    msg = R._describe(LocalEntryNotFoundError("missing"))
+    assert "not in the local cache" in msg and "offline" in msg
 
 
 # ---------------------------------------------------------------- committed outputs
@@ -151,11 +171,15 @@ def test_statuses_and_no_values_for_unmeasured(outputs):
     assert summary["status"] == "PROVISIONAL" and fm["corpus_status"] == "provisional"
 
 
-def test_equivalence_groups(outputs):
+def test_equivalence_groups_and_scope(outputs):
     _, summary, fm = outputs
     groups = {g["representative"]: g["members"] for g in summary["equivalence_groups"]}
     assert groups == {"jais-3-375b-a23b": ["k2-horizon-375b-a23b"], "Qwen/Qwen2.5-3B-Instruct": ["acegpt-v2-32b"]}
     a = fm["adapters"]
+    assert a["k2-horizon-375b-a23b"]["equivalence"]["scope"] == "identical tokenizer files"
+    ace = a["acegpt-v2-32b"]["equivalence"]
+    assert ace["scope"].startswith("same token ids on the 200 corpus texts only")
+    assert ace["divergent_added_tokens"]["count"] > 0 and "<tool_call>" in ace["divergent_added_tokens"]["examples"]
     assert a["k2-horizon-375b-a23b"]["checks"]["ids_sha256"] == a["jais-3-375b-a23b"]["checks"]["ids_sha256"]
     assert a["acegpt-v2-32b"]["checks"]["ids_sha256"] == \
         summary["reference_models"]["Qwen/Qwen2.5-3B-Instruct"]["ids_sha256"]
@@ -164,12 +188,21 @@ def test_equivalence_groups(outputs):
     assert len(digests) == len(set(digests))  # every reported row is a distinct tokenizer
 
 
+def test_runtimes_and_crosscheck_recorded_from_execution(outputs):
+    _, _, fm = outputs
+    a = fm["adapters"]
+    assert a["allam-7b-instruct-preview"]["runtime"].startswith("sentencepiece 0.2.1 ")
+    assert a["jais-3-375b-a23b"]["runtime"].startswith("tokenizers 0.22.1 ")
+    c = a["fanar-2-27b-instruct"]["official_crosscheck"]
+    assert c["texts"] == c["identical_ids"] == 200 and "sentencepiece 0.2.1" in c["reference"]
+
+
 def test_exclusion_evidence(outputs):
     _, _, fm = outputs
     ex = fm["adapters"]["arabiangpt-08b-v2"]
     assert ex["checks"]["failed_texts"] == 48 and "unknown" in ex["reason"]
     assert "U+064B ARABIC FATHATAN" in ex["checks"]["unknown_token_characters"]
-    for k, a in fm["adapters"].items():
+    for a in fm["adapters"].values():
         if a["status"] in ("MEASURED", "EQUIVALENT"):
             assert a["checks"]["failed_texts"] == 0 and a["checks"]["texts"] == 200
 
@@ -192,6 +225,14 @@ def test_statistics_and_sensitivity_recompute_exactly(outputs):
         assert s["ttr_without_34_35_108"] == float(Fraction(sum(ar[i] for i in keep), sum(en[i] for i in keep)))
 
 
+def test_accepted_baseline_numbers(outputs):
+    """The independently reproduced audit baseline (totals per tokenizer) is unchanged."""
+    _, summary, _ = outputs
+    got = {s["model_key"]: (s["ar_tokens_total"], s["en_tokens_total"]) for s in summary["models"].values()}
+    assert got == {"allam-7b-instruct-preview": (6097, 7645), "jais-3-375b-a23b": (6015, 7202),
+                   "fanar-2-27b-instruct": (8780, 7279), "aragpt2-mega": (5942, 13796)}
+
+
 def test_reference_models_match_published_results(outputs):
     _, summary, _ = outputs
     published = json.loads((ROOT / F.OUTPUTS["summary"]).read_text())["models"]
@@ -200,7 +241,6 @@ def test_reference_models_match_published_results(outputs):
     for m, s in ref.items():
         for f in ("ar_tokens_total", "en_tokens_total", "ttr", "median_article_ratio"):
             assert s[f] == published[m][f]
-    # README sensitivity column (rounded to 3 places) is reproduced from the published rows
     readme = {"Qwen/Qwen2.5-3B-Instruct": 1.340, "mistralai/Mistral-7B-Instruct-v0.3": 3.022,
               "deepseek-ai/DeepSeek-V4.1-Flash-1017": 1.334, "zai-org/GLM-5.3-Flash": 1.454,
               "moonshotai/Kimi-K3.1-Pro": 1.730}
@@ -217,10 +257,14 @@ def test_report_regenerates_and_keeps_methods_apart(outputs):
     assert "gemini" not in rep.lower()
 
 
-def test_english_inefficiency_flagged(outputs):
+def test_aragpt2_reported_separately(outputs):
     _, summary, _ = outputs
-    flagged = {s["model_key"] for s in summary["models"].values() if s.get("flag")}
-    assert flagged == {"aragpt2-mega"}
+    assert {s["model_key"] for s in summary["models"].values() if s["ranking"] == "separate"} == {"aragpt2-mega"}
+    rep = (ROOT / R.OUTPUTS["report"]).read_text(encoding="utf-8")
+    ranking = rep.split("## Bilingual ranking")[1].split("## Arabic-focused result")[0]
+    separate = rep.split("## Arabic-focused result")[1].split("## Per-language")[0]
+    assert "AraGPT2" not in ranking and "5,942 | 13,796" in separate
+    assert "diacritics" in separate and "ArabertPreprocessor" in separate
 
 
 # ---------------------------------------------------------------- needs the pinned tokenizer files
@@ -229,13 +273,14 @@ REF = json.loads((ROOT / "tests" / "regional_reference_ids.json").read_text(enco
 
 
 @pytest.mark.network
-@pytest.mark.parametrize("spec", [R.ALLAM, R.FANAR2], ids=lambda s: s.key)
-def test_ids_match_official_sentencepiece(spec):
-    c = R.load(spec, ROOT / R.HF_CACHE)
-    for text, ref in zip(REF["samples"], REF["ids"][spec.key]):
-        got = c.encode(text)[0] if isinstance(c, R.SentencePieceBpeCounter) else \
-            c.tok.encode(text, add_special_tokens=False).ids
-        assert got == ref, text
+def test_official_sentencepiece_reproduces_reference_ids():
+    c = R.load(R.ALLAM, ROOT / R.HF_CACHE)
+    assert isinstance(c, R.SentencePieceCounter)
+    for text, ref in zip(REF["samples"], REF["ids"]["allam-7b-instruct-preview"]):
+        assert c.sp.encode(text, out_type=int) == ref, text
+    fanar = R.load(R.FANAR2, ROOT / R.HF_CACHE)
+    for text, ref in zip(REF["samples"], REF["ids"]["fanar-2-27b-instruct"]):
+        assert fanar.tok.encode(text, add_special_tokens=False).ids == ref, text
 
 
 @pytest.mark.network
@@ -245,35 +290,102 @@ def test_rows_reproduce_byte_for_byte(outputs):
     records = v2.verify(m, ROOT / v2.RAW)
     for spec in R.SPECS:
         committed = [r for r in rows if r["model_key"] == spec.key]
-        if not committed:
-            continue
-        fresh = F.measure_rows(spec, R.load(spec, ROOT / R.HF_CACHE), records, m, committed[0]["measurement_meta"])
-        assert [{k: str(v) for k, v in r.items()} for r in fresh] == committed
+        if committed:
+            fresh = F.measure_rows(spec, R.load(spec, ROOT / R.HF_CACHE), records, m,
+                                   committed[0]["measurement_meta"])
+            assert [{k: str(v) for k, v in r.items()} for r in fresh] == committed
     assert F.weights_present(ROOT / R.HF_CACHE) == []
 
 
-def _sandbox(tmp_path):
+def _sandbox(tmp_path, link_regional_cache=True):
     for d in ("manifest", "results", "reports"):
         shutil.copytree(ROOT / d, tmp_path / d)
     (tmp_path / "data").mkdir()
-    for d in ("raw_v2", "hf", F.HF_CACHE.name, R.HF_CACHE.name):
+    for d in ("raw_v2", "hf", F.HF_CACHE.name) + ((R.HF_CACHE.name,) if link_regional_cache else ()):
         (tmp_path / "data" / d).symlink_to(ROOT / "data" / d)
     return tmp_path
+
+
+def _published(root):
+    return {p: (root / p).read_bytes() for p in R.OUTPUTS.values()}
 
 
 @pytest.mark.network
 def test_full_run_regenerates_every_regional_artifact_byte_for_byte(tmp_path):
     root = _sandbox(tmp_path)
     R.run(root)
-    for rel in R.OUTPUTS.values():
-        assert (root / rel).read_bytes() == (ROOT / rel).read_bytes(), rel
+    assert _published(root) == _published(ROOT)
     for d in ("manifest", "results", "reports"):  # nothing else touched
         for p in (ROOT / d).iterdir():
             assert (root / d / p.name).read_bytes() == p.read_bytes(), p
 
 
 @pytest.mark.network
-def test_run_refuses_to_change_published_rows(tmp_path):
+def test_integrity_failure_keeps_verified_outputs(tmp_path, monkeypatch):
+    """K2 Horizon tokenizer_config.json hash mismatch: abort, keep its published EQUIVALENT record."""
+    root = _sandbox(tmp_path)
+    bad = replace(R.K2_HORIZON, assets={**R.K2_HORIZON.assets, "tokenizer_config.json": "0" * 64})
+    monkeypatch.setattr(R, "SPECS", tuple(bad if s.key == bad.key else s for s in R.SPECS))
+    before = _published(root)
+    with pytest.raises(R.RegionalError, match="k2-horizon-375b-a23b: AssetIntegrityError"):
+        R.run(root)
+    assert _published(root) == before
+
+
+@pytest.mark.network
+def test_offline_cache_miss_keeps_verified_outputs(tmp_path, monkeypatch):
+    import huggingface_hub
+    from huggingface_hub.errors import LocalEntryNotFoundError
+
+    root = _sandbox(tmp_path, link_regional_cache=False)
+    (root / R.HF_CACHE).mkdir()  # empty regional cache
+    real = huggingface_hub.hf_hub_download
+    regional_repos = {s.repo_id for s in R.SPECS}
+
+    def offline(repo_id, *a, **k):
+        if repo_id in regional_repos:
+            raise LocalEntryNotFoundError("offline mode is enabled and the file is not cached")
+        return real(repo_id, *a, **k)
+
+    monkeypatch.setattr(huggingface_hub, "hf_hub_download", offline)
+    before = _published(root)
+    with pytest.raises(R.RegionalError, match="not in the local cache"):
+        R.run(root)
+    assert _published(root) == before
+
+
+@pytest.mark.network
+def test_unexpected_tokenizer_failure_keeps_verified_outputs(tmp_path, monkeypatch):
+    root = _sandbox(tmp_path)
+    real = R.check
+
+    def boom(counter, records):
+        if counter.spec.key == "arabiangpt-08b-v2":
+            raise RuntimeError("tokenizer crashed")
+        return real(counter, records)
+
+    monkeypatch.setattr(R, "check", boom)
+    before = _published(root)
+    with pytest.raises(R.RegionalError, match="arabiangpt-08b-v2: RuntimeError"):
+        R.run(root)
+    assert _published(root) == before
+
+
+@pytest.mark.network
+def test_changed_evidence_is_refused(tmp_path):
+    root = _sandbox(tmp_path)
+    path = root / R.OUTPUTS["manifest"]
+    doc = json.loads(path.read_text())
+    doc["adapters"]["acegpt-v2-32b"]["equivalent_to"] = "jais-3-375b-a23b"
+    path.write_text(F.dumps(doc))
+    before = _published(root)
+    with pytest.raises(F.PublishedResultsError, match="acegpt-v2-32b: its published equivalence would change"):
+        R.run(root)
+    assert _published(root) == before
+
+
+@pytest.mark.network
+def test_changed_published_rows_are_refused(tmp_path):
     root = _sandbox(tmp_path)
     path = root / R.OUTPUTS["csv"]
     lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
@@ -281,7 +393,7 @@ def test_run_refuses_to_change_published_rows(tmp_path):
     col = head.strip().split(",").index("ar_tokens")
     first[col] = str(int(first[col]) + 1)
     path.write_text(head + ",".join(first) + "".join(lines[2:]), encoding="utf-8")
-    before = {p: (root / p).read_bytes() for p in R.OUTPUTS.values()}
+    before = _published(root)
     with pytest.raises(F.PublishedResultsError, match="would change"):
         R.run(root)
-    assert {p: (root / p).read_bytes() for p in R.OUTPUTS.values()} == before
+    assert _published(root) == before

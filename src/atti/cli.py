@@ -255,7 +255,9 @@ def cmd_regional(args) -> int:
     try:
         status = regional.run(_root())
     except frontier.PublishedResultsError as exc:
-        return _refused(exc)
+        print(f"REFUSED: {exc}. Published regional results were left unchanged; nothing was written.",
+              file=sys.stderr)
+        return EXIT_BLOCKED
     except sources.NetworkError as exc:
         return _network_error(exc)
     except (v2.VerificationError, frontier.FrontierError, tokenization.TokenizerIntegrityError) as exc:
