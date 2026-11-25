@@ -229,7 +229,7 @@ def test_statistics_and_sensitivity_recompute_exactly(outputs):
 
 
 def test_accepted_baseline_numbers(outputs):
-    """The independently reproduced audit baseline (totals per tokenizer) is unchanged."""
+    """The verified per-tokenizer totals are unchanged."""
     _, summary, _ = outputs
     got = {s["model_key"]: (s["ar_tokens_total"], s["en_tokens_total"]) for s in summary["models"].values()}
     assert got == {"allam-7b-instruct-preview": (6097, 7645), "jais-3-375b-a23b": (6015, 7202),

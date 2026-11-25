@@ -16,6 +16,8 @@ so 1.0 means parity and 2.0 means Arabic costs twice as many tokens. The corpus 
 
 Eight models on the same 100 pairs (`current_law_v2`). The last column drops Articles 34, 35 and 108, whose published Arabic and English differ in meaning or numbering (see [Limitations](#limitations)).
 
+> **New in v0.2.0:** two tokenizers developed in the region make this Arabic *cheaper* to tokenize than its English translation. ALLaM's tokenizer (Saudi Arabia) has a token tax of **−20.2%**, and the K2 Horizon tokenizer, also used by Jais 3 (UAE), **−16.5%**. See [Arabic-focused and Arab-developed tokenizers](#arabic-focused-and-arab-developed-tokenizers).
+
 **Tokenizer counts** (`raw_content_tokens`): the tokenizer run locally on the article text only, with no special tokens or chat template.
 
 | Model | Σ AR | Σ EN | TTR | Median per article | TTR without 34, 35, 108 |
@@ -42,7 +44,29 @@ A few observations, without claiming more than one law can support:
 - Dropping the three pairs with known alignment problems moves no TTR by more than 0.005, and leaves both orderings unchanged.
 - These are input-token counts. They say nothing about model quality, latency, output length or pricing.
 
-Per-article rows: [`results/current_law_v2.csv`](results/current_law_v2.csv) (Qwen, Mistral), [`results/current_law_v2_frontier.csv`](results/current_law_v2_frontier.csv) (DeepSeek, GLM, Kimi, Claude, GPT) and [`results/current_law_v2_gemini.csv`](results/current_law_v2_gemini.csv). Every aggregate above can be recomputed from those three files. Generated reports: [`current_law_v2`](reports/current_law_v2.md), [`frontier`](reports/current_law_v2_frontier.md), [`gemini`](reports/current_law_v2_gemini.md).
+### Arabic-focused and Arab-developed tokenizers
+
+Seven more released tokenizers were checked on the same 100 pairs with the same method (`raw_content_tokens`), using `atti regional`. Every count passed the same guards: no truncation, no special or unknown tokens, and an exact round-trip. Token tax = (TTR − 1) × 100, so a negative tax means the Arabic text needs fewer tokens than its English translation. Each row below is one distinct tokenizer. Tokenizer and model developers are listed separately because they are not always the same.
+
+| Tokenizer (developer) | Shipped by (model developer) | Σ AR | Σ EN | TTR | Token tax | TTR without 34, 35, 108 |
+|---|---|---:|---:|---:|---:|---:|
+| ALLaM (NCAI/SDAIA, Saudi Arabia) | ALLaM 7B Instruct preview (NCAI/SDAIA) | 6,097 | 7,645 | **0.798** | **−20.2%** | 0.795 |
+| K2 Horizon (IFM, MBZUAI, UAE) | K2 Horizon 375B-A23B (IFM); Jais 3 375B-A23B (Jais Team: IFM/MBZUAI, Cerebras Systems, Inception42) | 6,015 | 7,202 | **0.835** | **−16.5%** | 0.832 |
+| Gemma 3 (Google) | Fanar 2 27B Instruct (QCRI, Hamad Bin Khalifa University, Qatar) | 8,780 | 7,279 | **1.206** | +20.6% | 1.203 |
+| DeepSeek V4.1 Flash 1017 | — | 9,693 | 7,248 | 1.337 | +33.7% | 1.334 |
+| Qwen2.5-3B-Instruct | AceGPT v2 32B (KAUST and King Abdulaziz University, with CUHK-Shenzhen and SRIBD) ships the Qwen1.5 tokenizer, which gives the same ids on this corpus | 9,811 | 7,293 | 1.345 | +34.5% | 1.340 |
+| GLM-5.3 Flash | — | 10,609 | 7,277 | 1.458 | +45.8% | 1.454 |
+| Kimi K3.1 Pro | — | 12,564 | 7,251 | 1.733 | +73.3% | 1.730 |
+| Mistral-7B-Instruct-v0.3 | — | 23,970 | 7,921 | 3.026 | +202.6% | 3.022 |
+
+- **Arabic is where the savings are.** ALLaM's and K2 Horizon's tokenizers use about 38% fewer Arabic tokens than Qwen2.5's, while their English counts (7,645 and 7,202) stay in the range of the other bilingual tokenizers (7,202–7,921).
+- **Tokenizer origin differs from model origin.** Fanar 2 uses Google's Gemma 3 tokenizer unchanged, and AceGPT v2 uses Qwen1.5's. Jais 3 keeps K2 Horizon's tokenizer unchanged, so the two models share one row. AceGPT's and Qwen2.5's tokenizers give identical ids on all 200 texts but are not identical in general; 19 added-token strings encode differently.
+- **AraGPT2 Mega (American University of Beirut, Lebanon) is reported separately:** 5,942 Arabic and 13,796 English tokens (TTR 0.431). It is an Arabic-only tokenizer. English costs it 1.9× the median tokens per character, so its low ratio comes from inefficient English, not efficient Arabic. It was trained on text with diacritics removed and punctuation padded, and its model card asks for the arabert preprocessor. ATTI applies neither, so its counts describe the text as published.
+- **Not measured:** ArabianGPT V2's tokenizer maps Arabic diacritics to its unknown token in 48 texts, so it was excluded. Falcon-H1 Arabic has no public tokenizer, and the standard Falcon-H1 tokenizer was not substituted for it.
+
+These results are experimental and kept separate from the v0.1.0 results above. Full table, provenance, licenses and pinned revisions: [`reports/current_law_v2_regional.md`](reports/current_law_v2_regional.md) and `manifest/regional_tokenizers.json`.
+
+Per-article rows: [`results/current_law_v2.csv`](results/current_law_v2.csv) (Qwen, Mistral), [`results/current_law_v2_frontier.csv`](results/current_law_v2_frontier.csv) (DeepSeek, GLM, Kimi, Claude, GPT) [`results/current_law_v2_gemini.csv`](results/current_law_v2_gemini.csv) and [`results/current_law_v2_regional.csv`](results/current_law_v2_regional.csv). Every aggregate above can be recomputed from those four files. Generated reports: [`current_law_v2`](reports/current_law_v2.md), [`frontier`](reports/current_law_v2_frontier.md), [`gemini`](reports/current_law_v2_gemini.md), [`regional`](reports/current_law_v2_regional.md).
 
 ## How it works
 
@@ -64,8 +88,11 @@ uv run pytest -m "not network" -q   # offline: check and recompute the committed
 uv run atti v2-fetch                # download the HRSD sources into data/ (polite, cached)
 uv run atti v2                      # rebuild the Qwen and Mistral results from the sources
 uv run pytest -q                    # everything, incl. re-tokenizing all 100 pairs with DeepSeek, GLM and Kimi
+uv run atti regional                # re-measure the Arabic-focused tokenizers (tokenizer files only)
 git status                          # nothing committed should have changed
 ```
+
+`atti regional` downloads only pinned tokenizer files (about 110 MB, never model weights) into `data/`. ALLaM is counted with the official `sentencepiece` 0.2.1 runtime, which `uv sync` installs from the `regional` dependency group; it is not a dependency of the `atti` package. The command writes only the `*_regional` files. If any pinned file cannot be verified or downloaded, it exits with code 2 and writes nothing. It also refuses, with exit code 4, any run that would change a published regional result.
 
 In a fresh clone the last test run reports 7 skipped tests. Those need the API count cache, which stays on the machine that measured them.
 

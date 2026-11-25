@@ -1,6 +1,6 @@
 [project]
 name = "atti"
-version = "0.1.0"
+version = "0.2.0"
 description = "Arabic Token Tax Index: Arabic/English token-count comparison on parallel Saudi legal texts"
 readme = "README.md"
 license = "MIT"
