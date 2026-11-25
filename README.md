@@ -1,5 +1,7 @@
 # ATTI: Arabic Token Tax Index
 
+[![CI](https://github.com/SaudiSavvy/atti/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SaudiSavvy/atti/actions/workflows/ci.yml)
+
 How many more tokens does it take to say the same thing in Arabic than in English?
 
 ATTI measures this on real parallel text: 100 articles of the current Saudi Labor Law, using the government-published Arabic and the ministry's published English translation. For each model, the **Token Tax Ratio** is

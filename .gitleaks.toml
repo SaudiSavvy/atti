@@ -1,0 +1,16 @@
+# Gitleaks configuration: the default rules, plus one narrow exception.
+#
+# The repository pins public tokenizer files by SHA-256 (src/atti/frontier.py and the
+# results/*_summary.json files). The generic-api-key rule reads those integrity hashes as secrets.
+# Only that rule is relaxed, and only when a tokenizer-file key holds exactly 64 lowercase hex digits.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "SHA-256 integrity pins of public tokenizer files"
+targetRules = ["generic-api-key"]
+regexTarget = "match"
+regexes = [
+  '''(?:tokenizer\.json|tokenizer_config\.json|tiktoken\.model|tokenizer_json_sha256)"\s*:\s*"[0-9a-f]{64}"''',
+]
