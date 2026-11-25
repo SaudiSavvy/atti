@@ -82,7 +82,7 @@ Deterministic and token-blind (token counts, ratios and English length are never
 - `manifest/current_law_v2_review.json` holds the AI pair review: statuses PROPOSED_PASS, NEEDS_REVIEW, FAIL, MISSING_SOURCE and VERSION_MISMATCH, with evidence, including a re-evaluation of v1's disputed Articles 45, 65, 108 and 134.
 - **Review exclusions.** A pair is excluded when the English adds, drops or changes a legal element (negation, condition, threshold, scope, sanction, legal basis) or reflects another legal version (`EXCLUDED_AFTER_REVIEW` in `src/atti/v2.py`). Each excluded pick is replaced by the next draw from the same Part and length stratum; no other selection moves. Six pairs were excluded (40, 63, 66, 81, 189, and the rejected replacement draw 76). Sources, short excerpts and findings: [`reports/current_law_v2_discrepancies.md`](../reports/current_law_v2_discrepancies.md).
 - **Retained with documented limitations.** Article 34 (direction of substitution reversed in the English), Article 35 ("and" vs "or"), and Article 108 (nested list labels make the English cross-reference misleading). The README reports results with and without these three.
-- `atti v2-manifest` refuses to rebuild the manifest once any human decision is recorded, because decisions are bound to the manifest hash. While the decision template is empty, it is re-bound to the new manifest.
+- `atti v2-manifest` refuses to rebuild the manifest once any human decision is recorded, because decisions are bound to the manifest hash. While the decision template is empty, the template is re-bound to the new manifest.
 - Human decisions go in `review/current_law_v2_human_decisions.json` (see [Human validation](#human-validation)).
 
 ### Comparison with the historical corpora
@@ -116,7 +116,7 @@ There are two measurement methods, and they are never ranked together.
 
 ### Arabic-focused and Arab-developed tokenizers (experimental)
 
-`atti regional` measures further tokenizers with the same `raw_content_tokens` method, on the same 100 pairs and texts, with the same whitespace normalization, metrics and special-token policy. Its outputs are separate (`results/current_law_v2_regional*`, `reports/current_law_v2_regional.md`, `manifest/regional_tokenizers.json`); every other result is only read.
+`atti regional` measures further tokenizers on the same 100 pairs and texts, with the same `raw_content_tokens` method, whitespace normalization, metrics and special-token policy. Its outputs are separate (`results/current_law_v2_regional*`, `reports/current_law_v2_regional.md`, `manifest/regional_tokenizers.json`); every other result is only read.
 
 - **Assets.** Only `tokenizer.json`, `tokenizer.model` and `tokenizer_config.json` are downloaded, anonymously, at pinned revisions, and each file's SHA-256 is checked before use. No weights are downloaded and no repository code is run.
 - **Guards.** Every text must pass the guards above, give identical ids when encoded twice, and decode back to itself. The only allowed differences are the tokenizer's own NFC/NFKC normalization and the GPT-2 prefix space. A tokenizer that fails on any text is **EXCLUDED**, and no count is published for it.
@@ -124,9 +124,9 @@ There are two measurement methods, and they are never ranked together.
 - **Availability.** A tokenizer that cannot be verified is **UNAVAILABLE**, and nothing is substituted for it.
 - **SentencePiece without `tokenizer.json`.** ALLaM is counted with the official `sentencepiece` runtime, pinned at 0.2.1 in the `regional` dependency group. That group is installed by `uv sync --locked` but is not a dependency of the package. ATTI's coverage, special-token and round-trip guards are applied to the official output. For Fanar 2, every run also encodes all 200 texts with the official runtime and the repository's own `tokenizer.model`, and records how many ids match the counted `tokenizer.json`. The manifest's runtime and cross-check fields are written from the run itself.
 - **Sensitivity and comparison.** TTR without Articles 34, 35 and 108 is computed from the rows for both the new and the existing tokenizers. The existing values are cross-checked against their published summaries.
-- **English efficiency.** A ratio can fall below 1 because English is tokenized poorly rather than Arabic well. A tokenizer whose English tokens per 1,000 characters exceed 1.5× the median is reported in a separate section, with its absolute counts, and is not ranked with the bilingual tokenizers. This applies to AraGPT2, whose tokenizer was trained on Arabic with diacritics removed and punctuation padded.
+- **English efficiency.** A low TTR may reflect efficient Arabic tokenization, inefficient English tokenization, or both. A tokenizer whose English tokens per 1,000 characters exceed 1.5× the median is reported separately with its absolute counts and is not ranked with the bilingual tokenizers. This applies to AraGPT2, an Arabic-only tokenizer trained on text with diacritics removed and punctuation padded. Its Arabic count is the lowest measured; its English count is the highest.
 - **Provenance.** Model developers and tokenizer origin are recorded separately, and so are the model release's license declaration and the upstream terms of an inherited tokenizer. Unresolved licensing evidence is stated as unresolved.
-- **Failures.** An integrity failure, a missing pinned file (for example, offline with an empty cache) or an unexpected tokenizer error stops the run before anything is written. The last verified outputs stay in place and the command exits with code 2. A run that would change a published status, equivalence or exclusion record, or a published row, is refused with exit code 4.
+- **Failures.** An integrity failure, a missing pinned file (for example, offline with an empty cache) or an unexpected tokenizer error stops the run before anything is written. The last verified outputs stay in place, and the command exits with code 2. A run that would change a published status, equivalence or exclusion record, or a published row, is refused with exit code 4.
 
 ### `api_input_tokens`: provider counting endpoints
 
@@ -229,7 +229,6 @@ Decisions are bound to the manifest's SHA-256. A REJECT does not remove an artic
 | `atti gemini [--pilot-only]` | Pilots, then measures, Gemini 4 Neon. Without a key or cache it writes nothing and exits with code 4 (BLOCKED). | `results/current_law_v2_gemini*`, `reports/current_law_v2_gemini.md`, `manifest/gemini_4_neon.json` |
 | `atti regional` | Measures the Arabic-focused and Arab-developed tokenizers; records EQUIVALENT, EXCLUDED and UNAVAILABLE tokenizers with evidence. Uses the same publish guard. | `results/current_law_v2_regional*`, `reports/current_law_v2_regional.md`, `manifest/regional_tokenizers.json` |
 
-**Published results are protected.** `atti frontier`, `atti gemini` and `atti regional` validate every row before writing (each model covers exactly the 100 corpus articles with positive counts and consistent ratios), then write the outputs. Nothing is written if validation fails. Valid outputs are replaced one file at a time, so an interruption between replacements, or two runs at once, could leave files from different runs. Complete-generation writes are deferred. They refuse, with exit code 4 and nothing written, any run that would remove or change a published model's rows, alter a recorded passing pilot, or turn a MEASURED adapter into anything else (`frontier.publish`, tested in `tests/test_publish.py`). Re-measuring from scratch is a deliberate step: remove the published files first. `atti pilot`, `atti expanded` and `atti v2` are deterministic and write only after the sources verify against the manifest hashes.
 | `atti v2-manifest` | Curation only: rebuilds the manifest from the cache and the AI review file. | `manifest/current_law_v2_manifest.json` |
 | `atti pilot` | Reproduces the pilot from `data/raw`, downloading a source only if missing. Checks every article against the manifest hashes, then counts tokens. | `results/pilot.csv`, `results/pilot_summary.json`, `reports/pilot.md` |
 | `atti expanded` | Same for the 30-article `expanded_v1` corpus; never touches pilot files. | `results/expanded_v1.csv`, `results/expanded_v1_summary.json`, `reports/expanded_v1.md` |
@@ -237,6 +236,8 @@ Decisions are bound to the manifest's SHA-256. A REJECT does not remove an artic
 | `atti fetch` | Downloads missing BOE sources. | `data/raw/` (git-ignored) |
 | `atti manifest [--corpus expanded_v1]` | Curation only: rebuilds a v1 manifest; refuses ineligible articles or ones without a review note. | `manifest/pilot_manifest.json` or `manifest/expanded_v1_manifest.json` |
 | `atti review-sheet`, `atti decide` | Human validation, see above. | `data/review/`, `review/*_human_decisions.json` |
+
+**Published results are protected.** `atti frontier`, `atti gemini` and `atti regional` validate every row before writing: each model must cover exactly the 100 corpus articles with positive counts and consistent ratios. If validation fails, nothing is written. They also refuse, with exit code 4, any run that would remove or change a published model's rows, alter a recorded passing pilot, or turn a MEASURED adapter into anything else (`frontier.publish`, tested in `tests/test_publish.py`). To re-measure from scratch, delete the published files first. Valid outputs are replaced one file at a time, so an interruption between replacements, or two concurrent runs, can leave files from different runs; complete-generation writes are deferred. `atti pilot`, `atti expanded` and `atti v2` are deterministic and write only after the sources verify against the manifest hashes.
 
 | Code | `pilot` | `verify-live` |
 |---|---|---|
@@ -301,7 +302,7 @@ src/atti/  cli.py           command line
            tokenization.py  pinned tokenizer loading, content-only counting, run-time guards
            frontier.py      DeepSeek/GLM/Kimi tokenizers, Claude/GPT counting APIs, API cache
            gemini.py        Gemini countTokens adapter
-           regional.py      Arabic-focused/Arab-developed tokenizers, SentencePiece reader, equivalence
+           regional.py      Arabic-focused/Arab-developed tokenizers, official SentencePiece runtime, equivalence
            review.py        review sheet, decision template + validation
            metrics.py / pipeline.py / report.py
 manifest/  article manifests, AI review files, adapter manifests
