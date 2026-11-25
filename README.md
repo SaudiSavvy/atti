@@ -97,3 +97,7 @@ The project started with a 10-article pilot and a 30-article `expanded_v1`. Both
 ## License
 
 The code is released under the [MIT License](LICENSE). It covers this project's own code, documentation, token counts and derived results. It does not cover the Saudi legal texts, which belong to their publishers and are never redistributed here, or third-party tokenizer files and model weights, which keep their own licenses.
+
+## Acknowledgments
+
+Developed with the assistance of Claude Opus 5.5 and DeepSeek V4.1 Flash.
