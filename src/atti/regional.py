@@ -308,6 +308,9 @@ def official_crosscheck(spec: RegionalSpec, root: Path, counter, texts: list[str
     paths = F.fetch_assets(replace(spec, assets=spec.crosscheck_assets), root / HF_CACHE, ASSET_ALLOWLIST)
     sp, version = sentencepiece_processor(paths["tokenizer.model"])
     same = sum(sp.encode(t, out_type=int) == counter.ids(t) for t in texts)
+    if same != len(texts):  # the counted tokenizer must agree with the official reference on every text
+        raise F.FrontierError(f"official SentencePiece cross-check failed: {same}/{len(texts)} texts give "
+                              "identical ids")
     return {"reference": f"sentencepiece {version} SentencePieceProcessor.encode with the repository's "
                          f"tokenizer.model (sha256 {spec.crosscheck_assets['tokenizer.model']})",
             "texts": len(texts), "identical_ids": same}
@@ -451,7 +454,7 @@ def protect_evidence(root: Path, status: dict) -> None:
             continue
         if n["status"] != o["status"]:
             errs.append(f"{k}: published as {o['status']}, would become {n['status']}")
-        if n.get("equivalent_to") != o.get("equivalent_to"):
+        if n.get("equivalent_to") != o.get("equivalent_to") or n.get("equivalence") != o.get("equivalence"):
             errs.append(f"{k}: its published equivalence would change")
         if any(n.get("checks", {}).get(c) != o.get("checks", {}).get(c) for c in PROTECTED_CHECKS):
             errs.append(f"{k}: its published verification evidence would change")

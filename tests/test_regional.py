@@ -113,7 +113,8 @@ def _published_manifest(root, adapters):
 
 
 def test_evidence_guard_protects_equivalence_and_exclusion(tmp_path):
-    old = {"k2": {"status": "EQUIVALENT", "equivalent_to": "jais", "checks": {"ids_sha256": "a" * 64}},
+    old = {"k2": {"status": "EQUIVALENT", "equivalent_to": "jais", "checks": {"ids_sha256": "a" * 64},
+                  "equivalence": {"scope": "only", "divergent_added_tokens": {"count": 19, "examples": ["<x>"]}}},
            "ag": {"status": "EXCLUDED", "checks": {"failed_texts": 48, "failures": {"ar x": 48}}}}
     _published_manifest(tmp_path, old)
     R.protect_evidence(tmp_path, json.loads(json.dumps(old)))  # reproduced exactly: allowed
@@ -121,6 +122,8 @@ def test_evidence_guard_protects_equivalence_and_exclusion(tmp_path):
         ({"k2": {**old["k2"], "status": "BLOCKED"}}, "would become BLOCKED"),
         ({"k2": {**old["k2"], "equivalent_to": "qwen"}}, "equivalence would change"),
         ({"k2": {**old["k2"], "checks": {"ids_sha256": "b" * 64}}}, "evidence would change"),
+        ({"k2": {**old["k2"], "equivalence": {"scope": "only"}}}, "equivalence would change"),
+        ({"k2": {k: v for k, v in old["k2"].items() if k != "equivalence"}}, "equivalence would change"),
         ({"ag": {**old["ag"], "checks": {"failed_texts": 0, "failures": {}}}}, "evidence would change"),
         ({"k2": None}, "would be removed")]:
         new = {**json.loads(json.dumps(old)), **change}
@@ -397,3 +400,55 @@ def test_changed_published_rows_are_refused(tmp_path):
     with pytest.raises(F.PublishedResultsError, match="would change"):
         R.run(root)
     assert _published(root) == before
+
+
+def _hashes(root):
+    import hashlib
+
+    return {str(p): hashlib.sha256((root / p).read_bytes()).hexdigest() for p in R.OUTPUTS.values()}
+
+
+@pytest.mark.network
+def test_fanar_crosscheck_disagreement_fails_with_exit_2(tmp_path, monkeypatch, capsys):
+    """199/200 agreement with the official SentencePiece reference is a verification failure."""
+    root = _sandbox(tmp_path)
+    real = R.sentencepiece_processor
+
+    class OneOff:
+        def __init__(self, sp):
+            self.sp, self.calls = sp, 0
+
+        def encode(self, text, out_type=int):
+            self.calls += 1
+            ids = self.sp.encode(text, out_type=out_type)
+            return ids + [0] if self.calls == 1 else ids  # disagree on exactly one of the 200 texts
+
+    def patched(model_file):  # only Fanar's reference model disagrees; ALLaM's runtime is untouched
+        import hashlib
+
+        sp, version = real(model_file)
+        fanar = hashlib.sha256(model_file.read_bytes()).hexdigest() == R.FANAR2.crosscheck_assets["tokenizer.model"]
+        return (OneOff(sp) if fanar else sp), version
+
+    monkeypatch.setattr(R, "sentencepiece_processor", patched)
+    monkeypatch.chdir(root)
+    before = _hashes(root)
+    assert cli.main(["regional"]) == 2
+    err = capsys.readouterr().err
+    assert "fanar-2-27b-instruct: FrontierError: official SentencePiece cross-check failed: 199/200" in err
+    assert err.count("FrontierError") == 1 and "allam" not in err  # Fanar is the only failure
+    assert _hashes(root) == before
+
+
+@pytest.mark.network
+def test_lost_divergent_token_evidence_refused_with_exit_4(tmp_path, monkeypatch, capsys):
+    """A rerun that no longer reproduces AceGPT's 19 divergent added-token strings is refused."""
+    root = _sandbox(tmp_path)
+    published = json.loads((root / R.OUTPUTS["manifest"]).read_text())["adapters"]["acegpt-v2-32b"]
+    assert published["equivalence"]["divergent_added_tokens"]["count"] == 19
+    monkeypatch.setattr(R, "divergent_added_tokens", lambda a, b: [])
+    monkeypatch.chdir(root)
+    before = _hashes(root)
+    assert cli.main(["regional"]) == 4
+    assert "acegpt-v2-32b: its published equivalence would change" in capsys.readouterr().err
+    assert _hashes(root) == before
