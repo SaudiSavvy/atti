@@ -42,7 +42,7 @@ The current consolidated law, with amendments through Royal Decree M/44 (in forc
 
 The English is the ministry's published translation; its official status is not stated on the pages. Full evidence: [`reports/current_law_v2_sources.md`](../reports/current_law_v2_sources.md).
 
-`atti v2-fetch` is deliberately polite: one request at a time, at least 2 s apart, with backoff, verified TLS and a write-once cache.
+`atti v2-fetch` is deliberately polite: one request at a time, at least 2 s apart, with backoff, verified TLS and a write-once cache. Every request and redirect must stay on `https://www.hrsd.gov.sa` (the BOE downloader likewise on `https://laws.boe.gov.sa`); anything else is refused before it is contacted.
 
 ### Extraction
 
@@ -109,7 +109,7 @@ There are two measurement methods, and they are never ranked together.
 | GLM-5.3 Flash | `tokenizer.json`, pinned revision and SHA-256 |
 | Kimi K3.1 Pro | `tiktoken.model` with the pre-tokenizer and split rule of its `tokenization_kimi.py` |
 
-- Only allow-listed tokenizer files are downloaded (anonymously, about 29 MB for the three frontier tokenizers); never model weights. Revisions and asset hashes are in `results/current_law_v2_summary.json` and `manifest/frontier_tokenizers.json`.
+- Only allow-listed tokenizer files are downloaded (anonymously, about 29 MB for the three frontier tokenizers); never model weights. Every tokenizer file's SHA-256 is checked against its pin before it is loaded; revisions and hashes are in `results/current_law_v2_summary.json` and `manifest/frontier_tokenizers.json`.
 - Counts use `encode(text, add_special_tokens=False)`: no BOS/EOS and no chat template. Truncation and padding are disabled.
 - A count is refused, not estimated, if a text contains literal control-token strings. All 200 texts passed.
 - Qwen and Mistral were cross-checked during development against `transformers.AutoTokenizer` (fast) and Mistral's SentencePiece slow tokenizer on the pilot: all 40 counts matched. DeepSeek, GLM and Kimi token IDs were checked against the official implementations on all 200 corpus texts; synthetic reference IDs are in `tests/frontier_reference_ids.json`.
@@ -200,7 +200,7 @@ A corpus stays provisional until a human has recorded a decision for every pair.
 To record decisions:
 
 1. `uv run atti review-sheet [--corpus current_law_v2]` re-extracts and hash-verifies the pairs, writes the sheet, creates an empty decision template if none exists (never overwriting one), and validates recorded decisions.
-2. Read each pair and record a decision, either by editing the decisions file or with `uv run atti decide <article> <APPROVE|REJECT|REQUEST_EXAMINATION> --reviewer "Name" [--comment ...] [--corpus ...]`. A comment is required for anything other than APPROVE.
+2. Read each pair and record a decision, either by editing the decisions file or with `uv run atti decide <article> <APPROVE|REJECT|REQUEST_EXAMINATION> --reviewer "<name or pseudonym>" [--comment ...] [--corpus ...]`. A comment is required for anything other than APPROVE. The reviewer can be a stable pseudonym such as a GitHub handle; a civil name is not required.
 3. Re-run `review-sheet`. It exits with code 2 if the file is invalid: an unknown decision, missing name or date, an AI-system reviewer name, or a manifest hash mismatch.
 
 Decisions are bound to the manifest's SHA-256. A REJECT does not remove an article automatically. Excluding one is a separate, reported change that replaces the pair and alters the results, which would then need a new corpus version.

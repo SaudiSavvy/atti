@@ -57,13 +57,13 @@ def cmd_manifest(args) -> int:
 
 
 def cmd_pilot(args, name: str = "pilot") -> int:
-    from atti import corpus, pipeline, sources
+    from atti import corpus, pipeline, sources, tokenization
 
     try:
         summary = pipeline.run(_root(), name)
     except sources.NetworkError as exc:
         return _network_error(exc)
-    except corpus.VerificationError as exc:
+    except (corpus.VerificationError, tokenization.TokenizerIntegrityError) as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
     for model, s in summary["models"].items():
@@ -109,9 +109,7 @@ def cmd_review_sheet(args) -> int:
             pairs = [SimpleNamespace(article=r.key, ar_text=r.ar_text, en_text=r.en_text) for r in recs]
             parts = {r.key: r.part for r in recs}
             for r in recs:
-                pages = ", ".join(str(p) for p in r.ar_pages)
-                sources[r.key] = (f'Arabic PDF p. {pages} · <a href="{r.en_url}">English page</a> · '
-                                  f'<a href="{r.ar_html_url}">Arabic HTML page</a>')
+                sources[r.key] = review.source_links(r.ar_pages, r.en_url, r.ar_html_url)
             ai = corpus.read_json(root / "manifest" / f"{name}_review.json")
         else:
             pairs = corpus.verify(manifest, root / "data" / "raw")
@@ -121,6 +119,11 @@ def cmd_review_sheet(args) -> int:
     except (corpus.VerificationError, Exception) as exc:  # noqa: BLE001
         if type(exc).__name__ != "VerificationError":
             raise
+        print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    try:
+        review.check_review_inputs(ai, [p.article for p in pairs])
+    except ValueError as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
     dec_path = root / "review" / f"{name}_human_decisions.json"
@@ -203,13 +206,13 @@ def cmd_v2_manifest(args) -> int:
 
 
 def cmd_v2(args) -> int:
-    from atti import sources, v2
+    from atti import sources, tokenization, v2
 
     try:
         summary = v2.run(_root())
     except sources.NetworkError as exc:
         return _network_error(exc)
-    except v2.VerificationError as exc:
+    except (v2.VerificationError, tokenization.TokenizerIntegrityError) as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
     for model, s in summary["models"].items():
@@ -307,7 +310,7 @@ def main(argv: list[str] | None = None) -> int:
                        "without --replace)")
     d.add_argument("article", help="article key, e.g. 45 or 79bis")
     d.add_argument("decision", choices=("APPROVE", "REJECT", "REQUEST_EXAMINATION"))
-    d.add_argument("--reviewer", required=True, help="your name (a human)")
+    d.add_argument("--reviewer", required=True, help="your name or a stable pseudonym such as a GitHub handle (a human, not an AI system)")
     d.add_argument("--comment", default="")
     d.add_argument("--date", help="YYYY-MM-DD (default: today)")
     d.add_argument("--replace", action="store_true", help="change an already recorded decision")

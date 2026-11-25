@@ -157,7 +157,7 @@ def test_cli_network_failure_exit_code(tmp_path, monkeypatch, command, capsys):
 
     def offline(*a, **k):
         raise urllib.error.URLError("network unreachable")
-    monkeypatch.setattr("urllib.request.urlopen", offline)
+    monkeypatch.setattr("urllib.request.OpenerDirector.open", offline)
     assert cli.main([command]) == 3
     assert "NETWORK ERROR" in capsys.readouterr().err
     assert not (tmp_path / "data" / "raw" / sources.ARABIC.filename).exists()

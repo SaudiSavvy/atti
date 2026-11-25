@@ -12,8 +12,8 @@ from atti.sources import NetworkError
 
 
 class FakeResponse:
-    def __init__(self, status, content=b"ok", url="https://x/final"):
-        self.status_code, self.content, self.url = status, content, url
+    def __init__(self, status, content=b"ok", url="https://www.hrsd.gov.sa/final"):
+        self.status_code, self.content, self.url, self.history = status, content, url, []
         self.headers = {"content-type": "text/html", "last-modified": "Sun, 22 Nov 2026 15:02:02 GMT"}
 
 
@@ -37,33 +37,33 @@ def fetcher(tmp_path, script):
 
 def test_retries_with_backoff_then_caches_with_provenance(tmp_path):
     f, sleeps = fetcher(tmp_path, [FakeResponse(503), httpx.ConnectError("reset"), FakeResponse(200, b"page")])
-    path = f.fetch("en/index.html", "https://x/index")
+    path = f.fetch("en/index.html", "https://www.hrsd.gov.sa/index")
     assert path.read_bytes() == b"page"
     assert 1 in sleeps and 2 in sleeps  # exponential backoff 2**0, 2**1
     assert any(s == hrsd.MIN_INTERVAL_S for s in sleeps)  # rate limiting between requests
     prov = json.loads((tmp_path / "provenance.json").read_text())["en/index.html"]
-    assert prov["final_url"] == "https://x/final" and prov["status"] == 200 and len(prov["sha256"]) == 64
+    assert prov["final_url"] == "https://www.hrsd.gov.sa/final" and prov["status"] == 200 and len(prov["sha256"]) == 64
     assert prov["last_modified_header"]  # recorded as a header, not as a legislative date
 
 
 def test_gives_up_after_retries(tmp_path):
     f, _ = fetcher(tmp_path, [FakeResponse(503)] * (hrsd.RETRIES + 1))
     with pytest.raises(NetworkError, match="after"):
-        f.fetch("a", "https://x/a")
+        f.fetch("a", "https://www.hrsd.gov.sa/a")
     assert not (tmp_path / "a").exists()
 
 
 def test_client_error_not_retried(tmp_path):
     f, _ = fetcher(tmp_path, [FakeResponse(404)])
     with pytest.raises(NetworkError, match="HTTP 404"):
-        f.fetch("a", "https://x/a")
+        f.fetch("a", "https://www.hrsd.gov.sa/a")
     assert len(f._client.calls) == 1
 
 
 def test_cache_is_never_overwritten(tmp_path):
     (tmp_path / "a").write_bytes(b"baseline")
     f, _ = fetcher(tmp_path, [FakeResponse(200, b"new")])
-    assert f.fetch("a", "https://x/a").read_bytes() == b"baseline"
+    assert f.fetch("a", "https://www.hrsd.gov.sa/a").read_bytes() == b"baseline"
     assert f._client.calls == []
 
 

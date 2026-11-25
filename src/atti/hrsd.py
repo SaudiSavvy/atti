@@ -29,10 +29,11 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from atti.arabic import parse_ordinal
-from atti.sources import NetworkError, sha256_bytes
+from atti.sources import NetworkError, require_https_host, sha256_bytes
 from atti.textnorm import normalize_ws
 
-BASE = "https://www.hrsd.gov.sa"
+HOST = "www.hrsd.gov.sa"
+BASE = f"https://{HOST}"
 EN_INDEX_URL = BASE + "/en/knowledge-centre/%D9%86%D8%B8%D8%A7%D9%85-%D8%A7%D9%84%D8%B9%D9%85%D9%84"
 AR_PDF_URL = BASE + "/sites/default/files/2025-11/labor-law.pdf"
 USER_AGENT = "atti-benchmark/0.2 (research; tokenizer measurement)"
@@ -61,12 +62,15 @@ class Fetcher:
                 timeout=httpx.Timeout(60.0, connect=20.0),
                 follow_redirects=True,
                 verify=truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT),
+                # checked before every request, redirect hops included, so no other host is contacted
+                event_hooks={"request": [lambda req: require_https_host(str(req.url), HOST)]},
             )
         return self._client
 
     def _get(self, url: str):
         import httpx
 
+        require_https_host(url, HOST)
         for attempt in range(RETRIES + 1):
             if self._last is not None:
                 wait = MIN_INTERVAL_S - (self._clock() - self._last)
@@ -79,6 +83,8 @@ class Fetcher:
                 err = f"{url}: {type(exc).__name__}: {exc}"
             else:
                 if resp.status_code == 200:
+                    for hop in (*resp.history, resp):  # final destination and every redirect hop
+                        require_https_host(str(hop.url), HOST)
                     return resp
                 if resp.status_code not in (429, 500, 502, 503, 504):
                     raise NetworkError(f"{url}: HTTP {resp.status_code}")
