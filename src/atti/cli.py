@@ -130,13 +130,11 @@ def cmd_review_sheet(args) -> int:
     if review.write_json_new(dec_path, review.decisions_template(name, manifest, m_hash)):
         print(f"created empty decision template {dec_path.relative_to(root)}")
     dec = corpus.read_json(dec_path)
-    errors = review.validate_decisions(dec, manifest, m_hash)
+    flagged = review.flagged_articles(ai)
+    errors = review.validate_decisions(dec, manifest, m_hash, flagged)
     out = root / "data" / "review" / f"{name}_review_sheet.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(review.render_sheet(manifest, pairs, parts, ai, dec, errors), encoding="utf-8")
-    flagged = [k for k, v in ai["articles"].items() if v["proposed_status"] not in ("PASS", "PROPOSED_PASS")]
-    flagged += [k for k in ai.get("priority_for_human", []) if k not in flagged]
-    flagged.sort(key=review._sort)
     page = out.with_name(f"{name}_review.html")
     page.write_text(review.render_html(manifest, pairs, parts, ai, dec, errors, flagged, sources), encoding="utf-8")
     s = review.summarize(ai, dec)
@@ -169,11 +167,28 @@ def cmd_decide(args) -> int:
     if not dec_path.exists():
         print(f"ERROR: {dec_path.relative_to(root)} not found; run `atti review-sheet` first", file=sys.stderr)
         return EXIT_VERIFICATION
+    ai_path = root / ("manifest/current_law_v2_review.json" if args.corpus == "current_law_v2"
+                      else f"review/{args.corpus}_ai_review.json")
+    flagged = review.flagged_articles(corpus.read_json(ai_path)) if ai_path.exists() else []
+
+    def pair(value, allowed, what):
+        label, sep, note = (value or "").partition(":")
+        if not sep or label.strip().upper() not in allowed:
+            raise ValueError(f"{what} must look like LABEL:note with LABEL one of {allowed}")
+        return label.strip().upper(), note.strip()
+
     try:
+        findings = {
+            "review_period": args.review_period, "equivalence": args.equivalence, "terminology": args.terminology,
+            "discrepancies": [dict(zip(("severity", "note"), pair(x, review.SEVERITIES, "--discrepancy")))
+                              for x in args.discrepancy],
+            "ai_adjudication": (dict(zip(("verdict", "note"), pair(args.ai_adjudication, review.ADJUDICATIONS,
+                                                                   "--ai-adjudication")))
+                                if args.ai_adjudication else None)}
         new = review.record_decision(
             corpus.read_json(dec_path), corpus.read_json(m_path), review.manifest_sha256(m_path),
             args.article, args.decision, args.reviewer, args.date or dt.date.today().isoformat(),
-            args.comment, replace=args.replace)
+            args.comment, replace=args.replace, findings=findings, flagged=flagged)
     except ValueError as exc:
         print(f"NOT RECORDED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
@@ -181,7 +196,8 @@ def cmd_decide(args) -> int:
     tmp.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.replace(tmp, dec_path)
     d = new["decisions"][str(args.article)]
-    print(f"recorded Article {args.article}: {d['decision']} by {d['reviewer']} on {d['date']}")
+    print(f"recorded Article {args.article}: {d['decision']} by {d['reviewer']} on {d['date']}"
+          + (f" (reviewed {d['review_period']})" if d.get("review_period") else ""))
     return 0
 
 
@@ -336,8 +352,18 @@ def main(argv: list[str] | None = None) -> int:
     d.add_argument("article", help="article key, e.g. 45 or 79bis")
     d.add_argument("decision", choices=("APPROVE", "REJECT", "REQUEST_EXAMINATION"))
     d.add_argument("--reviewer", required=True, help="your name or a stable pseudonym such as a GitHub handle (a human, not an AI system)")
-    d.add_argument("--comment", default="")
-    d.add_argument("--date", help="YYYY-MM-DD (default: today)")
+    d.add_argument("--comment", default="", help="justification for the decision (required unless APPROVE "
+                   "without a material difference)")
+    d.add_argument("--date", help="date the decision is formally recorded, YYYY-MM-DD (default: today)")
+    d.add_argument("--review-period", help="when the review itself took place: YYYY-MM-DD or "
+                   "YYYY-MM-DD/YYYY-MM-DD (may predate --date)")
+    d.add_argument("--equivalence", choices=("EQUIVALENT", "MINOR_DIFFERENCES", "MATERIAL_DIFFERENCE"),
+                   help="semantic equivalence of the Arabic and English texts")
+    d.add_argument("--terminology", help="legal terminology observations")
+    d.add_argument("--discrepancy", action="append", default=[], metavar="MATERIAL|MINOR:note",
+                   help="a translation discrepancy (repeatable)")
+    d.add_argument("--ai-adjudication", metavar="AGREE|PARTLY_AGREE|DISAGREE:note",
+                   help="your verdict on the AI review's flag (required for AI-flagged articles)")
     d.add_argument("--replace", action="store_true", help="change an already recorded decision")
     d.add_argument("--corpus", choices=("pilot", "expanded_v1", "current_law_v2"), default="expanded_v1")
     d.set_defaults(func=cmd_decide)

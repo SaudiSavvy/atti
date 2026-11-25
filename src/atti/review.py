@@ -25,6 +25,12 @@ HUMAN_DECISIONS = ("APPROVE", "REJECT", "REQUEST_EXAMINATION")
 # every AI proposed status the review files may use (v1: AI_STATUSES; current_law_v2 adds the rest)
 REVIEW_STATUSES = (*AI_STATUSES, "PROPOSED_PASS", "MISSING_SOURCE", "VERSION_MISMATCH")
 _ARTICLE_KEY = re.compile(r"\d+(?:bis)?")
+# Optional findings a human reviewer may record with a decision (all text is the reviewer's own).
+EQUIVALENCE = ("EQUIVALENT", "MINOR_DIFFERENCES", "MATERIAL_DIFFERENCE")
+SEVERITIES = ("MATERIAL", "MINOR")
+ADJUDICATIONS = ("AGREE", "PARTLY_AGREE", "DISAGREE")
+_DECISION_FIELDS = ("decision", "reviewer", "date", "comment")
+FINDING_FIELDS = ("review_period", "equivalence", "terminology", "discrepancies", "ai_adjudication")
 # Whole-word AI markers. A reviewer may use a stable pseudonym; a civil name is never required.
 _NOT_HUMAN = re.compile(r"\b(?:llm|chatgpt|copilot|bot|gpt[\w.-]*|deepseek[\w.-]*|gemini[\w.-]*"
                         r"|claude[\s_-]*(?:opus|sonnet|haiku|fable|\d)[\w.-]*"
@@ -72,9 +78,74 @@ def decisions_template(corpus: str, manifest: dict, manifest_hash: str) -> dict:
     }
 
 
-def validate_decisions(dec: dict, manifest: dict, manifest_hash: str) -> list[str]:
-    """Return a list of problems (empty if the file is valid; undecided entries are valid)."""
+def flagged_articles(ai: dict) -> list[str]:
+    """Articles the AI review flagged: any status other than a pass, plus its priority list."""
+    flagged = [str(k) for k, v in ai["articles"].items() if v["proposed_status"] not in ("PASS", "PROPOSED_PASS")]
+    flagged += [str(k) for k in ai.get("priority_for_human", []) if str(k) not in flagged]
+    return sorted(flagged, key=_sort)
+
+
+def parse_review_period(value: str) -> tuple[dt.date, dt.date]:
+    """``YYYY-MM-DD`` or ``YYYY-MM-DD/YYYY-MM-DD`` (ISO 8601 interval): when the review itself took place."""
+    parts = value.split("/")
+    if len(parts) not in (1, 2):
+        raise ValueError(value)
+    start, end = dt.date.fromisoformat(parts[0]), dt.date.fromisoformat(parts[-1])
+    if end < start:
+        raise ValueError(value)
+    return start, end
+
+
+def _check_findings(n: str, d: dict, flagged) -> list[str]:
+    e = []
+    unknown = set(d) - set(_DECISION_FIELDS) - set(FINDING_FIELDS)
+    if unknown:
+        e.append(f"Article {n}: unknown fields {sorted(unknown)}")
+    present = [f for f in FINDING_FIELDS if d.get(f) not in (None, "", [])]
+    if d.get("decision") is None:
+        return e + ([f"Article {n}: findings {present} need a recorded decision"] if present else [])
+    if d.get("review_period") is not None:
+        try:
+            _, end = parse_review_period(d["review_period"])
+            if end > dt.date.fromisoformat(d.get("date") or ""):
+                e.append(f"Article {n}: review_period must not end after the recording date")
+        except (ValueError, TypeError, AttributeError):
+            e.append(f"Article {n}: review_period must be YYYY-MM-DD or YYYY-MM-DD/YYYY-MM-DD, start <= end")
+    eq = d.get("equivalence")
+    if eq is not None and eq not in EQUIVALENCE:
+        e.append(f"Article {n}: equivalence must be one of {EQUIVALENCE}")
+    if d.get("terminology") is not None and not isinstance(d["terminology"], str):
+        e.append(f"Article {n}: terminology must be text")
+    disc = d.get("discrepancies") or []
+    if not isinstance(disc, list) or any(
+            not isinstance(x, dict) or set(x) != {"severity", "note"} or x["severity"] not in SEVERITIES
+            or not isinstance(x["note"], str) or not x["note"].strip() for x in disc):
+        e.append(f"Article {n}: discrepancies must be a list of {{severity: {'|'.join(SEVERITIES)}, note: text}}")
+    else:
+        sev = {x["severity"] for x in disc}
+        if "MATERIAL" in sev and eq != "MATERIAL_DIFFERENCE":
+            e.append(f"Article {n}: a MATERIAL discrepancy requires equivalence MATERIAL_DIFFERENCE")
+        if eq == "MATERIAL_DIFFERENCE" and "MATERIAL" not in sev:
+            e.append(f"Article {n}: MATERIAL_DIFFERENCE requires at least one MATERIAL discrepancy")
+        if eq == "EQUIVALENT" and sev:
+            e.append(f"Article {n}: EQUIVALENT cannot list discrepancies; use MINOR_DIFFERENCES")
+        if eq == "MATERIAL_DIFFERENCE" and not (d.get("comment") or "").strip():
+            e.append(f"Article {n}: justify the decision in comment when there is a material difference")
+    adj = d.get("ai_adjudication")
+    if adj is not None and (not isinstance(adj, dict) or set(adj) != {"verdict", "note"}
+                            or adj["verdict"] not in ADJUDICATIONS
+                            or not isinstance(adj["note"], str) or not adj["note"].strip()):
+        e.append(f"Article {n}: ai_adjudication must be {{verdict: {'|'.join(ADJUDICATIONS)}, note: text}}")
+    if str(n) in flagged and adj is None:
+        e.append(f"Article {n}: flagged by the AI review, so ai_adjudication is required")
+    return e
+
+
+def validate_decisions(dec: dict, manifest: dict, manifest_hash: str, flagged=()) -> list[str]:
+    """Return a list of problems (empty if the file is valid; undecided entries are valid).
+    ``flagged``: articles the AI review flagged; a decision on one must carry the human's adjudication."""
     errors = []
+    flagged = {str(k) for k in flagged}
     if dec.get("manifest_sha256") != manifest_hash:
         errors.append("manifest_sha256 does not match the current manifest: decisions refer to another version")
     expected = set(keys(manifest))
@@ -82,6 +153,7 @@ def validate_decisions(dec: dict, manifest: dict, manifest_hash: str) -> list[st
     if got != expected:
         errors.append(f"articles missing {sorted(expected - got, key=_sort)} / unexpected {sorted(got - expected, key=_sort)}")
     for n, d in sorted(dec.get("decisions", {}).items(), key=lambda kv: _sort(kv[0])):
+        errors += _check_findings(n, d, flagged)
         if d.get("decision") is None:
             continue
         if d["decision"] not in HUMAN_DECISIONS:
@@ -112,10 +184,26 @@ def summarize(ai: dict, dec: dict) -> dict:
             "fully_human_approved": human["APPROVE"] == len(dec["decisions"])}
 
 
+def _findings_text(d: dict) -> list[str]:
+    out = []
+    if d.get("review_period"):
+        out.append(f"reviewed {d['review_period']}")
+    if d.get("equivalence"):
+        out.append(f"equivalence {d['equivalence']}")
+    for x in d.get("discrepancies") or []:
+        out.append(f"{x['severity']} discrepancy: {x['note']}")
+    if d.get("terminology"):
+        out.append(f"terminology: {d['terminology']}")
+    if d.get("ai_adjudication"):
+        out.append(f"AI flag {d['ai_adjudication']['verdict']}: {d['ai_adjudication']['note']}")
+    return out
+
+
 def _human_cell(d: dict) -> str:
     if d["decision"] is None:
         return "_not recorded_"
-    return f"**{d['decision']}** by {d['reviewer']} on {d['date']}" + (f": {d['comment']}" if d["comment"] else "")
+    return (f"**{d['decision']}** by {d['reviewer']}, recorded {d['date']}" + (f": {d['comment']}" if d["comment"] else "")
+            + "".join(f"; {x}" for x in _findings_text(d)))
 
 
 def render_sheet(manifest: dict, pairs, parts: dict[int, int], ai: dict, dec: dict, errors: list[str]) -> str:
@@ -167,7 +255,8 @@ def write_json_new(path: Path, data: dict) -> bool:
 
 
 def record_decision(dec: dict, manifest: dict, manifest_hash: str, article: int, decision: str,
-                    reviewer: str, date: str, comment: str, replace: bool = False) -> dict:
+                    reviewer: str, date: str, comment: str, replace: bool = False,
+                    findings: dict | None = None, flagged=()) -> dict:
     """Return an updated copy of ``dec``; raise ValueError (file untouched) on any problem."""
     import copy
 
@@ -178,8 +267,9 @@ def record_decision(dec: dict, manifest: dict, manifest_hash: str, article: int,
         raise ValueError(f"Article {article} already has a recorded decision "
                          f"({dec['decisions'][key]['decision']}); pass --replace to change it")
     new = copy.deepcopy(dec)
-    new["decisions"][key] = {"decision": decision, "reviewer": reviewer, "date": date, "comment": comment}
-    errors = validate_decisions(new, manifest, manifest_hash)
+    new["decisions"][key] = {"decision": decision, "reviewer": reviewer, "date": date, "comment": comment,
+                             **{k: v for k, v in (findings or {}).items() if v not in (None, "", [])}}
+    errors = validate_decisions(new, manifest, manifest_hash, flagged)
     if errors:
         raise ValueError("; ".join(errors))
     return new
@@ -326,7 +416,8 @@ def render_html(manifest: dict, pairs, parts: dict, ai: dict, dec: dict, errors:
         rec = dec["decisions"][n]
         recorded = ("<em>No human decision recorded.</em>" if rec["decision"] is None else
                     f'<strong>Recorded: {esc(rec["decision"])}</strong> by {esc(rec["reviewer"])} on '
-                    f'{esc(rec["date"])}' + (f": {esc(rec['comment'])}" if rec["comment"] else ""))
+                    f'{esc(rec["date"])}' + (f": {esc(rec['comment'])}" if rec["comment"] else "")
+                    + "".join(f"<br>{esc(x)}" for x in _findings_text(rec)))
         radios = "".join(
             f'<label><input type="radio" name="d{n}" value="{d}" data-for="{n}"> {d}</label>'
             for d in HUMAN_DECISIONS)

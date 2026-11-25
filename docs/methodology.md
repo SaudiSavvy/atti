@@ -28,13 +28,13 @@ Four kinds of review are kept apart:
 | Kind | By | Recorded | Status |
 |---|---|---|---|
 | AI-assisted pair review | AI agent (Claude) | per article: `manifest/review.json`, `manifest/*_review.json`, `review/expanded_v1_ai_review.json` | every selected pair, every corpus |
-| Maintainer review | the maintainer (SaudiSavvy) | not recorded per article | informal reading during corpus development |
+| Maintainer-led bilingual semantic review | the maintainer (SaudiSavvy) | retrospectively, per article, as recorded human decisions | carried out during corpus development; recording in progress |
 | Recorded human decisions | a human reviewer; a stable pseudonym is enough | `review/<corpus>_human_decisions.json`, bound to the manifest hash | none recorded yet |
 | Independent external validation | someone outside the project | none | not done |
 
-A corpus counts as human-approved only through recorded decisions, so the maintainer's informal reading does not change any status. Generated reports, manifests and the v0.1.0 release notes say "not human-approved" in that sense: no decision is recorded. They are published artifacts and are not rewritten.
+The maintainer's review was a substantive bilingual semantic review of the Arabic and English texts. It becomes auditable as it is recorded article by article (below), where each record states what was assessed; a corpus counts as human-approved only through recorded decisions. Generated reports, manifests and the v0.1.0 release notes say "not human-approved" in that sense: no decision is recorded. They are published artifacts and are not rewritten.
 
-The published pilot report says "reviewed manually". The per-article notes recorded for the pilot (`manifest/review.json`) were written by the AI agent; the maintainer's own reading is not recorded per article. The `expanded_v1` manifest records its provenance in `review_provenance`, and its report carries a PROVISIONAL banner.
+The published pilot report says "reviewed manually". The per-article notes recorded for the pilot (`manifest/review.json`) were written by the AI agent; the maintainer's own review is recorded per article only as decisions are added to `review/expanded_v1_human_decisions.json`. The `expanded_v1` manifest records its provenance in `review_provenance`, and its report carries a PROVISIONAL banner.
 
 **Text is not redistributed.** Legal texts are downloaded at run time into git-ignored `data/`. The repository stores only URLs, article identifiers and SHA-256 hashes, and a test checks that no article text appears in repository files.
 
@@ -232,21 +232,37 @@ To record decisions:
 
 ### Recording the maintainer's decisions
 
-The maintainer records decisions under the pseudonym `SaudiSavvy`. The pilot's 10 articles are part of `expanded_v1`, so they are recorded there.
+The maintainer records decisions under the pseudonym `SaudiSavvy`. The pilot's 10 articles are part of `expanded_v1`, so they are recorded there. Each record holds only what the reviewer writes or confirms; nothing is generated on their behalf.
+
+| Field | Meaning | Required |
+|---|---|---|
+| `decision` | `APPROVE`, `REJECT` or `REQUEST_EXAMINATION` for the pair's place in the corpus | yes |
+| `reviewer` | `SaudiSavvy` (a stable pseudonym; no AI system names) | yes |
+| `date` | the day the decision is formally recorded | yes |
+| `comment` | justification for inclusion or exclusion | unless APPROVE without a material difference |
+| `review_period` | when the review itself took place: `YYYY-MM-DD` or `YYYY-MM-DD/YYYY-MM-DD`, not after `date` | no |
+| `equivalence` | `EQUIVALENT`, `MINOR_DIFFERENCES` or `MATERIAL_DIFFERENCE` | no |
+| `terminology` | legal terminology observations | no |
+| `discrepancies` | list of `{severity: MATERIAL or MINOR, note}`; a MATERIAL item requires `MATERIAL_DIFFERENCE` | no |
+| `ai_adjudication` | `{verdict: AGREE, PARTLY_AGREE or DISAGREE, note}` on the AI review's flag | for AI-flagged articles |
+
+`APPROVE` with a material difference is allowed when it is justified: the corpus measures the texts as published, and the record then states both.
 
 ```bash
 uv run atti v2-fetch                                   # current_law_v2 sources, if not cached yet
 uv run atti review-sheet --corpus current_law_v2       # or omit --corpus for expanded_v1
 # then, for each article you have checked:
 uv run atti decide <article> <APPROVE|REJECT|REQUEST_EXAMINATION> --reviewer SaudiSavvy \
-    --corpus current_law_v2 [--comment "..."]
+    --corpus current_law_v2 [--review-period YYYY-MM-DD[/YYYY-MM-DD]] [--equivalence ...] \
+    [--terminology "..."] [--discrepancy "MATERIAL|MINOR: ..."]... [--ai-adjudication "AGREE|PARTLY_AGREE|DISAGREE: ..."] \
+    [--comment "..."]
 uv run atti review-sheet --corpus current_law_v2       # validates the decisions file
 ```
 
-The review page (`data/review/<corpus>_review.html`) builds the same commands: enter `SaudiSavvy`, choose a decision per article and copy the command.
+The review page (`data/review/<corpus>_review.html`) builds the basic command (decision and comment): enter `SaudiSavvy`, choose a decision and copy it, then add the finding flags.
 
-- Record only articles you have checked against both texts. Articles the AI review flagged (marked ⚑ on the review page) deserve an explicit comment.
-- `--date` defaults to today, the day the decision is recorded. Do not backdate it; if a decision rests on an earlier reading during development, say so in the comment.
+- Record only articles you have checked against both texts. For articles the AI review flagged (marked ⚑ on the review page) a decision is refused without `--ai-adjudication`.
+- Retrospective records: `--date` is the recording date and defaults to today; do not backdate it. Put the time of the original review in `--review-period`.
 - `atti decide` refuses to overwrite a recorded decision unless `--replace` is given, and rejects AI-system reviewer names.
 - Submit the changed decisions file through a pull request. Recording decisions changes only `review/<corpus>_human_decisions.json`: no measurement, report or manifest. The published reports keep their PROVISIONAL status until a later version is regenerated deliberately.
 
