@@ -145,9 +145,7 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
             outputs.update(build_outputs(root, rows, status))
     if pilot_only or not p.passed:
         outputs["manifest"] = F.dumps(status)
-    for k, content in outputs.items():
-        (root / OUTPUTS[k]).parent.mkdir(parents=True, exist_ok=True)
-        (root / OUTPUTS[k]).write_text(content, encoding="utf-8")
+    F.publish(root, OUTPUTS, outputs, manifest)  # validates; never drops, changes or downgrades published results
     return status
 
 

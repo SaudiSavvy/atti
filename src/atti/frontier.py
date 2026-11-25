@@ -759,9 +759,11 @@ def run(root: Path, pilot_only: bool = False) -> dict:
     outputs = {"pilot": dumps(pilot_doc)}
     if not pilot_only:
         outputs.update(build_outputs(root, manifest, rows, status))
-    for k, content in outputs.items():
-        (root / OUTPUTS[k]).parent.mkdir(parents=True, exist_ok=True)
-        (root / OUTPUTS[k]).write_text(content, encoding="utf-8")
+    try:
+        publish(root, OUTPUTS, outputs, manifest)
+    except PublishedResultsError as exc:
+        blocked = [f"{st['display']}: {st['blocked_reason']}" for st in status.values() if st["status"] == "BLOCKED"]
+        raise PublishedResultsError(str(exc) + (f" (blocked: {'; '.join(blocked)})" if blocked else "")) from None
     return status
 
 
@@ -802,6 +804,92 @@ def replay_pilot(spec: ApiSpec, counter: CachedApiCounter, prev: dict, texts: di
 
 def dumps(obj) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=2) + "\n"
+
+
+# ----------------------------------------------------------------------------- safe publication
+
+class PublishedResultsError(RuntimeError):
+    """Writing would drop, change or downgrade published measurements; nothing was written."""
+
+
+def _csv_rows(text: str) -> list[dict]:
+    import csv
+    import io
+
+    return list(csv.DictReader(io.StringIO(text)))
+
+
+def validate_rows(rows: list[dict], manifest: dict) -> list[str]:
+    """Every measured model must cover exactly the corpus articles with positive, consistent counts."""
+    keys = sorted(a["key"] for a in manifest["articles"])
+    errs = []
+    for k in dict.fromkeys(r.get("model_key") for r in rows):
+        sel = [r for r in rows if r.get("model_key") == k]
+        if sorted(r.get("article") for r in sel) != keys:
+            errs.append(f"{k}: rows do not cover exactly the {len(keys)} corpus articles")
+        for r in sel:
+            if set(r) != set(CSV_FIELDS) or r.get("measurement_method") not in (RAW_CONTENT, API_INPUT):
+                errs.append(f"{k} article {r.get('article')}: malformed row")
+                continue
+            try:
+                ar, en = int(r["ar_tokens"]), int(r["en_tokens"])
+            except (TypeError, ValueError):
+                errs.append(f"{k} article {r['article']}: token counts are not integers")
+                continue
+            if ar <= 0 or en <= 0 or r["ar_en_ratio"] != f"{ar / en:.4f}":
+                errs.append(f"{k} article {r['article']}: invalid counts or ratio")
+    return errs
+
+
+def _adapters(doc: dict) -> dict:
+    """Per-adapter records of a pilot or adapter manifest (frontier: many adapters; Gemini: one)."""
+    if "adapters" in doc:
+        return doc["adapters"]
+    rec = doc["adapter"] if "adapter" in doc else doc
+    return {doc.get("key", rec.get("key", "adapter")): rec}
+
+
+def publish(root: Path, paths: dict, outputs: dict, manifest: dict) -> None:
+    """Validate, then write all outputs or none. Published results are never dropped, changed or downgraded:
+    a model's published rows must reappear unchanged, a recorded passing pilot must be kept verbatim, and an
+    adapter published as MEASURED must stay MEASURED. Re-measuring from scratch is a deliberate step:
+    remove the published files first."""
+    errs = []
+    if "csv" in outputs:
+        new = _csv_rows(outputs["csv"])
+        errs += validate_rows(new, manifest)
+        if (root / paths["csv"]).exists():
+            old = _csv_rows((root / paths["csv"]).read_text(encoding="utf-8"))
+            for k in dict.fromkeys(r["model_key"] for r in old):
+                o, n = [r for r in old if r["model_key"] == k], [r for r in new if r["model_key"] == k]
+                if not n:
+                    errs.append(f"{k}: its {len(o)} published rows would be removed")
+                elif n != o:
+                    errs.append(f"{k}: its published rows would change")
+    for kind in ("pilot", "manifest"):
+        if kind in outputs and (root / paths[kind]).exists():
+            old = _adapters(json.loads((root / paths[kind]).read_text(encoding="utf-8")))
+            new = _adapters(json.loads(outputs[kind]))
+            for k, rec in old.items():
+                if kind == "pilot" and rec.get("passed") and new.get(k) != rec:
+                    errs.append(f"{k}: its recorded passing pilot would be removed or changed")
+                if kind == "manifest" and rec.get("status") == "MEASURED" and new.get(k, {}).get("status") != "MEASURED":
+                    errs.append(f"{k}: published as MEASURED, would become {new.get(k, {}).get('status', 'absent')}")
+    if errs:
+        raise PublishedResultsError("; ".join(errs[:8]) + (f"; and {len(errs) - 8} more" if len(errs) > 8 else ""))
+    staged = []
+    try:
+        for k, content in outputs.items():
+            dst = root / paths[k]
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            tmp = dst.with_name(dst.name + ".tmp")
+            tmp.write_text(content, encoding="utf-8")
+            staged.append((tmp, dst))
+        for tmp, dst in staged:
+            os.replace(tmp, dst)
+    finally:
+        for tmp, _ in staged:
+            tmp.unlink(missing_ok=True)
 
 
 def baseline_rows(root: Path) -> list[dict]:

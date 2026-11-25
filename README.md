@@ -67,7 +67,7 @@ git status                          # nothing committed should have changed
 
 In a fresh clone the last test run reports 6 skipped tests. Those replay the API count cache, which stays on the machine that measured them.
 
-The API counts can't be reproduced without keys. `atti frontier` and `atti gemini` re-measure from scratch, calling the providers when `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` is set. In a fresh clone without keys, `atti frontier` rewrites the frontier result files with Claude and GPT marked BLOCKED (`git checkout -- results reports manifest` restores them), and `atti gemini` exits with code 4 without writing anything. Hosted tokenizers can change without notice, so fresh API counts may differ from the committed ones.
+The API counts can't be reproduced without keys. `atti frontier` and `atti gemini` re-measure, calling the providers when `ANTHROPIC_API_KEY`, `OPENAI_API_KEY` or `GEMINI_API_KEY` is set. They validate everything before writing and never drop, change or downgrade a published result, so in a fresh clone without keys they stop with exit code 4 and write nothing. Hosted tokenizers can change without notice, so fresh API counts may differ from the committed ones. In that case the run is refused too; re-measuring from scratch means deliberately removing the published files first.
 
 All commands, outputs and exit codes: [`docs/methodology.md`](docs/methodology.md#commands-and-exit-codes).
 

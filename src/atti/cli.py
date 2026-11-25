@@ -226,6 +226,8 @@ def cmd_frontier(args) -> int:
 
     try:
         status = frontier.run(_root(), pilot_only=args.pilot_only)
+    except frontier.PublishedResultsError as exc:
+        return _refused(exc)
     except frontier.CacheIntegrityError as exc:
         print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
@@ -245,11 +247,20 @@ def cmd_frontier(args) -> int:
 EXIT_BLOCKED = 4
 
 
+def _refused(exc) -> int:
+    print(f"REFUSED: {exc}. Published results were left unchanged; nothing was written. API counts need the "
+          "provider keys or the local API cache; local tokenizer rows can be checked with `pytest -q`.",
+          file=sys.stderr)
+    return EXIT_BLOCKED
+
+
 def cmd_gemini(args) -> int:
     from atti import frontier, gemini, sources, v2
 
     try:
         st = gemini.run(_root(), pilot_only=args.pilot_only)
+    except frontier.PublishedResultsError as exc:
+        return _refused(exc)
     except gemini.GeminiBlocked as exc:
         print(f"Gemini 4 Neon: BLOCKED ({exc})", file=sys.stderr)
         return EXIT_BLOCKED
