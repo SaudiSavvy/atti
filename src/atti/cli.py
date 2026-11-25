@@ -247,6 +247,31 @@ def cmd_frontier(args) -> int:
     return 0
 
 
+def cmd_regional(args) -> int:
+    import resource
+
+    from atti import frontier, regional, sources, tokenization, v2
+
+    try:
+        status = regional.run(_root())
+    except frontier.PublishedResultsError as exc:
+        print(f"REFUSED: {exc}. Published regional results were left unchanged; nothing was written.",
+              file=sys.stderr)
+        return EXIT_BLOCKED
+    except sources.NetworkError as exc:
+        return _network_error(exc)
+    except (v2.VerificationError, frontier.FrontierError, tokenization.TokenizerIntegrityError) as exc:
+        print(f"VERIFICATION FAILED: {exc}; no output was written", file=sys.stderr)
+        return EXIT_VERIFICATION
+    for st in status.values():
+        extra = st.get("equivalent_to") or st.get("reason") or st.get("blocked_reason") or ""
+        print(f"{st['display']}: {st['status']}" + (f" ({extra[:120]})" if extra else ""))
+    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    print("wrote " + ", ".join(str(p) for p in regional.OUTPUTS.values()))
+    return 0
+
+
 EXIT_BLOCKED = 4
 
 
@@ -331,6 +356,9 @@ def main(argv: list[str] | None = None) -> int:
                         "the Anthropic or OpenAI APIs")
     gm.add_argument("--pilot-only", action="store_true", help="run the 10-pair repeatability pilot only")
     gm.set_defaults(func=cmd_gemini)
+    sub.add_parser("regional", help="measure Arabic-focused and Arab-developed tokenizers on the 100 "
+                   "current_law_v2 pairs (tokenizer files only; writes only the *_regional outputs)"
+                   ).set_defaults(func=cmd_regional)
     args = p.parse_args(argv)
     return args.func(args)
 

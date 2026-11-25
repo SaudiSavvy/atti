@@ -1,0 +1,323 @@
+{
+  "corpus": "current_law_v2",
+  "corpus_manifest": "manifest/current_law_v2_manifest.json",
+  "corpus_status": "provisional",
+  "adapter_version": "1.0",
+  "checked_on": "2026-11-26",
+  "measurement_method": "raw_content_tokens",
+  "status_definitions": {
+    "MEASURED": "all 100 pairs measured in both languages; every guard held on all 200 texts",
+    "EQUIVALENT": "token ids identical to another tokenizer's on all 200 corpus texts; reported only as a member of that tokenizer's group, never as an independent result. `equivalence.scope` says whether the tokenizer files are also identical",
+    "EXCLUDED": "at least one corpus text cannot be represented faithfully; no value published",
+    "UNAVAILABLE": "no public tokenizer could be verified; nothing substituted"
+  },
+  "failure_policy": "an integrity, retrieval or unexpected failure aborts the run before writing; published statuses and evidence must be reproduced exactly",
+  "asset_policy": "allow-listed tokenizer files only (tokenizer.json, tokenizer.model, tokenizer_config.json) at pinned revisions, SHA-256 checked before use; no weights; no repository code run",
+  "adapters": {
+    "allam-7b-instruct-preview": {
+      "key": "allam-7b-instruct-preview",
+      "display": "ALLaM 7B Instruct (preview)",
+      "repo_id": "humain-ai/ALLaM-7B-Instruct-preview",
+      "revision": "a28dd1e67420cde72d3629c8633a974cf7d9c366",
+      "model_country": "Saudi Arabia",
+      "model_developers": "National Center for Artificial Intelligence (NCAI), Saudi Data and AI Authority (SDAIA); repository hosted by the humain-ai organization",
+      "model_license": "apache-2.0 (Hub metadata)",
+      "tokenizer_name": "ALLaM tokenizer",
+      "tokenizer_developer": "NCAI/SDAIA",
+      "tokenizer_type": "SentencePiece BPE",
+      "tokenizer_origin": "NCAI/SDAIA, released with the model",
+      "tokenizer_terms": "same release; unresolved: the model card refers to a LICENSE file that is not in the pinned repository",
+      "adapter": "sentencepiece",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "The repository ships only a SentencePiece tokenizer.model (no tokenizer.json at any of its 33 commits); this revision is the 'version 2' tokenizer: BPE, 64,000 pieces, identity normalization, byte fallback. Counted with the official sentencepiece runtime. tokenizer_config.json: add_bos_token=false, add_eos_token=false.",
+      "assets": {
+        "tokenizer.model": {
+          "sha256": "feff3deb3537c4a47b77585053ad2aa00484da7907b188e0111cbed1f4592e67",
+          "bytes": 1228714
+        },
+        "tokenizer_config.json": {
+          "sha256": "37bcb27b4b135353488e79314ceb16182049265c95790e6586b2afeb62e40093",
+          "bytes": 1620
+        }
+      },
+      "runtime": "sentencepiece 0.2.1 SentencePieceProcessor.encode (official library)",
+      "vocab_size": 64000,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "3de61784568d3b52dd83132c224ea37c56f1ab769ab1b23d7fc057b89da660c5",
+        "round_trip": "exact"
+      },
+      "status": "MEASURED"
+    },
+    "jais-3-375b-a23b": {
+      "key": "jais-3-375b-a23b",
+      "display": "Jais 3 375B-A23B",
+      "repo_id": "inception42/Jais-3-375B-A23B",
+      "revision": "f51d0a4dd93ed0d5cbb9ed58749aa519bd091bc9",
+      "model_country": "United Arab Emirates, with Cerebras Systems (United States)",
+      "model_developers": "Jais Team: Institute of Foundation Models (IFM), MBZUAI; Cerebras Systems; Inception42 (technical report affiliations)",
+      "model_license": "apache-2.0 (Hub metadata)",
+      "tokenizer_name": "K2 Horizon tokenizer",
+      "tokenizer_developer": "IFM, MBZUAI",
+      "tokenizer_type": "byte-level BPE",
+      "tokenizer_origin": "IFM (MBZUAI), from K2 Horizon; files byte-identical to IFM/K2-Horizon-375B-A23B",
+      "tokenizer_terms": "apache-2.0 (K2 Horizon Hub metadata; LICENSE file in the K2 Horizon repository)",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Released tokenizer.json (byte-level BPE, 250,000 base tokens + 624 added; NFC normalizer; the TemplateProcessing post-processor adds a begin-of-text token only when special tokens are requested, which content-only counts never do). The IFM technical report 'Jais 3: Introducing Arabic-centric Agentic AI' (2026-11-13, section 2) states that each Jais 3 model keeps the K2 Horizon architecture and tokenizer unchanged. The repository's custom code is model configuration only and is not used.",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "2fa69519ff1ee3ee55ac50927b00058e88b9eb90802fabaf3c6b05804601c53b",
+          "bytes": 29197477
+        },
+        "tokenizer_config.json": {
+          "sha256": "581375b2ce8d56d59f609f08a7165365ac53b6543f3442ef0117b4951b0d747c",
+          "bytes": 253
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 250624,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "a294f698807a048f1e6d4694ad973a6a006d638a3337325e2c8f4ffdef26463c",
+        "round_trip": "exact up to the tokenizer's own NFC normalization (4 texts change)"
+      },
+      "status": "MEASURED"
+    },
+    "k2-horizon-375b-a23b": {
+      "key": "k2-horizon-375b-a23b",
+      "display": "K2 Horizon 375B-A23B",
+      "repo_id": "IFM/K2-Horizon-375B-A23B",
+      "revision": "7a17b47a74b9371e71ed64b4080192e01caa6174",
+      "model_country": "United Arab Emirates",
+      "model_developers": "IFM Team, Institute of Foundation Models (IFM), MBZUAI",
+      "model_license": "apache-2.0 (Hub metadata; LICENSE file in the repository)",
+      "tokenizer_name": "K2 Horizon tokenizer",
+      "tokenizer_developer": "IFM, MBZUAI",
+      "tokenizer_type": "byte-level BPE",
+      "tokenizer_origin": "IFM (MBZUAI), released with the model",
+      "tokenizer_terms": "same release",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Released tokenizer.json; byte-identical to Jais 3's (same SHA-256 for tokenizer.json and tokenizer_config.json). K2 Horizon is the tokenizer's origin.",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "2fa69519ff1ee3ee55ac50927b00058e88b9eb90802fabaf3c6b05804601c53b",
+          "bytes": 29197477
+        },
+        "tokenizer_config.json": {
+          "sha256": "581375b2ce8d56d59f609f08a7165365ac53b6543f3442ef0117b4951b0d747c",
+          "bytes": 253
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 250624,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "a294f698807a048f1e6d4694ad973a6a006d638a3337325e2c8f4ffdef26463c",
+        "round_trip": "exact up to the tokenizer's own NFC normalization (4 texts change)"
+      },
+      "status": "EQUIVALENT",
+      "equivalent_to": "jais-3-375b-a23b",
+      "equivalence": {
+        "scope": "identical tokenizer files",
+        "evidence": "ids_sha256 equal on all 200 corpus texts"
+      }
+    },
+    "fanar-2-27b-instruct": {
+      "key": "fanar-2-27b-instruct",
+      "display": "Fanar 2 27B Instruct",
+      "repo_id": "QCRI/Fanar-2-27B-Instruct",
+      "revision": "074005040e9c3511b1c43b4298bef09908285534",
+      "model_country": "Qatar",
+      "model_developers": "Qatar Computing Research Institute (QCRI), Hamad Bin Khalifa University; sponsored by the Ministry of Communications and Information Technology, State of Qatar",
+      "model_license": "apache-2.0 (Hub metadata)",
+      "tokenizer_name": "Gemma 3 tokenizer",
+      "tokenizer_developer": "Google",
+      "tokenizer_type": "SentencePiece-style BPE (byte fallback)",
+      "tokenizer_origin": "Google (Gemma 3), unchanged",
+      "tokenizer_terms": "upstream Google repositories carry the Hub license tag 'gemma' (Gemma Terms of Use); how those terms apply to the files redistributed with Fanar 2 is not assessed here",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Continually pretrained from google/gemma-3-27b-pt. Its tokenizer.json has the same SHA-256 as google/gemma-3-27b-it@005ad3404e59d6023443cb575daa05336842228a, and its tokenizer.model equals that of gemma-3-27b-pt@9fe3c4ebc93fbadb14913801536d022054ef11cc and gemma-3-27b-it (Hub file metadata; the Gemma repositories are gated and were not downloaded). Fanar's tokenizer_config.json differs from both Google configurations (git blob ids); it does not affect content-only encoding. SentencePiece-style BPE with byte fallback; the post-processor's <bos> is added only on request.",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "4667f2089529e8e7657cfb6d1c19910ae71ff5f28aa7ab2ff2763330affad795",
+          "bytes": 33384568
+        },
+        "tokenizer_config.json": {
+          "sha256": "40131233b6e76727588476460cb61fda8d6bfa0e85d1d303bcbce405c4a0fc5d",
+          "bytes": 1155433
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 262145,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "5725bc12e9a8d5f318132aa6012f6f29303028c83923524ad15cb7d8ba58297e",
+        "round_trip": "exact"
+      },
+      "official_crosscheck": {
+        "reference": "sentencepiece 0.2.1 SentencePieceProcessor.encode with the repository's tokenizer.model (sha256 1299c11d7cf632ef3b4e11937501358ada021bbdf7c47638d13c0ee982f2e79c)",
+        "texts": 200,
+        "identical_ids": 200
+      },
+      "status": "MEASURED"
+    },
+    "aragpt2-mega": {
+      "key": "aragpt2-mega",
+      "display": "AraGPT2 Mega",
+      "repo_id": "aubmindlab/aragpt2-mega",
+      "revision": "0c129c98931a9d888080c83c410ec67960ea4dff",
+      "model_country": "Lebanon",
+      "model_developers": "Wissam Antoun, Fady Baly, Hazem Hajj; AUB MIND Lab, American University of Beirut",
+      "model_license": "custom AraGPT2 software license (LICENSE in the pinned repository; Hub tag 'other')",
+      "tokenizer_name": "AraGPT2 tokenizer",
+      "tokenizer_developer": "American University of Beirut",
+      "tokenizer_type": "byte-level BPE (GPT-2)",
+      "tokenizer_origin": "American University of Beirut, trained for AraGPT2 (paper section 3.2)",
+      "tokenizer_terms": "same license",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Released tokenizer.json (GPT-2 byte-level BPE, 64,000 tokens, add_prefix_space=true; no tokenizer_config.json in the repository). The AraGPT2 paper (arXiv 2012.15520, section 3.2) trains it on a preprocessed corpus from which all diacritics and elongations were removed and in which punctuation and non-alphabetic characters were padded with spaces; the model card asks that input first be passed through the arabert ArabertPreprocessor. ATTI applies no preprocessing beyond its whitespace normalization, so counts are for the text as published. The repository's custom code is model code only and is not used.",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "a27c1fb8a2e7cc78c346f6bc21fb114353188930c499f670cbb6ffe75e549d91",
+          "bytes": 4519765
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 64000,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "85746c0bce7eb2ccf73f64115664e848c4a278e1fac111edf6878db4c73203f7",
+        "round_trip": "exact up to the GPT-2 prefix space the tokenizer adds"
+      },
+      "status": "MEASURED"
+    },
+    "acegpt-v2-32b": {
+      "key": "acegpt-v2-32b",
+      "display": "AceGPT v2 32B",
+      "repo_id": "FreedomIntelligence/AceGPT-v2-32B",
+      "revision": "d07e8ea20b3cb0ccab624615b5e0d5e2da9a1378",
+      "model_country": "Saudi Arabia and China (collaboration)",
+      "model_developers": "KAUST and King Abdulaziz University (Saudi Arabia) with The Chinese University of Hong Kong, Shenzhen and the Shenzhen Research Institute of Big Data (China)",
+      "model_license": "apache-2.0 (Hub metadata)",
+      "tokenizer_name": "Qwen1.5 tokenizer",
+      "tokenizer_developer": "Alibaba Qwen team",
+      "tokenizer_type": "byte-level BPE",
+      "tokenizer_origin": "Alibaba Qwen team (Qwen1.5), unchanged",
+      "tokenizer_terms": "upstream Qwen/Qwen1.5-32B carries the Hub license 'tongyi-qianwen-research' (LICENSE in that repository); how it applies to the files redistributed with AceGPT is not assessed here",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Developed from Qwen1.5-32B (model card). Its tokenizer.json is the same git blob as Qwen/Qwen1.5-32B@cefef80dc06a65f89d1d71d0adbc56d335ca2490, and its vocab.json equals Qwen2.5's.",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "f7c9b2dba4a296b1aa76c16a34b8225c0c118978400d4bb66bff0902d702f5b8",
+          "bytes": 7028015
+        },
+        "tokenizer_config.json": {
+          "sha256": "6a4a43e8a7c68a7aa377bca6dcd8df1da42fcb79eca8162eb9f7b817ea75db16",
+          "bytes": 1261
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 151646,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 0,
+        "failures": {},
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "ids_sha256": "3453e0707ac64bbeeacf004cfdaa4ab8f9722eea46cf21a8b132367dbb17fbb2",
+        "round_trip": "exact up to the tokenizer's own NFC normalization (4 texts change)"
+      },
+      "status": "EQUIVALENT",
+      "equivalent_to": "Qwen/Qwen2.5-3B-Instruct",
+      "equivalence": {
+        "scope": "same token ids on the 200 corpus texts only; tokenizer files differ",
+        "evidence": "ids_sha256 equal on all 200 corpus texts",
+        "divergent_added_tokens": {
+          "count": 19,
+          "examples": [
+            "</tool_call>",
+            "<tool_call>",
+            "<|box_end|>",
+            "<|box_start|>",
+            "<|file_sep|>"
+          ]
+        }
+      }
+    },
+    "arabiangpt-08b-v2": {
+      "key": "arabiangpt-08b-v2",
+      "display": "ArabianGPT 0.8B V2",
+      "repo_id": "riotu-lab/ArabianGPT-08B-V2",
+      "revision": "97d86d8de4ee494184d25f3e2822ae7a8cf7efe7",
+      "model_country": "Saudi Arabia",
+      "model_developers": "Robotics and Internet-of-Things Lab (RIOTU), Prince Sultan University",
+      "model_license": "apache-2.0 (Hub metadata)",
+      "tokenizer_name": "Aranizer 64K",
+      "tokenizer_developer": "RIOTU Lab, Prince Sultan University",
+      "tokenizer_type": "Metaspace BPE (no byte fallback)",
+      "tokenizer_origin": "RIOTU Lab, Prince Sultan University",
+      "tokenizer_terms": "same release",
+      "adapter": "tokenizers",
+      "measurement_method": "raw_content_tokens",
+      "source_note": "Released tokenizer.json ('Aranizer 64K': Metaspace BPE, NFKC normalizer, <unk> without byte fallback).",
+      "assets": {
+        "tokenizer.json": {
+          "sha256": "5a5a774b76cec6111ff2a452bc56dfe2f788e0a7a89fe67028ea81b05153ba58",
+          "bytes": 3423986
+        },
+        "tokenizer_config.json": {
+          "sha256": "7979d8c7b8d8a9a43daae399968457a61361df9c3d05947dcc3d1227f10b4253",
+          "bytes": 735
+        }
+      },
+      "runtime": "tokenizers 0.22.1 Tokenizer.encode(text, add_special_tokens=False)",
+      "vocab_size": 64002,
+      "checks": {
+        "texts": 200,
+        "failed_texts": 48,
+        "failures": {
+          "ar texts with special or unknown token ids": 48
+        },
+        "guards": "no truncation/overflow; every character covered; no special or unknown ids; decode round-trip; identical ids on repeat",
+        "unknown_token_characters": {
+          "U+064B ARABIC FATHATAN": 85,
+          "U+0651 ARABIC SHADDA": 10,
+          "U+064F ARABIC DAMMA": 6,
+          "U+064E ARABIC FATHA": 1,
+          "U+0650 ARABIC KASRA": 1
+        }
+      },
+      "status": "EXCLUDED",
+      "reason": "cannot represent every corpus text faithfully: ar texts with special or unknown token ids: 48"
+    },
+    "falcon-h1-arabic": {
+      "key": "falcon-h1-arabic",
+      "display": "Falcon-H1 Arabic 34B",
+      "model_country": "United Arab Emirates",
+      "model_developers": "Technology Innovation Institute (TII), Abu Dhabi",
+      "status": "UNAVAILABLE",
+      "measurement_method": "raw_content_tokens",
+      "reason": "No public tokenizer: no Falcon-H1 Arabic repository exists on the Hugging Face Hub (searches for Falcon-H1-Arabic, Falcon-Arabic and falcon-h1-ar, by author tiiuae and Hub-wide), and the official announcement (huggingface.co/blog/tiiuae/falcon-h1-arabic) and product page (falconllm.tii.ae/falcon-h1-arabic.html) link only a chat interface. Neither states that it uses the standard Falcon-H1 tokenizer, so that tokenizer is not substituted.",
+      "checked_on": "2026-11-26"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 [project]
 name = "atti"
-version = "0.1.0"
+version = "0.2.0"
 description = "Arabic Token Tax Index: Arabic/English token-count comparison on parallel Saudi legal texts"
 readme = "README.md"
 license = "MIT"
@@ -23,6 +23,13 @@ atti = "atti.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8"]
+regional = [
+    "sentencepiece==0.2.1",
+]
+
+[tool.uv]
+# regional: official SentencePiece runtime for `atti regional` only (not a dependency of the package)
+default-groups = ["dev", "regional"]
 
 [build-system]
 requires = ["hatchling"]
