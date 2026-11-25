@@ -53,6 +53,35 @@ class NetworkError(RuntimeError):
     """The source could not be retrieved (DNS, TLS, timeout, HTTP error status)."""
 
 
+class UntrustedURLError(NetworkError):
+    """A request or redirect would leave the official HTTPS host; nothing is fetched from it."""
+
+
+BOE_HOST = "laws.boe.gov.sa"
+
+
+def require_https_host(url: str, host: str) -> str:
+    """Return ``url`` if it is plain HTTPS on exactly ``host`` (default port, no credentials)."""
+    from urllib.parse import urlsplit
+
+    try:
+        p = urlsplit(url)
+        port = p.port
+    except ValueError as exc:
+        raise UntrustedURLError(f"refusing malformed URL {url!r}") from exc
+    if p.scheme != "https" or p.hostname != host or port not in (None, 443) or p.username or p.password:
+        raise UntrustedURLError(f"refusing {url!r}: only https://{host}/ is allowed")
+    return url
+
+
+class _OfficialHostRedirects(urllib.request.HTTPRedirectHandler):
+    """Follow a redirect only if its target is on the official BOE host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        require_https_host(newurl, BOE_HOST)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -65,10 +94,13 @@ def download(url: str) -> bytes:
     """GET ``url``; every transport-level failure is raised as NetworkError."""
     import truststore  # verify TLS against the OS trust store (the BOE server needs it)
 
+    require_https_host(url, BOE_HOST)
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    opener = urllib.request.build_opener(urllib.request.HTTPSHandler(context=ctx), _OfficialHostRedirects())
     try:
-        with urllib.request.urlopen(req, timeout=120, context=ctx) as resp:
+        with opener.open(req, timeout=120) as resp:
+            require_https_host(resp.geturl(), BOE_HOST)
             return resp.read()
     except urllib.error.HTTPError as exc:
         raise NetworkError(f"{url}: HTTP {exc.code}") from exc

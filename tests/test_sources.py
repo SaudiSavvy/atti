@@ -18,7 +18,7 @@ from atti import sources
 def test_transport_failures_become_network_error(monkeypatch, exc):
     def boom(*a, **k):
         raise exc
-    monkeypatch.setattr("urllib.request.urlopen", boom)
+    monkeypatch.setattr("urllib.request.OpenerDirector.open", boom)
     with pytest.raises(sources.NetworkError):
         sources.download("https://laws.boe.gov.sa/x")
 

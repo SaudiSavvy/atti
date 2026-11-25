@@ -18,11 +18,19 @@ import json
 import re
 from pathlib import Path
 
-from atti.sources import sha256_bytes
+from atti.sources import UntrustedURLError, require_https_host, sha256_bytes
 
 AI_STATUSES = ("PASS", "NEEDS_REVIEW", "FAIL")
 HUMAN_DECISIONS = ("APPROVE", "REJECT", "REQUEST_EXAMINATION")
-_NOT_HUMAN = ("claude", "ai agent", "gpt", "llm", "assistant")
+# every AI proposed status the review files may use (v1: AI_STATUSES; current_law_v2 adds the rest)
+REVIEW_STATUSES = (*AI_STATUSES, "PROPOSED_PASS", "MISSING_SOURCE", "VERSION_MISMATCH")
+_ARTICLE_KEY = re.compile(r"\d+(?:bis)?")
+# Whole-word AI markers. A reviewer may use a stable pseudonym; a civil name is never required.
+_NOT_HUMAN = re.compile(r"\b(?:llm|chatgpt|copilot|bot|gpt[\w.-]*|deepseek[\w.-]*|gemini[\w.-]*"
+                        r"|claude[\s_-]*(?:opus|sonnet|haiku|fable|\d)[\w.-]*"
+                        r"|ai[\s_-]*(?:agent|assistant|system|model|reviewer|bot))\b|\(\s*ai\b"
+                        r"|^\s*(?:ai|claude|assistant)\s*$",  # bare names are ambiguous: add a surname or handle
+                        re.IGNORECASE)
 
 INSTRUCTIONS = [
     "Open the review sheet (data/review/<corpus>_review_sheet.md) and read each pair side by side.",
@@ -81,7 +89,7 @@ def validate_decisions(dec: dict, manifest: dict, manifest_hash: str) -> list[st
         reviewer = (d.get("reviewer") or "").strip()
         if not reviewer:
             errors.append(f"Article {n}: reviewer name required")
-        elif any(tok in reviewer.lower() for tok in _NOT_HUMAN):
+        elif _NOT_HUMAN.search(reviewer):
             errors.append(f"Article {n}: reviewer must be a human, not an AI system")
         try:
             dt.date.fromisoformat(d.get("date") or "")
@@ -241,11 +249,40 @@ document.addEventListener('input',e=>{
 """
 
 
+def check_review_inputs(ai: dict, article_keys) -> None:
+    """Article keys and AI proposed statuses end up in HTML attributes and scripts: allow only known values."""
+    for k in article_keys:
+        if not _ARTICLE_KEY.fullmatch(str(k)):
+            raise ValueError(f"unexpected article key {str(k)!r}")
+        st = ai["articles"].get(str(k), {}).get("proposed_status")
+        if st not in REVIEW_STATUSES:
+            raise ValueError(f"Article {k}: unknown AI proposed status {st!r}")
+
+
+def source_links(ar_pages, en_url: str | None, ar_html_url: str | None) -> str:
+    """Escaped source line for the review page; only official HRSD HTTPS URLs become links."""
+    from atti.hrsd import HOST
+
+    def link(label, url):
+        if not url:
+            return html.escape(f"{label}: none")
+        try:
+            require_https_host(url, HOST)
+        except UntrustedURLError:
+            return html.escape(f"{label}: unexpected URL withheld")
+        return f'<a href="{html.escape(url, quote=True)}">{html.escape(label)}</a>'
+
+    pages = ", ".join(str(int(p)) for p in ar_pages)
+    return f"Arabic PDF p. {pages} · {link('English page', en_url)} · {link('Arabic HTML page', ar_html_url)}"
+
+
 def render_html(manifest: dict, pairs, parts: dict, ai: dict, dec: dict, errors: list[str],
                 flagged: list, sources: dict | None = None) -> str:
     """Local, self-contained review page. It never saves anything: decision
-    controls are drafts that only build an `atti decide` command."""
+    controls are drafts that only build an `atti decide` command. ``sources`` values are trusted
+    HTML built by ``source_links``."""
     esc = html.escape
+    check_review_inputs(ai, [*(p.article for p in pairs), *flagged])
     by_num = dict(zip(keys(manifest), manifest["articles"]))
     issues = {str(d["article"]): d["issue"] for d in ai["material_discrepancies"]}
     flagged = [str(f) for f in flagged]
@@ -272,15 +309,15 @@ def render_html(manifest: dict, pairs, parts: dict, ai: dict, dec: dict, errors:
         'decision unless you add <code>--replace</code>. AI statuses and notes are advisory only and '
         'are <strong>not</strong> human approval.</div>',
         f'<p class="meta">Manifest SHA-256 <code>{esc(dec["manifest_sha256"][:16])}…</code> · AI proposed: '
-        + ", ".join(f"{k} {v}" for k, v in s["ai_proposed"].items())
+        + esc(", ".join(f"{k} {v}" for k, v in s["ai_proposed"].items()))
         + " · Recorded human decisions: "
-        + ", ".join(f"{k} {v}" for k, v in s["human"].items()) + "</p>",
+        + esc(", ".join(f"{k} {v}" for k, v in s["human"].items())) + "</p>",
     ]
     if errors:
         body.append('<div class="banner"><strong>Decision file problems:</strong> '
                     + esc("; ".join(errors)) + "</div>")
-    body += ['<p><label>Your name (used only to build commands; not stored): '
-             '<input type="text" id="reviewer" autocomplete="off" placeholder="e.g. Your Name"></label></p>',
+    body += ['<p><label>Your name or a stable pseudonym (used only to build commands; not stored): '
+             '<input type="text" id="reviewer" autocomplete="off" placeholder="e.g. a GitHub handle"></label></p>',
              '<div class="flaglist">Jump to flagged: '
              + "".join(f'<a href="#a{n}">Article {n}</a>' for n in flagged) + "</div>"]
     for i, p in enumerate(pairs):
@@ -298,8 +335,8 @@ def render_html(manifest: dict, pairs, parts: dict, ai: dict, dec: dict, errors:
         body.append(
             f'<article id="a{n}" class="{"flagged" if n in flagged else ""}">'
             f'<header><h3>{"⚑ " if n in flagged else ""}Article {n} <span class="meta">· {esc(e["id"])} · '
-            f'Part {parts[n]} · {e["ar_chars"]} AR / {e["en_chars"]} EN chars</span></h3>'
-            f'<span class="badge {a["proposed_status"]}">AI proposed: {a["proposed_status"]}</span></header>'
+            f'Part {esc(str(parts[n]))} · {esc(str(e["ar_chars"]))} AR / {esc(str(e["en_chars"]))} EN chars</span></h3>'
+            f'<span class="badge {esc(a["proposed_status"])}">AI proposed: {esc(a["proposed_status"])}</span></header>'
             + (f'<p class="issue">Possible material discrepancy: {esc(issues[n])}</p>' if n in issues else "")
             + (f'<p class="meta">Sources: {sources[n]}</p>' if n in sources else "")
             + '<div class="cols">'

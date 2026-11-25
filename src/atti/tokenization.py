@@ -13,12 +13,19 @@ from tokenizers import Tokenizer
 class TokenizerSpec:
     repo_id: str
     revision: str  # full commit SHA on the Hugging Face Hub
+    sha256: str  # SHA-256 of tokenizer.json, as recorded in the published summaries
 
 
 TOKENIZERS = (
-    TokenizerSpec("Qwen/Qwen2.5-3B-Instruct", "aa8e72537993ba99e69dfaafa59ed015b17504d1"),
-    TokenizerSpec("mistralai/Mistral-7B-Instruct-v0.3", "c170c708c41dac9275d15a8fff4eca08d52bab71"),
+    TokenizerSpec("Qwen/Qwen2.5-3B-Instruct", "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+                  "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"),
+    TokenizerSpec("mistralai/Mistral-7B-Instruct-v0.3", "c170c708c41dac9275d15a8fff4eca08d52bab71",
+                  "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49"),
 )
+
+
+class TokenizerIntegrityError(RuntimeError):
+    """A downloaded or cached tokenizer.json does not match its pinned SHA-256."""
 
 
 @dataclass
@@ -40,6 +47,10 @@ def load(spec: TokenizerSpec, cache_dir: Path) -> LoadedTokenizer:
         token=False,  # no credentials: both repos are publicly downloadable
     )
     data = Path(path).read_bytes()
+    got = hashlib.sha256(data).hexdigest()
+    if got != spec.sha256:  # checked before the file is parsed or used for counting
+        raise TokenizerIntegrityError(f"{spec.repo_id}@{spec.revision[:12]} tokenizer.json: "
+                                      f"SHA-256 {got} != pinned {spec.sha256}")
     tok = Tokenizer.from_str(data.decode("utf-8"))
     tok.no_truncation()
     tok.no_padding()

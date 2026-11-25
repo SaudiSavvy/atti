@@ -9,7 +9,7 @@ requires-python = ">=3.11"
 dependencies = [
     "tokenizers==0.22.1",
     "huggingface-hub==0.36.0",
-    "pdfminer.six==20250506",
+    "pdfminer.six==20260107",
     "truststore==0.10.4",
     "pymupdf==1.26.5",
     "httpx==0.28.1",
