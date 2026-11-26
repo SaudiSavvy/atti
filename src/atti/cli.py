@@ -147,7 +147,7 @@ def cmd_review_sheet(args) -> int:
         full.write_text(v2.render_discrepancy_matrix(ai, texts), encoding="utf-8")
         print(f"wrote {full.relative_to(root)} (git-ignored; full texts of the discrepancy pairs)")
     print(f"AI proposed: {s['ai_proposed']}")
-    print(f"human decisions: {s['human']}; fully human-approved: {s['fully_human_approved']}")
+    print(f"human decisions: {s['human']}; every pair has a recorded APPROVE: {s['fully_human_approved']}")
     for e in errors:
         print(f"DECISION FILE ERROR: {e}", file=sys.stderr)
     return EXIT_VERIFICATION if errors else 0
