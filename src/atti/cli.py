@@ -201,6 +201,45 @@ def cmd_decide(args) -> int:
     return 0
 
 
+def cmd_review_workspace(args) -> int:
+    """Verify all three corpora, then serve the local review workspace on 127.0.0.1."""
+    import webbrowser
+
+    from atti import corpus, v2, workspace
+
+    root = _root()
+    try:
+        data = workspace.load_corpora(root)
+        items, summary = workspace.build_items(data)
+        ws = workspace.Workspace(root, args.reviewer, items, summary)
+    except (corpus.VerificationError, v2.VerificationError, workspace.WorkspaceError) as exc:
+        print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
+        return EXIT_VERIFICATION
+    v = summary["verified"]
+    print(f"verified against pinned hashes: pilot {v['pilot']}, expanded_v1 {v['expanded_v1']}, "
+          f"current_law_v2 {v['current_law_v2']} ({summary['slots']} slots, {summary['unique_pairs']} distinct pairs)")
+    print(f"identical pairs reviewed once: {len(summary['duplicates'])} "
+          f"({', '.join(d['item'] for d in summary['duplicates'])})")
+    print(f"same article number, different text (reviewed separately): {len(summary['version_differences'])}")
+    for d in summary["version_differences"]:
+        print(f"  Article {d['article']}: Arabic {d['arabic']}, English {d['english']}")
+    if args.check:
+        return 0
+    srv, url = workspace.serve(ws, lambda token: workspace.render_page(items, summary, args.reviewer, token),
+                               port=args.port)
+    print(f"review workspace (local only, Ctrl-C to stop): {url}", flush=True)
+    print(f"drafts autosave to {workspace.DRAFTS} (git-ignored)", flush=True)
+    if not args.no_browser:
+        webbrowser.open(url)
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        srv.server_close()
+    return 0
+
+
 def cmd_v2_fetch(args) -> int:
     from atti import sources, v2
 
@@ -367,6 +406,13 @@ def main(argv: list[str] | None = None) -> int:
     d.add_argument("--replace", action="store_true", help="change an already recorded decision")
     d.add_argument("--corpus", choices=("pilot", "expanded_v1", "current_law_v2"), default="expanded_v1")
     d.set_defaults(func=cmd_decide)
+    w = sub.add_parser("review-workspace", help="verify all three corpora and open the local human review "
+                       "workspace (127.0.0.1; drafts in git-ignored data/review/)")
+    w.add_argument("--reviewer", required=True, help="your name or stable pseudonym (a human, not an AI system)")
+    w.add_argument("--port", type=int, default=0, help="local port (default: any free port)")
+    w.add_argument("--no-browser", action="store_true", help="print the URL instead of opening a browser")
+    w.add_argument("--check", action="store_true", help="verify and print the summary, then exit")
+    w.set_defaults(func=cmd_review_workspace)
     sub.add_parser("v2-fetch", help="fetch HRSD sources for current_law_v2 into data/raw_v2 "
                    "(polite, cached, never overwritten)").set_defaults(func=cmd_v2_fetch)
     sub.add_parser("v2-manifest", help="(curation) rebuild manifest/current_law_v2_manifest.json "
