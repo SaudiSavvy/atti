@@ -15,11 +15,11 @@ Details behind the [README](../README.md): sources, extraction, selection, revie
 
 | Corpus | Pairs | Sources | Manifest | Results | Review status |
 |---|---:|---|---|---|---|
-| `current_law_v2` | 100 | HRSD, current consolidated law | `manifest/current_law_v2_manifest.json` | `results/current_law_v2*.csv`, `reports/current_law_v2*.md` | **accepted for benchmarking** after the maintainer's bilingual semantic review; AI-reviewed (97 PROPOSED_PASS, 3 NEEDS_REVIEW; 6 review exclusions, 5 replacements); no article-level decision records yet; external validation pending |
-| `expanded_v1` | 30 (pilot 10 + 20) | BOE, 2005 base text | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **provisional**: AI-reviewed; no recorded human decisions |
-| `pilot` | 10 | BOE, 2005 base text | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | AI-reviewed; no recorded human decisions |
+| `current_law_v2` | 100 | HRSD, current consolidated law | `manifest/current_law_v2_manifest.json` | `results/current_law_v2*.csv`, `reports/current_law_v2*.md` | **ACCEPTED** (maintainer review complete); AI-reviewed (97 PROPOSED_PASS, 3 NEEDS_REVIEW; 6 review exclusions, 5 replacements) |
+| `expanded_v1` | 30 (pilot 10 + 20) | BOE, 2005 base text | `manifest/expanded_v1_manifest.json` | `results/expanded_v1.csv`, `reports/expanded_v1.md` | **ACCEPTED** (maintainer review complete); AI-reviewed |
+| `pilot` | 10 | BOE, 2005 base text | `manifest/pilot_manifest.json` | `results/pilot.csv`, `reports/pilot.md` | **ACCEPTED** (maintainer review complete); AI-reviewed; pairs identical to `expanded_v1` |
 
-`pilot` and `expanded_v1` are frozen historical corpora; their files are only read by later runs. The acceptance described below applies to `current_law_v2`; the historical corpora keep their provisional status.
+`pilot` and `expanded_v1` are frozen historical corpora; their files are only read by later runs.
 
 ### Review provenance
 
@@ -28,17 +28,17 @@ Four kinds of review are kept apart:
 | Kind | By | Recorded | Status |
 |---|---|---|---|
 | AI-assisted pair review | AI agent (Claude) | per article: `manifest/review.json`, `manifest/*_review.json`, `review/expanded_v1_ai_review.json` | every selected pair, every corpus |
-| Maintainer-led bilingual semantic review and acceptance | the maintainer (SaudiSavvy) | corpus-level statement in this document and the README | completed; `current_law_v2` accepted for comparative tokenization benchmarking |
-| Formal article-level review records | a human reviewer; a stable pseudonym is enough | `review/<corpus>_human_decisions.json`, bound to the manifest hash | none recorded yet |
-| Independent external validation | someone outside the project | none | pending |
+| Maintainer-led bilingual semantic review and acceptance | the maintainer (SaudiSavvy) | this document and the README (corpus-wide acceptance, authoritative) | **COMPLETE**; all three corpora **ACCEPTED** |
+| Structured article-level records | the maintainer, through `atti decide` or the review workspace | `review/<corpus>_human_decisions.json`, bound to the manifest hash | supplementary to the corpus-wide acceptance |
+| Independent external validation | someone outside the project | none | not performed |
 
-The corpus underwent substantive bilingual semantic review by the maintainer, alongside AI-assisted assessment, and was accepted for comparative tokenization benchmarking. The review examined semantic equivalence, legal terminology, and textual discrepancies. Independent external validation remains pending.
+All three corpora underwent substantive bilingual semantic review and were accepted by the maintainer for comparative tokenization benchmarking. The review examined semantic equivalence, legal terminology and textual discrepancies. The maintainer's corpus-wide acceptance is the authoritative decision on inclusion. Independent external validation has not been performed.
 
-**What acceptance means.** Acceptance is a corpus-level judgment that the pairs are fit for comparing token counts across the two languages. It does not certify legal equivalence. The disclosed discrepancies stay in force: Articles 34, 35 and 108 differ in meaning or numbering and are reported with sensitivity results that exclude them, and the source quirks listed in the README are kept as published.
+**What acceptance means.** Acceptance is a corpus-level judgment that the pairs are fit for comparing token counts across the two languages. It does not certify legal equivalence. The disclosed discrepancies stay in force: in `current_law_v2`, Articles 34, 35 and 108 differ in meaning or numbering and are reported with sensitivity results that exclude them, and the source quirks listed in the README are kept as published.
 
-**What is not yet recorded.** The maintainer's review is documented at corpus level only. No article-level decision, review date or finding has been recorded for it, and none is reconstructed here. Article-level records may be added later with `atti decide` (below); each carries its actual recording date, and the time of the original review goes in `review_period`.
+**Structured records.** Article-level records in the decision files supplement the corpus-wide acceptance and are not a precondition for it. They hold only what the maintainer entered and confirmed; none is generated or reconstructed. The maintainer noted textual observations on `expanded_v1` Articles 32 and 70 (also in `pilot`) that do not affect their inclusion.
 
-**Status labels.** `current_law_v2` was labelled PROVISIONAL because no human acceptance had been documented. In the README and this document that label is replaced by *accepted for benchmarking; external validation pending*. Generated reports, manifests and result summaries, and the v0.1.0 and v0.2.0 release notes, are published, hash-bound artifacts: they keep the PROVISIONAL label and their "not human-approved" wording unchanged. For `current_law_v2` that wording means no formal article-level record existed, and it is superseded by the statement above. Regenerating those artifacts is left to a future corpus version.
+**Status labels.** The corpora were labelled PROVISIONAL before the maintainer's acceptance was documented. In the README and this document all three are **ACCEPTED**. Generated reports, manifests and result summaries, and the v0.1.0 and v0.2.0 release notes, are published, hash-bound artifacts: they keep the PROVISIONAL label and their "not human-approved" wording unchanged, including the `expanded_v1` statement that no human had reviewed or approved any pair. That wording is superseded. Regenerating those artifacts is left to a future corpus version.
 
 The published pilot report says "reviewed manually". The per-article notes recorded for the pilot (`manifest/review.json`) were written by the AI agent. The `expanded_v1` manifest records its provenance in `review_provenance`, and its report carries a PROVISIONAL banner.
 
@@ -222,7 +222,7 @@ Parts come from the Arabic page's Part headings, cross-checked against poppler's
 
 ## Human validation
 
-Formal article-level records make human review auditable per article. For `current_law_v2` they supplement the maintainer's corpus-level acceptance and are not a precondition for it; for the historical corpora they are the only route out of provisional status. The material lives in three places (shown for `expanded_v1`; `current_law_v2` is analogous):
+Structured article-level records document individual pairs. They supplement the maintainer's corpus-wide acceptance and are not a precondition for it. The material lives in three places (shown for `expanded_v1`; `current_law_v2` is analogous):
 
 | File | Content | Author | Committed? |
 |---|---|---|---|
@@ -235,6 +235,17 @@ To record decisions:
 1. `uv run atti review-sheet [--corpus current_law_v2]` re-extracts and hash-verifies the pairs, writes the sheet, creates an empty decision template if none exists (never overwriting one), and validates recorded decisions.
 2. Read each pair and record a decision, either by editing the decisions file or with `uv run atti decide <article> <APPROVE|REJECT|REQUEST_EXAMINATION> --reviewer "<name or pseudonym>" [--comment ...] [--corpus ...]`. A comment is required for anything other than APPROVE. The reviewer can be a stable pseudonym such as a GitHub handle; a civil name is not required.
 3. Re-run `review-sheet`. It exits with code 2 if the file is invalid: an unknown decision, missing name or date, an AI-system reviewer name, or a manifest hash mismatch.
+
+### Review workspace
+
+`uv run atti review-workspace --reviewer <pseudonym>` re-verifies all three corpora against their pinned hashes (fail closed), then serves one local page on `127.0.0.1` behind a random URL token. It covers all 140 corpus slots: 130 distinct pairs, because the 10 pilot pairs are byte-identical to 10 `expanded_v1` pairs and are reviewed once. Pairs are de-duplicated only when both the Arabic and English hashes match. The 15 article numbers that appear in both `expanded_v1` and `current_law_v2` have different texts and are reviewed separately. `--check` prints this summary and exits.
+
+- For each pair the page shows the full Arabic (RTL) and English (LTR) texts as verified, the corpus membership, the legal version and the official source links.
+- The reviewer assesses semantic equivalence, legal terminology, completeness of clauses and conditions, and consistency of numbers, exceptions and references, and records discrepancies. The benchmark decision (APPROVE, REJECT or REQUEST_EXAMINATION) is made separately.
+- AI material is not part of the page. It is fetched for one article only when the reviewer asks for it, and the time of that reveal is logged locally. For AI-flagged articles, the AI assessment must be revealed and adjudicated before a decision can be recorded.
+- Drafts and private notes autosave to `data/review/workspace_drafts.json`, which is git-ignored.
+- A decision is written only after the reviewer previews the exact record and confirms it. It then goes through the same validation as `atti decide`. Changing a recorded decision needs a second, explicit confirmation.
+- Criterion issues are stored in the existing fields: `terminology`, plus `discrepancies` notes prefixed with the criterion. `review_period` runs from the first draft to the recording date.
 
 ### Recording the maintainer's decisions
 
@@ -290,7 +301,7 @@ Decisions are bound to the manifest's SHA-256. A REJECT does not remove an artic
 | `atti verify-live [--corpus expanded_v1]` | Downloads fresh BOE sources into a temporary directory (deleted afterwards) and compares them with the manifest and, if present, the cached baseline. Never updates hashes or approves text. | nothing |
 | `atti fetch` | Downloads missing BOE sources. | `data/raw/` (git-ignored) |
 | `atti manifest [--corpus expanded_v1]` | Curation only: rebuilds a v1 manifest; refuses ineligible articles or ones without a review note. | `manifest/pilot_manifest.json` or `manifest/expanded_v1_manifest.json` |
-| `atti review-sheet`, `atti decide` | Human validation, see above. | `data/review/`, `review/*_human_decisions.json` |
+| `atti review-sheet`, `atti decide`, `atti review-workspace` | Human validation, see above. | `data/review/`, `review/*_human_decisions.json` |
 
 **Published results are protected.** `atti frontier`, `atti gemini` and `atti regional` validate every row before writing: each model must cover exactly the 100 corpus articles with positive counts and consistent ratios. If validation fails, nothing is written. They also refuse, with exit code 4, any run that would remove or change a published model's rows, alter a recorded passing pilot, or turn a MEASURED adapter into anything else (`frontier.publish`, tested in `tests/test_publish.py`). To re-measure from scratch, delete the published files first. Valid outputs are replaced one file at a time, so an interruption between replacements, or two concurrent runs, can leave files from different runs; complete-generation writes are deferred. `atti pilot`, `atti expanded` and `atti v2` are deterministic and write only after the sources verify against the manifest hashes.
 
@@ -337,7 +348,7 @@ Decisions are bound to the manifest's SHA-256. A REJECT does not remove an artic
 - That offsets align with *linguistic* units. They only show that characters are attributed to tokens.
 - That production inference for these models uses the same tokenizer files. The Qwen/Mistral cross-check against `transformers` and SentencePiece is not part of the test suite.
 - That the Arabic and English texts are legally equivalent. Neither the AI review nor the maintainer's acceptance certifies that.
-- That any individual pair has a formal article-level review record, or has been validated by anyone outside the project.
+- That the pairs have been validated by anyone outside the project.
 - That the official sources are unchanged *today*. Only `atti verify-live` checks that, at the moment it runs, and only for the BOE sources. The Arabic page bytes are not compared because they embed a live view counter; only the parsed article text, headings and amendment flags are.
 - That API counts would be the same today, or that they isolate content tokens.
 

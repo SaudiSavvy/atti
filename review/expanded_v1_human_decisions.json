@@ -58,16 +58,22 @@
       "comment": ""
     },
     "49": {
-      "decision": null,
-      "reviewer": null,
-      "date": null,
-      "comment": ""
+      "decision": "APPROVE",
+      "reviewer": "SaudiSavvy",
+      "date": "2026-11-26",
+      "comment": "",
+      "review_period": "2026-11-26",
+      "equivalence": "EQUIVALENT",
+      "terminology": "Accurate"
     },
     "59": {
-      "decision": null,
-      "reviewer": null,
-      "date": null,
-      "comment": ""
+      "decision": "APPROVE",
+      "reviewer": "SaudiSavvy",
+      "date": "2026-11-26",
+      "comment": "",
+      "review_period": "2026-11-26",
+      "equivalence": "EQUIVALENT",
+      "terminology": "Accurate"
     },
     "65": {
       "decision": null,
