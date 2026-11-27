@@ -133,6 +133,18 @@ def test_reference_extraction():
     assert c["refs_mismatch"] == [] and 30.0 in c["numbers_ar_not_en"] and 60.0 in c["numbers_en_not_ar"]
 
 
+def test_curation_flags_name_each_difference():
+    rec = v2.Record("1", 1, "h", "خلال ثلاثين يوماً وفقاً للمادة (الخامسة) من هذا النظام، 1- أ 2- ب", [1], None, ["Article 1:"],
+                    "within sixty days under Article 6: (a) x", "u", "u")
+    flags = v2.auto_flags(v2.auto_checks(rec))
+    assert len(flags) == 3
+    assert flags[0].startswith("numbers differ") and "30.0" in flags[0] and "60.0" in flags[0]
+    assert flags[1] == "article references differ (AR [5], EN [6])"
+    assert flags[2].startswith("clause markers differ")
+    same = v2.Record("2", 1, "h", "خلال ثلاثين يوماً", [1], None, ["Article 2:"], "within thirty days", "u", "u")
+    assert v2.auto_flags(v2.auto_checks(same)) == []
+
+
 # ---------------------------------------------------------------- committed artifacts (offline)
 
 @pytest.fixture(scope="module")

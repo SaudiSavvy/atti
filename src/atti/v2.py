@@ -191,6 +191,9 @@ def _strip_prefix(w: str) -> str:
     return w
 
 
+# Curation checks: prompts for the AI pair review, never verdicts, and not used by any command.
+# docs/methodology.md ("Curation checks") shows how to reproduce them on the committed pairs.
+
 def ar_numbers(text: str) -> set[float]:
     """Numeric values in Arabic text: digits plus cardinal number words (approximate)."""
     t = text.translate(_AR_DIGITS)

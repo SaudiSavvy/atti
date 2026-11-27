@@ -10,7 +10,6 @@ import httpx
 import pytest
 
 from atti import cli, hrsd, review, sources, tokenization
-from atti.corpus import ArticlePair
 from tests.conftest import ROOT
 
 # ---------------------------------------------------------------- F1: tokenizer SHA-256 pins
@@ -138,11 +137,10 @@ def test_boe_final_url_checked(monkeypatch):
         sources.download(sources.ENGLISH.url)
 
 
-# ---------------------------------------------------------------- F3-F5: review page
+# ---------------------------------------------------------------- F3-F5: review workspace and sheet inputs
 
 MANIFEST = {"corpus": "toy", "articles": [{"article": 1, "id": "T-1", "ar_chars": 3, "en_chars": 3,
                                            "ar_sha256": "a" * 64, "en_sha256": "b" * 64}]}
-PAIRS = [ArticlePair(1, "h", "نص", "text one")]
 
 
 def ai_review(status="PASS"):
@@ -150,34 +148,39 @@ def ai_review(status="PASS"):
             "no_fail_found": "", "articles": {"1": {"proposed_status": status, "evidence": "e"}}}
 
 
-def page(ai=None, sources_html=None, flagged=()):
-    return review.render_html(MANIFEST, PAIRS, {1: 1}, ai or ai_review(),
-                              review.decisions_template("toy", MANIFEST, "f" * 64), [], list(flagged),
-                              sources_html)
+def workspace_page(sources):
+    from atti import workspace
+
+    item = workspace.Item(id="expanded_v1:1", home="expanded_v1", key="1", ar="نص", en="text one",
+                          ar_sha256="a" * 64, en_sha256="b" * 64, part="1", sources=sources)
+    return workspace.render_page([item], {"unique_pairs": 1, "slots": 1}, "SaudiSavvy", "tok")
 
 
 @pytest.mark.parametrize("url", ['https://www.hrsd.gov.sa/"><script>alert(1)</script>',
                                  "javascript:alert(1)", "https://evil.example/part",
                                  'https://www.hrsd.gov.sa/x" onmouseover="alert(1)'])
 def test_hostile_source_urls_cannot_inject_markup(url):
-    line = review.source_links([12], url, url)
-    out = page(sources_html={"1": line})
-    assert out.count("<script") == 2  # only the page's own two scripts, nothing injected
-    assert 'href="javascript:' not in out and "evil.example" not in line.split("withheld")[0]
-    assert "onmouseover=\"" not in out
+    from atti import workspace
+
+    link = workspace._link("English page", url, hrsd.HOST)
+    assert link["url"] in (None, url) and (link["url"] is None) == (not url.startswith("https://www.hrsd.gov.sa/"))
+    out = workspace_page([link])
+    assert out.count("<script") == 2  # only the page's own data block and script, nothing injected
+    assert "javascript:" not in out and "evil.example" not in out and 'onmouseover="' not in out
 
 
 def test_official_source_url_still_linked():
+    from atti import workspace
+
     url = "https://www.hrsd.gov.sa/en/part?a=1&b=2"
-    assert review.source_links([3, 4], url, None) == \
-        'Arabic PDF p. 3, 4 · <a href="https://www.hrsd.gov.sa/en/part?a=1&amp;b=2">English page</a> · ' \
-        "Arabic HTML page: none"
+    assert workspace._link("English page", url, hrsd.HOST) == {"label": "English page", "url": url}
+    assert workspace._link("Arabic HTML page", None, hrsd.HOST) == {"label": "Arabic HTML page: none", "url": None}
 
 
 @pytest.mark.parametrize("status", ['PASS"><script>alert(1)</script>', "APPROVED", None])
 def test_unknown_proposed_status_rejected(status):
     with pytest.raises(ValueError, match="unknown AI proposed status"):
-        page(ai_review(status))
+        review.check_review_inputs(ai_review(status), [1])
 
 
 @pytest.mark.parametrize("key", ["1'); alert(1); ('", "<b>1</b>"])
@@ -187,8 +190,8 @@ def test_unexpected_article_keys_rejected(key):
 
 
 @pytest.mark.parametrize("status", review.REVIEW_STATUSES)
-def test_every_documented_status_renders(status):
-    assert f"AI proposed: {status}" in page(ai_review(status))
+def test_every_documented_status_accepted(status):
+    review.check_review_inputs(ai_review(status), [1])
 
 
 # ---------------------------------------------------------------- F7: pseudonymous reviewers

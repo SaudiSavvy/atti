@@ -107,14 +107,11 @@ def cmd_review_sheet(args) -> int:
     m_path = root / "manifest" / f"{name}_manifest.json"
     manifest = corpus.read_json(m_path)
     m_hash = review.manifest_sha256(m_path)
-    sources = {}
     try:
         if name == "current_law_v2":
             recs = v2.verify(manifest, root / v2.RAW)
             pairs = [SimpleNamespace(article=r.key, ar_text=r.ar_text, en_text=r.en_text) for r in recs]
             parts = {r.key: r.part for r in recs}
-            for r in recs:
-                sources[r.key] = review.source_links(r.ar_pages, r.en_url, r.ar_html_url)
             ai = corpus.read_json(root / "manifest" / f"{name}_review.json")
         else:
             pairs = corpus.verify(manifest, root / "data" / "raw")
@@ -138,10 +135,9 @@ def cmd_review_sheet(args) -> int:
     out = root / "data" / "review" / f"{name}_review_sheet.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(review.render_sheet(manifest, pairs, parts, ai, dec, errors), encoding="utf-8")
-    page = out.with_name(f"{name}_review.html")
-    page.write_text(review.render_html(manifest, pairs, parts, ai, dec, errors, flagged, sources), encoding="utf-8")
     s = review.summarize(ai, dec)
-    print(f"wrote {out.relative_to(root)} and {page.relative_to(root)} (git-ignored; contain full legal texts)")
+    print(f"wrote {out.relative_to(root)} (git-ignored; contains full legal texts); "
+          "record decisions with `atti review-workspace` or `atti decide`")
     if name == "current_law_v2" and ai.get("discrepancy_matrix"):
         all_recs, _ = v2.build_records(v2.load(root / v2.RAW))
         texts = {d["article"]: (all_recs[d["article"]].ar_text, all_recs[d["article"]].en_text)

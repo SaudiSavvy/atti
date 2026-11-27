@@ -125,17 +125,9 @@ def test_cli_requires_adjudication_for_ai_flagged_articles(tmp_path, monkeypatch
         {"verdict": "PARTLY_AGREE", "note": "note A"}
 
 
-def test_findings_are_escaped_on_the_review_page():
-    from atti.corpus import ArticlePair
-
+def test_findings_are_kept_verbatim_in_the_markdown_sheet():
     dec = review.decisions_template("toy", MANIFEST, H)
     dec["decisions"]["1"] = {**BASE, "terminology": "<script>x</script>",
                              "discrepancies": [{"severity": "MINOR", "note": "<b>n</b>"}]}
-    ai = {"reviewer": "AI", "independence_caveat": "", "status_criteria": {}, "material_discrepancies": [],
-          "no_fail_found": "", "articles": {"1": {"proposed_status": "PASS", "evidence": "e"},
-                                            "2": {"proposed_status": "PASS", "evidence": "e"}}}
-    pairs = [ArticlePair(1, "h", "a", "b"), ArticlePair(2, "h", "a", "b")]
-    out = review.render_html({**MANIFEST, "articles": [{**a, "ar_chars": 1, "en_chars": 1} for a in MANIFEST["articles"]]},
-                             pairs, {1: 1, 2: 1}, ai, dec, [], [])
-    assert "&lt;script&gt;x&lt;/script&gt;" in out and "&lt;b&gt;n&lt;/b&gt;" in out and out.count("<script") == 2
-    assert "terminology: <script>" in review._human_cell(dec["decisions"]["1"])  # Markdown sheet is local text
+    cell = review._human_cell(dec["decisions"]["1"])
+    assert "terminology: <script>x</script>" in cell and "MINOR discrepancy: <b>n</b>" in cell  # local text file
