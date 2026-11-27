@@ -366,10 +366,13 @@ src/atti/  cli.py           command line
            selection.py     deterministic expanded_v1 selection
            v2.py            current_law_v2 eligibility, QA, selection, measurement, report, migration
            tokenization.py  pinned tokenizer loading, content-only counting, run-time guards
-           frontier.py      DeepSeek/GLM/Kimi tokenizers, Claude/GPT counting APIs, API cache
+           adapters.py      corpus-agnostic tokenizer and API adapters, write-once API cache
+           measure.py       corpus-agnostic pilot, rows, summaries, all-or-nothing publication
+           frontier.py      DeepSeek/GLM/Kimi tokenizers, Claude/GPT counting APIs (current_law_v2)
            gemini.py        Gemini countTokens adapter
            regional.py      Arabic-focused/Arab-developed tokenizers, official SentencePiece runtime, equivalence
            review.py        review sheet, decision template + validation
+           workspace.py     local review workspace (workspace_page.py: its page)
            metrics.py / pipeline.py / report.py
 manifest/  article manifests, AI review files, adapter manifests
 results/   per-article CSVs and summaries
