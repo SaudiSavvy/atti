@@ -14,7 +14,6 @@ import collections
 import hashlib
 import json
 import re
-import statistics
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -191,6 +190,9 @@ def _strip_prefix(w: str) -> str:
             return w[1:]
     return w
 
+
+# Curation checks: prompts for the AI pair review, never verdicts, and not used by any command.
+# docs/methodology.md ("Curation checks") shows how to reproduce them on the committed pairs.
 
 def ar_numbers(text: str) -> set[float]:
     """Numeric values in Arabic text: digits plus cardinal number words (approximate)."""
@@ -662,6 +664,16 @@ def verify(manifest: dict, raw: Path = RAW) -> list[Record]:
 
 # ----------------------------------------------------------------------------- measurement
 
+def load_verified(root: Path) -> tuple[dict, list[Record]]:
+    """The committed manifest and its 100 pairs, re-extracted and verified (see ``verify``)."""
+    manifest = json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8"))
+    records = verify(manifest, root / RAW)
+    keys = [a["key"] for a in manifest["articles"]]
+    if len(keys) != FROZEN_PAIRS or len(set(keys)) != FROZEN_PAIRS or [r.key for r in records] != keys:
+        raise VerificationError("the corpus must be exactly the 100 current_law_v2 pairs")  # implied by verify
+    return manifest, records
+
+
 CSV_FIELDS = ["model", "revision", "article_id", "article", "part", "ar_sha256", "en_sha256",
               "ar_chars", "en_chars", "ar_tokens", "en_tokens", "ar_en_ratio"]
 
@@ -998,7 +1010,7 @@ def curate(root: Path) -> dict:
         from atti import review as review_mod
 
         tmpl = review_mod.decisions_template(CORPUS, manifest, review_mod.manifest_sha256(root / MANIFEST_PATH))
-        dec_path.write_text(json.dumps(tmpl, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        dec_path.write_text(dumps(tmpl), encoding="utf-8")
     return manifest
 
 

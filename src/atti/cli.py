@@ -1,4 +1,4 @@
-"""Command-line entry point: ``uv run atti {fetch,manifest,pilot}``."""
+"""Command-line entry point: ``uv run atti <command>`` (see ``uv run atti --help``)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,14 @@ def _root() -> Path:
     return Path.cwd()
 
 
-EXIT_VERIFICATION, EXIT_NETWORK = 2, 3
+EXIT_VERIFICATION, EXIT_NETWORK, EXIT_BLOCKED = 2, 3, 4
+
+
+def _print_peak_memory() -> None:
+    import resource
+
+    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # bytes on macOS, kilobytes on Linux
+    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
 
 
 def _network_error(exc) -> int:
@@ -93,32 +100,25 @@ def cmd_verify_live(args) -> int:
 def cmd_review_sheet(args) -> int:
     from types import SimpleNamespace
 
-    from atti import corpus, review
+    from atti import corpus, review, v2
 
     root = _root()
     name = args.corpus
     m_path = root / "manifest" / f"{name}_manifest.json"
     manifest = corpus.read_json(m_path)
     m_hash = review.manifest_sha256(m_path)
-    sources = {}
     try:
         if name == "current_law_v2":
-            from atti import v2
-
             recs = v2.verify(manifest, root / v2.RAW)
             pairs = [SimpleNamespace(article=r.key, ar_text=r.ar_text, en_text=r.en_text) for r in recs]
             parts = {r.key: r.part for r in recs}
-            for r in recs:
-                sources[r.key] = review.source_links(r.ar_pages, r.en_url, r.ar_html_url)
             ai = corpus.read_json(root / "manifest" / f"{name}_review.json")
         else:
             pairs = corpus.verify(manifest, root / "data" / "raw")
             ar_articles, _ = corpus.load_sources(root / "data" / "raw")
             parts = {a.number: a.part for a in ar_articles if not a.bis}
             ai = corpus.read_json(root / "review" / f"{name}_ai_review.json")
-    except (corpus.VerificationError, Exception) as exc:  # noqa: BLE001
-        if type(exc).__name__ != "VerificationError":
-            raise
+    except (corpus.VerificationError, v2.VerificationError) as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
     try:
@@ -135,10 +135,9 @@ def cmd_review_sheet(args) -> int:
     out = root / "data" / "review" / f"{name}_review_sheet.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(review.render_sheet(manifest, pairs, parts, ai, dec, errors), encoding="utf-8")
-    page = out.with_name(f"{name}_review.html")
-    page.write_text(review.render_html(manifest, pairs, parts, ai, dec, errors, flagged, sources), encoding="utf-8")
     s = review.summarize(ai, dec)
-    print(f"wrote {out.relative_to(root)} and {page.relative_to(root)} (git-ignored; contain full legal texts)")
+    print(f"wrote {out.relative_to(root)} (git-ignored; contains full legal texts); "
+          "record decisions with `atti review-workspace` or `atti decide`")
     if name == "current_law_v2" and ai.get("discrepancy_matrix"):
         all_recs, _ = v2.build_records(v2.load(root / v2.RAW))
         texts = {d["article"]: (all_recs[d["article"]].ar_text, all_recs[d["article"]].en_text)
@@ -154,10 +153,8 @@ def cmd_review_sheet(args) -> int:
 
 
 def cmd_decide(args) -> int:
-    """Record ONE human decision in the decision file (the only writer of that file)."""
+    """Record ONE human decision in the decision file (validated; refuses to overwrite without --replace)."""
     import datetime as dt
-    import json
-    import os
 
     from atti import corpus, review
 
@@ -192,9 +189,7 @@ def cmd_decide(args) -> int:
     except ValueError as exc:
         print(f"NOT RECORDED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
-    tmp = dec_path.with_name(dec_path.name + ".part")
-    tmp.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(tmp, dec_path)
+    review.save_json(dec_path, new)
     d = new["decisions"][str(args.article)]
     print(f"recorded Article {args.article}: {d['decision']} by {d['reviewer']} on {d['date']}"
           + (f" (reviewed {d['review_period']})" if d.get("review_period") else ""))
@@ -278,15 +273,13 @@ def cmd_v2(args) -> int:
 
 
 def cmd_frontier(args) -> int:
-    import resource
-
-    from atti import frontier, sources, v2
+    from atti import adapters, frontier, measure, sources, v2
 
     try:
         status = frontier.run(_root(), pilot_only=args.pilot_only)
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         return _refused(exc)
-    except frontier.CacheIntegrityError as exc:
+    except adapters.CacheIntegrityError as exc:
         print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     except sources.NetworkError as exc:
@@ -296,38 +289,32 @@ def cmd_frontier(args) -> int:
         return EXIT_VERIFICATION
     for st in status.values():
         print(f"{st['display']}: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))
-    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    _print_peak_memory()
     print("wrote " + ", ".join(str(p) for k, p in frontier.OUTPUTS.items() if k == "pilot" or not args.pilot_only))
     return 0
 
 
 def cmd_regional(args) -> int:
-    import resource
-
-    from atti import frontier, regional, sources, tokenization, v2
+    from atti import adapters, measure, regional, sources, tokenization, v2
 
     try:
         status = regional.run(_root())
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         print(f"REFUSED: {exc}. Published regional results were left unchanged; nothing was written.",
               file=sys.stderr)
         return EXIT_BLOCKED
     except sources.NetworkError as exc:
         return _network_error(exc)
-    except (v2.VerificationError, frontier.FrontierError, tokenization.TokenizerIntegrityError) as exc:
+    except (v2.VerificationError, adapters.FrontierError, tokenization.TokenizerIntegrityError) as exc:
         print(f"VERIFICATION FAILED: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     for st in status.values():
         extra = st.get("equivalent_to") or st.get("reason") or st.get("blocked_reason") or ""
         print(f"{st['display']}: {st['status']}" + (f" ({extra[:120]})" if extra else ""))
-    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    _print_peak_memory()
     print("wrote " + ", ".join(str(p) for p in regional.OUTPUTS.values()))
     return 0
 
-
-EXIT_BLOCKED = 4
 
 
 def _refused(exc) -> int:
@@ -338,16 +325,16 @@ def _refused(exc) -> int:
 
 
 def cmd_gemini(args) -> int:
-    from atti import frontier, gemini, sources, v2
+    from atti import adapters, gemini, measure, sources, v2
 
     try:
         st = gemini.run(_root(), pilot_only=args.pilot_only)
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         return _refused(exc)
     except gemini.GeminiBlocked as exc:
         print(f"Gemini 4 Neon: BLOCKED ({exc})", file=sys.stderr)
         return EXIT_BLOCKED
-    except frontier.CacheIntegrityError as exc:
+    except adapters.CacheIntegrityError as exc:
         print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     except sources.NetworkError as exc:
@@ -355,7 +342,7 @@ def cmd_gemini(args) -> int:
     except v2.VerificationError as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
-    except frontier.ApiError as exc:
+    except adapters.ApiError as exc:
         print(f"Gemini 4 Neon: API ERROR ({exc}); nothing written for the failed step", file=sys.stderr)
         return EXIT_NETWORK
     print(f"Gemini 4 Neon: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))

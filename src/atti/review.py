@@ -5,6 +5,8 @@ Three separate files, by design:
   review/<corpus>_human_decisions.json   decisions recorded by a human (committable)
   data/review/<corpus>_review_sheet.md   full bilingual texts side by side (git-ignored)
 
+Decisions are recorded with ``atti decide`` or in the local review workspace (``atti.workspace``).
+
 Nothing here changes manifests, results or the selection. A decision binds
 to one manifest version through ``manifest_sha256``.
 """
@@ -18,7 +20,7 @@ import json
 import re
 from pathlib import Path
 
-from atti.sources import UntrustedURLError, require_https_host, sha256_bytes
+from atti.sources import sha256_bytes, write_atomic
 
 AI_STATUSES = ("PASS", "NEEDS_REVIEW", "FAIL")
 HUMAN_DECISIONS = ("APPROVE", "REJECT", "REQUEST_EXAMINATION")
@@ -254,6 +256,12 @@ def write_json_new(path: Path, data: dict) -> bool:
     return True
 
 
+def save_json(path: Path, data: dict) -> None:
+    """Write a decision (or drafts) file atomically, in the repository's JSON layout."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_atomic(path, (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+
+
 def record_decision(dec: dict, manifest: dict, manifest_hash: str, article: int, decision: str,
                     reviewer: str, date: str, comment: str, replace: bool = False,
                     findings: dict | None = None, flagged=()) -> dict:
@@ -275,177 +283,11 @@ def record_decision(dec: dict, manifest: dict, manifest_hash: str, article: int,
     return new
 
 
-_CSS = """
-:root{--bg:#fbfaf7;--fg:#1d1d1f;--muted:#6b6b70;--card:#fff;--line:#e3e1dc;--accent:#2f5d8a;
---flag:#b45309;--flagbg:#fff7ed;--pass:#2f7d4f;--warn:#b45309;--fail:#b3261e;--code:#f2f1ed}
-@media (prefers-color-scheme:dark){:root{--bg:#161618;--fg:#ececee;--muted:#a1a1a6;--card:#1f1f22;
---line:#333338;--accent:#8ab4e0;--flag:#f0a35e;--flagbg:#2a2116;--pass:#6cc58d;--warn:#f0a35e;
---fail:#f28b82;--code:#2a2a2e}}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:12px}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
-.layout{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
-nav{position:sticky;top:0;height:100vh;overflow:auto;padding:16px;border-right:1px solid var(--line);font-size:14px}
-nav h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 6px}
-nav a{display:flex;justify-content:space-between;padding:3px 8px;border-radius:6px;color:var(--fg);text-decoration:none}
-nav a:hover{background:var(--code)}nav a.flag{color:var(--flag);font-weight:600}
-main{padding:24px 32px 80px;max-width:1280px}
-.banner{border:1px solid var(--flag);background:var(--flagbg);border-radius:10px;padding:12px 16px;margin-bottom:16px}
-.meta{color:var(--muted);font-size:14px}
-.flaglist a{display:inline-block;margin:4px 8px 4px 0;padding:4px 10px;border-radius:999px;border:1px solid var(--flag);color:var(--flag);text-decoration:none;font-weight:600}
-article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:18px 0}
-article.flagged{border:2px solid var(--flag);box-shadow:0 0 0 4px var(--flagbg)}
-article header{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between}
-article h3{margin:0;font-size:20px}
-.badge{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid currentColor}
-.PASS,.PROPOSED_PASS{color:var(--pass)}.NEEDS_REVIEW{color:var(--warn)}.FAIL{color:var(--fail)}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:14px 0}
-.cols>div{border-top:3px solid var(--line);padding-top:8px}
-.cols h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.ar{font-family:"Geeza Pro","Noto Naskh Arabic","Arial",sans-serif;font-size:20px;line-height:2}
-.notes{background:var(--code);border-radius:8px;padding:10px 12px;font-size:14px}
-.issue{color:var(--flag);font-weight:600}
-.recorded{font-size:14px;margin:10px 0}
-fieldset{border:1px dashed var(--line);border-radius:8px;margin:12px 0 0;padding:10px 12px}
-legend{font-size:12px;color:var(--muted);padding:0 4px}
-fieldset label{margin-right:16px;font-size:14px;white-space:nowrap}
-textarea,input[type=text]{width:100%;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
-.cmd{display:flex;gap:8px;margin-top:8px}.cmd input{font-family:ui-monospace,Menlo,monospace;font-size:12px}
-button{font:inherit;font-size:13px;padding:4px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
-.pager{display:flex;justify-content:space-between;font-size:13px;margin-top:10px}.pager a{color:var(--accent)}
-code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:13px}
-@media (max-width:900px){.layout{grid-template-columns:1fr}nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
-.cols{grid-template-columns:1fr}main{padding:16px}}
-"""
-
-_JS = """
-function q(s){return "'"+String(s).replace(/'/g,"'\\\\''")+"'";}
-function build(n){
-  const d=document.querySelector('input[name="d'+n+'"]:checked');
-  const r=document.getElementById('reviewer').value.trim();
-  const c=document.getElementById('c'+n).value.trim();
-  const out=document.getElementById('cmd'+n);
-  if(!d){out.value='Choose a draft decision above to build the command';return;}
-  let cmd='uv run atti decide '+n+' '+d.value+' --reviewer '+q(r||'YOUR NAME');
-  if(CORPUS!=='expanded_v1') cmd+=' --corpus '+CORPUS;
-  if(c) cmd+=' --comment '+q(c);
-  out.value=cmd;
-}
-function copyCmd(n){const o=document.getElementById('cmd'+n);o.select();
-  try{document.execCommand('copy');}catch(e){}
-  if(navigator.clipboard){navigator.clipboard.writeText(o.value).catch(()=>{});}}
-document.addEventListener('input',e=>{
-  if(e.target.id==='reviewer'){document.querySelectorAll('[data-n]').forEach(a=>build(a.dataset.n));}
-  else if(e.target.dataset.for){build(e.target.dataset.for);}});
-"""
-
-
 def check_review_inputs(ai: dict, article_keys) -> None:
-    """Article keys and AI proposed statuses end up in HTML attributes and scripts: allow only known values."""
+    """Article keys and AI proposed statuses are written into the review sheet: allow only known values."""
     for k in article_keys:
         if not _ARTICLE_KEY.fullmatch(str(k)):
             raise ValueError(f"unexpected article key {str(k)!r}")
         st = ai["articles"].get(str(k), {}).get("proposed_status")
         if st not in REVIEW_STATUSES:
             raise ValueError(f"Article {k}: unknown AI proposed status {st!r}")
-
-
-def source_links(ar_pages, en_url: str | None, ar_html_url: str | None) -> str:
-    """Escaped source line for the review page; only official HRSD HTTPS URLs become links."""
-    from atti.hrsd import HOST
-
-    def link(label, url):
-        if not url:
-            return html.escape(f"{label}: none")
-        try:
-            require_https_host(url, HOST)
-        except UntrustedURLError:
-            return html.escape(f"{label}: unexpected URL withheld")
-        return f'<a href="{html.escape(url, quote=True)}">{html.escape(label)}</a>'
-
-    pages = ", ".join(str(int(p)) for p in ar_pages)
-    return f"Arabic PDF p. {pages} · {link('English page', en_url)} · {link('Arabic HTML page', ar_html_url)}"
-
-
-def render_html(manifest: dict, pairs, parts: dict, ai: dict, dec: dict, errors: list[str],
-                flagged: list, sources: dict | None = None) -> str:
-    """Local, self-contained review page. It never saves anything: decision
-    controls are drafts that only build an `atti decide` command. ``sources`` values are trusted
-    HTML built by ``source_links``."""
-    esc = html.escape
-    check_review_inputs(ai, [*(p.article for p in pairs), *flagged])
-    by_num = dict(zip(keys(manifest), manifest["articles"]))
-    issues = {str(d["article"]): d["issue"] for d in ai["material_discrepancies"]}
-    flagged = [str(f) for f in flagged]
-    sources = sources or {}
-    parts = {str(k): v for k, v in parts.items()}
-    s = summarize(ai, dec)
-    order = [str(p.article) for p in pairs]
-    nav = ['<nav><h2>Flagged for closer examination</h2>']
-    nav += [f'<a class="flag" href="#a{n}">Article {n}<span>⚑</span></a>' for n in flagged]
-    nav.append(f'<h2>All {len(pairs)} articles</h2>')
-    for n in order:
-        st = ai["articles"][str(n)]["proposed_status"]
-        rec = dec["decisions"][str(n)]["decision"]
-        mark = "⚑" if n in flagged else ("✓" if rec == "APPROVE" else "")
-        nav.append(f'<a class="{"flag" if n in flagged else ""}" href="#a{n}">Article {n}'
-                   f'<span class="{st}" title="AI proposed {st}">{mark or "·"}</span></a>')
-    nav.append("</nav>")
-    body = [
-        f'<h1>ATTI {esc(manifest["corpus"])}: bilingual review ({len(pairs)} articles)</h1>',
-        '<div class="banner"><strong>Reading and drafting page: nothing on this page is saved.</strong> '
-        'The authoritative record is <code>review/' + esc(manifest["corpus"]) + '_human_decisions.json</code>. '
-        'To record a decision, choose a draft below, copy the generated command and run it in the '
-        'repository: <code>atti decide</code> validates it and refuses to overwrite an existing '
-        'decision unless you add <code>--replace</code>. AI statuses and notes are advisory only and '
-        'are <strong>not</strong> human approval.</div>',
-        f'<p class="meta">Manifest SHA-256 <code>{esc(dec["manifest_sha256"][:16])}…</code> · AI proposed: '
-        + esc(", ".join(f"{k} {v}" for k, v in s["ai_proposed"].items()))
-        + " · Recorded human decisions: "
-        + esc(", ".join(f"{k} {v}" for k, v in s["human"].items())) + "</p>",
-    ]
-    if errors:
-        body.append('<div class="banner"><strong>Decision file problems:</strong> '
-                    + esc("; ".join(errors)) + "</div>")
-    body += ['<p><label>Your name or a stable pseudonym (used only to build commands; not stored): '
-             '<input type="text" id="reviewer" autocomplete="off" placeholder="e.g. a GitHub handle"></label></p>',
-             '<div class="flaglist">Jump to flagged: '
-             + "".join(f'<a href="#a{n}">Article {n}</a>' for n in flagged) + "</div>"]
-    for i, p in enumerate(pairs):
-        n = str(p.article)
-        e, a = by_num[n], ai["articles"][n]
-        rec = dec["decisions"][n]
-        recorded = ("<em>No human decision recorded.</em>" if rec["decision"] is None else
-                    f'<strong>Recorded: {esc(rec["decision"])}</strong> by {esc(rec["reviewer"])} on '
-                    f'{esc(rec["date"])}' + (f": {esc(rec['comment'])}" if rec["comment"] else "")
-                    + "".join(f"<br>{esc(x)}" for x in _findings_text(rec)))
-        radios = "".join(
-            f'<label><input type="radio" name="d{n}" value="{d}" data-for="{n}"> {d}</label>'
-            for d in HUMAN_DECISIONS)
-        prev_a = f'<a href="#a{order[i-1]}">← Article {order[i-1]}</a>' if i else "<span></span>"
-        next_a = f'<a href="#a{order[i+1]}">Article {order[i+1]} →</a>' if i + 1 < len(order) else "<span></span>"
-        body.append(
-            f'<article id="a{n}" class="{"flagged" if n in flagged else ""}">'
-            f'<header><h3>{"⚑ " if n in flagged else ""}Article {n} <span class="meta">· {esc(e["id"])} · '
-            f'Part {esc(str(parts[n]))} · {esc(str(e["ar_chars"]))} AR / {esc(str(e["en_chars"]))} EN chars</span></h3>'
-            f'<span class="badge {esc(a["proposed_status"])}">AI proposed: {esc(a["proposed_status"])}</span></header>'
-            + (f'<p class="issue">Possible material discrepancy: {esc(issues[n])}</p>' if n in issues else "")
-            + (f'<p class="meta">Sources: {sources[n]}</p>' if n in sources else "")
-            + '<div class="cols">'
-            f'<div lang="en" dir="ltr"><h4>English · official translation</h4>{esc(p.en_text)}</div>'
-            f'<div lang="ar" dir="rtl" class="ar"><h4 dir="ltr" style="text-align:right">'
-            f'Arabic · original (governing)</h4>{esc(p.ar_text)}</div></div>'
-            f'<div class="notes"><strong>AI review note</strong> (advisory): {esc(a["evidence"])}</div>'
-            f'<p class="recorded">{recorded}</p>'
-            f'<fieldset data-n="{n}"><legend>Draft decision for Article {n}: NOT saved by this page</legend>'
-            f'{radios}<p><textarea id="c{n}" rows="2" data-for="{n}" '
-            f'placeholder="Comment (required for REJECT and REQUEST_EXAMINATION)"></textarea></p>'
-            f'<div class="cmd"><input type="text" id="cmd{n}" readonly '
-            f'value="Choose a draft decision above to build the command">'
-            f'<button type="button" onclick="copyCmd(\'{n}\')">Copy</button></div></fieldset>'
-            f'<div class="pager">{prev_a}<a href="#top">↑ Top</a>{next_a}</div></article>')
-    return ("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
-            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-            f"<title>ATTI Review {esc(manifest['corpus'])}</title><style>{_CSS}</style></head>"
-            f"<script>const CORPUS={json.dumps(manifest['corpus'])};</script>"
-            f'<body id="top"><div class="layout">{"".join(nav)}<main>{"".join(body)}</main></div>'
-            f"<script>{_JS}</script></body></html>\n")

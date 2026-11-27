@@ -104,6 +104,33 @@ Deterministic and token-blind (token counts, ratios and English length are never
 - `atti v2-manifest` refuses to rebuild the manifest once any human decision is recorded, because decisions are bound to the manifest hash. While the decision template is empty, the template is re-bound to the new manifest.
 - Human decisions go in `review/current_law_v2_human_decisions.json` (see [Human validation](#human-validation)).
 
+### Curation checks
+
+The AI review used automated checks as prompts, never as verdicts (`independence_caveat` in `manifest/current_law_v2_review.json`). They live in `src/atti/v2.py` and are not part of any command, so measurements never depend on them:
+
+- `ar_numbers` / `en_numbers`: numbers in each language, including Arabic and English number words, ordinals and fractions;
+- `ar_refs` / `en_refs`: article cross-references;
+- `clause_markers`: numbered and lettered clause markers;
+- `auto_checks(record)`: all of the above for one pair, plus negation and modal-verb counts;
+- `auto_flags(checks)`: the prompts, which list differing numbers, references or clause counts.
+
+To reproduce them on the 100 committed pairs, from the cached sources (`uv run atti v2-fetch` once):
+
+```bash
+uv run python - <<'EOF'
+from pathlib import Path
+from atti import v2
+
+manifest, records = v2.load_verified(Path("."))      # the 100 committed pairs, hash-verified
+for r in records:
+    flags = v2.auto_flags(v2.auto_checks(r))
+    if flags:
+        print(r.key, "|", "; ".join(flags))
+EOF
+```
+
+For every candidate article before selection, iterate `v2.build_records(v2.load(v2.RAW))[0].values()` instead, keeping `r.eligible` records. The output holds article keys, numbers and counts only, not legal text. A flag is a prompt to read the pair, not a finding; 17 of the 100 committed pairs are flagged.
+
 ### Comparison with the historical corpora
 
 The migration record is `manifest/current_law_v2_migration.json`. `reports/current_law_v2.md` separates a *source* effect (the same 15 articles with old BOE and new HRSD texts) from a *sample-composition* effect. Tokenizers are unchanged between corpora.
@@ -276,9 +303,9 @@ uv run atti decide <article> <APPROVE|REJECT|REQUEST_EXAMINATION> --reviewer Sau
 uv run atti review-sheet --corpus current_law_v2       # validates the decisions file
 ```
 
-The review page (`data/review/<corpus>_review.html`) builds the basic command (decision and comment): enter `SaudiSavvy`, choose a decision and copy it, then add the finding flags.
+The [review workspace](#review-workspace) records the same fields without typing commands.
 
-- Record only articles you have checked against both texts. For articles the AI review flagged (marked ⚑ on the review page) a decision is refused without `--ai-adjudication`.
+- Record only articles you have checked against both texts. For articles the AI review flagged, a decision is refused without `--ai-adjudication` (in the workspace: without revealing the AI assessment and giving a verdict on it).
 - Retrospective records: `--date` is the recording date and defaults to today; do not backdate it. Put the time of the original review in `--review-period`.
 - `atti decide` refuses to overwrite a recorded decision unless `--replace` is given, and rejects AI-system reviewer names.
 - Submit the changed decisions file through a pull request. Recording decisions changes only `review/<corpus>_human_decisions.json`: no measurement, report or manifest. The published reports keep their PROVISIONAL label until a later version is regenerated deliberately (see [status labels](#review-provenance)).
@@ -366,10 +393,13 @@ src/atti/  cli.py           command line
            selection.py     deterministic expanded_v1 selection
            v2.py            current_law_v2 eligibility, QA, selection, measurement, report, migration
            tokenization.py  pinned tokenizer loading, content-only counting, run-time guards
-           frontier.py      DeepSeek/GLM/Kimi tokenizers, Claude/GPT counting APIs, API cache
+           adapters.py      corpus-agnostic tokenizer and API adapters, write-once API cache
+           measure.py       corpus-agnostic pilot, rows, summaries, all-or-nothing publication
+           frontier.py      DeepSeek/GLM/Kimi tokenizers, Claude/GPT counting APIs (current_law_v2)
            gemini.py        Gemini countTokens adapter
            regional.py      Arabic-focused/Arab-developed tokenizers, official SentencePiece runtime, equivalence
            review.py        review sheet, decision template + validation
+           workspace.py     local review workspace (workspace_page.py: its page)
            metrics.py / pipeline.py / report.py
 manifest/  article manifests, AI review files, adapter manifests
 results/   per-article CSVs and summaries

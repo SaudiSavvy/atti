@@ -10,6 +10,8 @@ from fractions import Fraction
 import httpx
 import pytest
 
+from atti import measure
+from atti import adapters
 from atti import frontier as F
 from atti import v2
 from tests.conftest import ROOT
@@ -30,33 +32,33 @@ def test_exact_model_identifiers():
 
 def test_local_specs_pinned_and_asset_only():
     for s in F.LOCAL:
-        assert re.fullmatch(r"[0-9a-f]{40}", s.revision) and s.method == F.RAW_CONTENT
+        assert re.fullmatch(r"[0-9a-f]{40}", s.revision) and s.method == adapters.RAW_CONTENT
         assert s.assets and all(re.fullmatch(r"[0-9a-f]{64}", d) for d in s.assets.values())
-        assert set(s.assets) <= F.ASSET_ALLOWLIST
-        assert not any(n.endswith(F.WEIGHT_SUFFIXES) for n in s.assets)
-    assert all(s.method == F.API_INPUT for s in F.API)
+        assert set(s.assets) <= adapters.ASSET_ALLOWLIST
+        assert not any(n.endswith(adapters.WEIGHT_SUFFIXES) for n in s.assets)
+    assert all(s.method == adapters.API_INPUT for s in F.API)
 
 
 def test_no_unauthorized_fallback_tokenizer():
     # Kimi's vocabulary comes from the K3.1 Pro repository itself, never another checkpoint
     assert F.KIMI.repo_id == "moonshotai/Kimi-K3.1-Pro" and "tiktoken.model" in F.KIMI.assets
-    with pytest.raises(F.FrontierError, match="unknown adapter kind"):
-        F.load_local(F.LocalSpec("x", "x", "a/b", "0" * 40, "other", {}, ""), ROOT / "data" / "unused")
+    with pytest.raises(adapters.FrontierError, match="unknown adapter kind"):
+        adapters.load_local(adapters.LocalSpec("x", "x", "a/b", "0" * 40, "other", {}, ""), ROOT / "data" / "unused")
 
 
 def test_asset_hash_mismatch_is_fatal(tmp_path, monkeypatch):
     fake = tmp_path / "tokenizer.json"
     fake.write_text("{}")
     monkeypatch.setattr("huggingface_hub.hf_hub_download", lambda *a, **k: str(fake))
-    with pytest.raises(F.AssetIntegrityError, match="SHA-256"):
-        F.fetch_assets(F.GLM, tmp_path)
-    bad = F.LocalSpec("x", "x", "a/b", "0" * 40, "tokenizers", {"model.safetensors": "0" * 64}, "")
-    with pytest.raises(F.AssetIntegrityError, match="allow-listed"):
-        F.fetch_assets(bad, tmp_path)
+    with pytest.raises(adapters.AssetIntegrityError, match="SHA-256"):
+        adapters.fetch_assets(F.GLM, tmp_path)
+    bad = adapters.LocalSpec("x", "x", "a/b", "0" * 40, "tokenizers", {"model.safetensors": "0" * 64}, "")
+    with pytest.raises(adapters.AssetIntegrityError, match="allow-listed"):
+        adapters.fetch_assets(bad, tmp_path)
 
 
 def test_kimi_split_rule_matches_official_algorithm():
-    parts = list(F.split_whitespaces_or_nonwhitespaces("ab" * 6 + "   " + "c", 5))
+    parts = list(adapters.split_whitespaces_or_nonwhitespaces("ab" * 6 + "   " + "c", 5))
     assert "".join(parts) == "ab" * 6 + "   " + "c"
     assert all(len(p) <= 5 or p.isspace() is False for p in parts)
     assert parts[0] == "ababa"
@@ -88,7 +90,7 @@ class Client:
 
 def counter(spec, script):
     sleeps = []
-    c = F.ApiCounter(spec, key=KEY, client=Client(script), sleep=sleeps.append, clock=lambda: 0.0)
+    c = adapters.ApiCounter(spec, key=KEY, client=Client(script), sleep=sleeps.append, clock=lambda: 0.0)
     return c, sleeps
 
 
@@ -98,7 +100,7 @@ def test_api_request_shape_is_one_plain_user_message():
     call = c._client.calls[0]
     assert call["url"] == "https://api.anthropic.com/v1/messages/count_tokens"
     assert call["json"] == {"model": "claude-opus-5-5", "messages": [{"role": "user", "content": "نص"}]}
-    assert call["headers"]["anthropic-version"] == F.ANTHROPIC_VERSION
+    assert call["headers"]["anthropic-version"] == adapters.ANTHROPIC_VERSION
     g, _ = counter(F.GPT, [Resp(200, {"object": "response.input_tokens", "input_tokens": 9})])
     assert g.count("text") == 9
     assert g._client.calls[0]["json"] == {"model": "gpt-6.2-sol", "input": [{"role": "user", "content": "text"}]}
@@ -117,7 +119,7 @@ def test_api_request_shape_is_one_plain_user_message():
 ])
 def test_malformed_or_failed_responses_raise(spec, resp, msg):
     c, _ = counter(spec, [resp])
-    with pytest.raises(F.ApiError, match=msg):
+    with pytest.raises(adapters.ApiError, match=msg):
         c.count("text")
     assert len(c._client.calls) == 1  # client errors are not retried
 
@@ -130,39 +132,39 @@ def test_rate_limits_and_transport_errors_retry_with_backoff():
 
 
 def test_gives_up_after_bounded_retries():
-    c, _ = counter(F.GPT, [Resp(500)] * (F.ApiCounter.RETRIES + 1))
-    with pytest.raises(F.ApiError, match="giving up"):
+    c, _ = counter(F.GPT, [Resp(500)] * (adapters.ApiCounter.RETRIES + 1))
+    with pytest.raises(adapters.ApiError, match="giving up"):
         c.count("x")
 
 
 def test_credentials_never_exposed(monkeypatch):
     c, _ = counter(F.GPT, [Resp(401, {"error": {"message": f"key {KEY} rejected"}})])
-    with pytest.raises(F.ApiError) as exc:
+    with pytest.raises(adapters.ApiError) as exc:
         c.count("x")
     assert KEY not in str(exc.value) and KEY not in repr(c) and KEY not in json.dumps(c.log)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with pytest.raises(F.ApiError, match="OPENAI_API_KEY is not set"):
-        F.ApiCounter(F.GPT)
+    with pytest.raises(adapters.ApiError, match="OPENAI_API_KEY is not set"):
+        adapters.ApiCounter(F.GPT)
 
 
 def test_empty_text_refused_without_request():
     c, _ = counter(F.CLAUDE, [])
-    with pytest.raises(F.ApiError, match="empty"):
+    with pytest.raises(adapters.ApiError, match="empty"):
         c.count("")
     assert c._client.calls == []
 
 
 def test_api_cache_is_write_once_and_credential_free(tmp_path):
-    cache = F.ApiCache(tmp_path / "c.json")
+    cache = adapters.ApiCache(tmp_path / "c.json")
     live, _ = counter(F.CLAUDE, [Resp(200, {"input_tokens": 11})])
-    cc = F.CachedApiCounter(F.CLAUDE, cache, live)
+    cc = F.cached_counter(F.CLAUDE, cache, live)
     assert cc.count("abc") == 11 and cc.count("abc") == 11  # second served from cache
     assert len(live._client.calls) == 1 and KEY not in (tmp_path / "c.json").read_text()
     sha = hashlib.sha256(b"abc").hexdigest()
-    with pytest.raises(F.CacheIntegrityError, match="not overwritten"):  # fatal, not a per-adapter BLOCKED
+    with pytest.raises(adapters.CacheIntegrityError, match="not overwritten"):  # fatal, not a per-adapter BLOCKED
         cache.put(sha, {"input_tokens": 12})
-    offline = F.CachedApiCounter(F.CLAUDE, F.ApiCache(tmp_path / "empty.json"), None)
-    with pytest.raises(F.ApiError, match="no cached count"):
+    offline = F.cached_counter(F.CLAUDE, adapters.ApiCache(tmp_path / "empty.json"), None)
+    with pytest.raises(adapters.ApiError, match="no cached count"):
         offline.count("abc")
 
 
@@ -174,14 +176,14 @@ def test_pilot_detects_instability_and_non_positive_counts():
             self.n += 1
             return self.n
 
-    assert not F.run_pilot("x", Flaky(), {"1": ("a", "b")}).passed
-    assert F.run_pilot("x", type("Z", (), {"count": lambda self, t: 0})(), {"1": ("a", "b")}).error
+    assert not measure.run_pilot("x", Flaky(), {"1": ("a", "b")}).passed
+    assert measure.run_pilot("x", type("Z", (), {"count": lambda self, t: 0})(), {"1": ("a", "b")}).error
 
 
 def test_pilot_selection_token_blind_and_deterministic():
     m = json.loads((ROOT / v2.MANIFEST_PATH).read_text())
-    keys = F.pilot_keys(m)
-    assert len(keys) == len(set(keys)) == 10 and keys == F.pilot_keys(json.loads(json.dumps(m)))
+    keys = measure.pilot_keys(m)
+    assert len(keys) == len(set(keys)) == 10 and keys == measure.pilot_keys(json.loads(json.dumps(m)))
     assert set(keys) <= {a["key"] for a in m["articles"]}
 
 
@@ -215,8 +217,8 @@ def test_provenance_recorded_per_row(outputs):
     spec = {s.key: s for s in F.ALL}
     for r in rows:
         s = spec[r["model_key"]]
-        assert r["measurement_method"] == s.method and r["adapter_version"] == F.ADAPTER_VERSION
-        if isinstance(s, F.LocalSpec):
+        assert r["measurement_method"] == s.method and r["adapter_version"] == adapters.ADAPTER_VERSION
+        if isinstance(s, adapters.LocalSpec):
             assert r["tokenizer_revision_or_api_model"] == s.revision and r["model"] == s.repo_id
             assert s.revision[:12] in r["measurement_meta"]
         else:
@@ -284,10 +286,10 @@ REF = json.loads((ROOT / "tests" / "frontier_reference_ids.json").read_text(enco
 def test_local_ids_match_official_reference_and_no_specials(spec):
     from atti import tokenization
 
-    c = F.load_local(spec, ROOT / F.HF_CACHE)
+    c = adapters.load_local(spec, ROOT / F.HF_CACHE)
     special_text = REF["samples"][3]  # literal control-token strings
     for text, ref in zip(REF["samples"], REF["ids"][spec.key]):
-        if isinstance(c, F.HFCounter) and set(ref) & tokenization.special_ids(c.tok):
+        if isinstance(c, adapters.HFCounter) and set(ref) & tokenization.special_ids(c.tok):
             # the official encode maps literal control strings to control ids even without
             # add_special_tokens; ATTI refuses such content instead of counting it
             assert text == special_text
@@ -296,9 +298,9 @@ def test_local_ids_match_official_reference_and_no_specials(spec):
             continue
         assert c.ids(text) == ref
         assert c.count(text) == c.count(text) == len(ref)  # deterministic
-    if isinstance(c, F.KimiCounter):  # encoding_k3 encodes user text with disallowed_special=()
+    if isinstance(c, adapters.KimiCounter):  # encoding_k3 encodes user text with disallowed_special=()
         assert all(t < c.n_base for t in c.ids(special_text))
-    assert F.weights_present(ROOT / F.HF_CACHE) == []
+    assert adapters.weights_present(ROOT / F.HF_CACHE) == []
 
 
 @pytest.mark.network
@@ -309,7 +311,7 @@ def test_local_rows_reproduce_byte_for_byte(outputs):
     for spec in F.LOCAL:
         committed = [r for r in rows if r["model_key"] == spec.key]
         meta = committed[0]["measurement_meta"]
-        fresh = F.measure_rows(spec, F.load_local(spec, ROOT / F.HF_CACHE), records, m, meta)
+        fresh = measure.measure_rows(spec, adapters.load_local(spec, ROOT / F.HF_CACHE), records, m, meta)
         assert [{k: str(v) for k, v in r.items()} for r in fresh] == committed
 
 
@@ -321,9 +323,9 @@ def _sha(t):
 
 def _legacy(spec, n=5, **over):
     r = {"input_tokens": n, "measured_on": "2026-11-24", "model": spec.model, "endpoint": spec.endpoint,
-         "request_shape": F.request_shape(spec)}
+         "request_shape": adapters.request_shape(spec)}
     if spec.provider == "anthropic":
-        r["anthropic_version"] = F.ANTHROPIC_VERSION
+        r["anthropic_version"] = adapters.ANTHROPIC_VERSION
     return {**r, **over}
 
 
@@ -339,46 +341,46 @@ def _legacy(spec, n=5, **over):
     ({"extra": 1}, "unknown fields"),
 ])
 def test_invalid_cache_records_rejected(over, msg):
-    errs = F.validate_record(F.GPT, _sha("t"), _legacy(F.GPT, **over), legacy_ok=True)
+    errs = adapters.validate_record(F.GPT, _sha("t"), _legacy(F.GPT, **over), legacy_ok=True)
     assert any(msg in e for e in errs), errs
 
 
 @pytest.mark.parametrize("over,msg", [
     ({"provider": "anthropic"}, "provider"), ({"text_sha256": "0" * 64}, "text_sha256"),
     ({"adapter_version": "0.9"}, "adapter_version"), ({"count_field": "totalTokens"}, "count_field"),
-    ({"measurement_method": F.RAW_CONTENT}, "measurement_method"),
+    ({"measurement_method": adapters.RAW_CONTENT}, "measurement_method"),
 ])
 def test_schema2_records_checked_for_identity(over, msg):
-    rec = {**F.new_record(F.GPT, _sha("t"), 5), **over}
-    assert any(msg in e for e in F.validate_record(F.GPT, _sha("t"), rec, legacy_ok=False))
-    assert F.validate_record(F.GPT, _sha("t"), F.new_record(F.GPT, _sha("t"), 5), legacy_ok=False) == []
+    rec = {**adapters.new_record(F.GPT, _sha("t"), 5), **over}
+    assert any(msg in e for e in adapters.validate_record(F.GPT, _sha("t"), rec, legacy_ok=False))
+    assert adapters.validate_record(F.GPT, _sha("t"), adapters.new_record(F.GPT, _sha("t"), 5), legacy_ok=False) == []
 
 
 def test_unanchored_legacy_records_are_not_trusted():
-    spec = F.ApiSpec("x-model", "X", "openai", "x-model", "https://api.openai.com/v1/responses/input_tokens", "X_KEY", "d")
-    assert any("no historical anchor" in e for e in F.validate_record(spec, _sha("t"), _legacy(spec), legacy_ok=False))
+    spec = adapters.ApiSpec("x-model", "X", "openai", "x-model", "https://api.openai.com/v1/responses/input_tokens", "X_KEY", "d")
+    assert any("no historical anchor" in e for e in adapters.validate_record(spec, _sha("t"), _legacy(spec), legacy_ok=False))
 
 
 def test_corrupted_cache_entry_fails_before_anything_is_served(tmp_path):
     path = tmp_path / "c.json"
     path.write_text(json.dumps({_sha("t"): _legacy(F.CLAUDE, model="WRONG", input_tokens=123456)}))
-    with pytest.raises(F.CacheIntegrityError, match="model 'WRONG'"):
-        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None)
+    with pytest.raises(adapters.CacheIntegrityError, match="model 'WRONG'"):
+        F.cached_counter(F.CLAUDE, adapters.ApiCache(path), None)
     path.write_text("{not json")
-    with pytest.raises(F.CacheIntegrityError, match="not valid JSON"):
-        F.ApiCache(path)
+    with pytest.raises(adapters.CacheIntegrityError, match="not valid JSON"):
+        adapters.ApiCache(path)
 
 
 def test_anchor_detects_well_formed_but_altered_counts(tmp_path):
     texts = ["alpha", "beta"]
-    anchor = {"articles_sha256": F.counts_digest({(_sha("alpha"), 3), (_sha("beta"), 4)}), "texts": 2, "source": "t"}
+    anchor = {"articles_sha256": adapters.counts_digest({(_sha("alpha"), 3), (_sha("beta"), 4)}), "texts": 2, "source": "t"}
     path = tmp_path / "c.json"
     path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 3), _sha("beta"): _legacy(F.CLAUDE, 4)}))
-    ev = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor).check_anchor(texts)
+    ev = F.cached_counter(F.CLAUDE, adapters.ApiCache(path), None, anchor=anchor).check_anchor(texts)
     assert ev["anchor"]["articles_sha256"] == anchor["articles_sha256"] and ev["provenance_limitations"]
     path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 3), _sha("beta"): _legacy(F.CLAUDE, 123456)}))
-    with pytest.raises(F.CacheIntegrityError, match="do not reproduce the pinned anchor"):
-        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor).check_anchor(texts)
+    with pytest.raises(adapters.CacheIntegrityError, match="do not reproduce the pinned anchor"):
+        F.cached_counter(F.CLAUDE, adapters.ApiCache(path), None, anchor=anchor).check_anchor(texts)
 
 
 def test_historical_anchors_pinned():
@@ -391,7 +393,7 @@ def test_anchor_reproduces_committed_results(outputs):
     rows = outputs[0]
     for key, a in F.HISTORICAL_API_ANCHORS.items():
         pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows if r["model_key"] == key for l in ("ar", "en")}
-        assert F.counts_digest(pairs) == a["articles_sha256"] and len(pairs) == a["texts"]
+        assert adapters.counts_digest(pairs) == a["articles_sha256"] and len(pairs) == a["texts"]
 
 
 def _live(spec, answers):
@@ -400,49 +402,49 @@ def _live(spec, answers):
     class C:
         def post(self, url, headers=None, json=None):
             return Resp(200, {"input_tokens": next(it), "object": "response.input_tokens"})
-    return F.ApiCounter(spec, key=KEY, client=C(), sleep=lambda s: None, clock=lambda: 0.0)
+    return adapters.ApiCounter(spec, key=KEY, client=C(), sleep=lambda s: None, clock=lambda: 0.0)
 
 
 def test_pilot_stale_cache_7_then_live_9_9_fails_controlled(tmp_path):
     """Exact audit regression: cached 7, two live observations of 9 -> controlled failure, cache unchanged."""
     path = tmp_path / "c.json"
-    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7)}))
+    path.write_text(json.dumps({_sha("ar"): adapters.new_record(F.GPT, _sha("ar"), 7)}))
     before = path.read_bytes()
-    cc = F.CachedApiCounter(F.GPT, F.ApiCache(path), _live(F.GPT, [9, 9, 4, 4]))
-    with pytest.raises(F.CacheIntegrityError, match="stale or conflicting cache.*holds 7.*observation is 9"):
-        F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    cc = F.cached_counter(F.GPT, adapters.ApiCache(path), _live(F.GPT, [9, 9, 4, 4]))
+    with pytest.raises(adapters.CacheIntegrityError, match="stale or conflicting cache.*holds 7.*observation is 9"):
+        measure.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
     assert path.read_bytes() == before
 
 
 def test_pilot_observation_is_what_gets_published(tmp_path):
-    cc = F.CachedApiCounter(F.GPT, F.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 9, 4, 4]))
-    p = F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    cc = F.cached_counter(F.GPT, adapters.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 9, 4, 4]))
+    p = measure.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
     assert p.passed and p.counts == {"1": [9, 4]}
     assert (cc.count("ar"), cc.count("en")) == (9, 4)  # served from the cache, equal to the pilot
-    assert json.loads((tmp_path / "c.json").read_text())[_sha("ar")]["schema"] == F.CACHE_SCHEMA
+    assert json.loads((tmp_path / "c.json").read_text())[_sha("ar")]["schema"] == adapters.CACHE_SCHEMA
 
 
 def test_pilot_unstable_live_counts_fail(tmp_path):
-    cc = F.CachedApiCounter(F.GPT, F.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 10]))
-    p = F.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
+    cc = F.cached_counter(F.GPT, adapters.ApiCache(tmp_path / "c.json"), _live(F.GPT, [9, 10]))
+    p = measure.run_pilot("gpt-6.2-sol", cc, {"1": ("ar", "en")})
     assert not p.passed and "unstable" in p.error and not (tmp_path / "c.json").exists()
 
 
 def test_pilot_never_rerun_from_cache(tmp_path):
     path = tmp_path / "c.json"
-    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7)}))
-    p = F.run_pilot("gpt-6.2-sol", F.CachedApiCounter(F.GPT, F.ApiCache(path), None), {"1": ("ar", "en")})
+    path.write_text(json.dumps({_sha("ar"): adapters.new_record(F.GPT, _sha("ar"), 7)}))
+    p = measure.run_pilot("gpt-6.2-sol", F.cached_counter(F.GPT, adapters.ApiCache(path), None), {"1": ("ar", "en")})
     assert not p.passed and "never re-run" in p.error
 
 
 def test_replay_rejects_recorded_pilot_that_disagrees_with_cache(tmp_path):
     path = tmp_path / "c.json"
-    path.write_text(json.dumps({_sha("ar"): F.new_record(F.GPT, _sha("ar"), 7),
-                                _sha("en"): F.new_record(F.GPT, _sha("en"), 4)}))
-    cc = F.CachedApiCounter(F.GPT, F.ApiCache(path), None)
+    path.write_text(json.dumps({_sha("ar"): adapters.new_record(F.GPT, _sha("ar"), 7),
+                                _sha("en"): adapters.new_record(F.GPT, _sha("en"), 4)}))
+    cc = F.cached_counter(F.GPT, adapters.ApiCache(path), None)
     prev = {"pilot": {"gpt-6.2-sol": {"passed": True, "checks": {}, "counts": {"1": [9, 4]}, "error": None}},
             "adapters": {}}
-    with pytest.raises(F.CacheIntegrityError, match="disagrees with the cache"):
+    with pytest.raises(adapters.CacheIntegrityError, match="disagrees with the cache"):
         F.replay_pilot(F.GPT, cc, prev, {"1": ("ar", "en")}, {})
     prev["pilot"]["gpt-6.2-sol"]["counts"]["1"] = [7, 4]
     st = {}
@@ -495,7 +497,7 @@ def test_corrupted_historical_cache_aborts_without_publishing(tmp_path, monkeypa
                if r["model_key"] == "claude-opus-5-5")
     data[row["ar_sha256"]].update(corrupt)
     path.write_text(json.dumps(data))
-    with pytest.raises(F.CacheIntegrityError):
+    with pytest.raises(adapters.CacheIntegrityError):
         F.run(root)
     for rel in F.OUTPUTS.values():
         assert (root / rel).read_bytes() == (ROOT / rel).read_bytes()  # nothing published
@@ -504,13 +506,13 @@ def test_corrupted_historical_cache_aborts_without_publishing(tmp_path, monkeypa
 def test_anchor_binds_offline_replay_even_for_schema2_records(tmp_path):
     """Forged but well-formed schema-2 records cannot be replayed as the historical measurement."""
     path = tmp_path / "c.json"
-    path.write_text(json.dumps({_sha("alpha"): F.new_record(F.CLAUDE, _sha("alpha"), 123456)}))
-    anchor = {"articles_sha256": F.counts_digest({(_sha("alpha"), 3)}), "texts": 1, "source": "t"}
-    offline = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), None, anchor=anchor)
-    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):
+    path.write_text(json.dumps({_sha("alpha"): adapters.new_record(F.CLAUDE, _sha("alpha"), 123456)}))
+    anchor = {"articles_sha256": adapters.counts_digest({(_sha("alpha"), 3)}), "texts": 1, "source": "t"}
+    offline = F.cached_counter(F.CLAUDE, adapters.ApiCache(path), None, anchor=anchor)
+    with pytest.raises(adapters.CacheIntegrityError, match="pinned anchor"):
         offline.check_anchor(["alpha"])
-    live = F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor)
+    live = F.cached_counter(F.CLAUDE, adapters.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor)
     assert live.anchor is None and live.check_anchor(["alpha"])["anchor"] is None  # new measurement, not anchored
     path.write_text(json.dumps({_sha("alpha"): _legacy(F.CLAUDE, 123456)}))
-    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):  # legacy records: anchored even when live
-        F.CachedApiCounter(F.CLAUDE, F.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor).check_anchor(["alpha"])
+    with pytest.raises(adapters.CacheIntegrityError, match="pinned anchor"):  # legacy records: anchored even when live
+        F.cached_counter(F.CLAUDE, adapters.ApiCache(path), _live(F.CLAUDE, []), anchor=anchor).check_anchor(["alpha"])

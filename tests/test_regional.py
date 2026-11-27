@@ -11,6 +11,8 @@ from fractions import Fraction
 
 import pytest
 
+from atti import measure
+from atti import adapters
 from atti import cli
 from atti import frontier as F
 from atti import regional as R
@@ -24,10 +26,10 @@ def test_specs_pinned_and_tokenizer_files_only():
     assert [s.key for s in R.SPECS] == ["allam-7b-instruct-preview", "jais-3-375b-a23b", "k2-horizon-375b-a23b",
                                         "fanar-2-27b-instruct", "aragpt2-mega", "acegpt-v2-32b", "arabiangpt-08b-v2"]
     for s in R.SPECS:
-        assert re.fullmatch(r"[0-9a-f]{40}", s.revision) and s.method == F.RAW_CONTENT
+        assert re.fullmatch(r"[0-9a-f]{40}", s.revision) and s.method == adapters.RAW_CONTENT
         for assets in (s.assets, s.crosscheck_assets):
             assert all(re.fullmatch(r"[0-9a-f]{64}", d) for d in assets.values())
-            assert set(assets) <= R.ASSET_ALLOWLIST and not any(n.endswith(F.WEIGHT_SUFFIXES) for n in assets)
+            assert set(assets) <= R.ASSET_ALLOWLIST and not any(n.endswith(adapters.WEIGHT_SUFFIXES) for n in assets)
         assert s.assets and s.kind in ("sentencepiece", "tokenizers")
         for f in ("model_country", "model_developers", "model_license", "tokenizer_name", "tokenizer_developer",
                   "tokenizer_type", "tokenizer_origin", "tokenizer_terms"):
@@ -41,7 +43,7 @@ def test_existing_pins_untouched_and_disjoint():
          "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"),
         ("mistralai/Mistral-7B-Instruct-v0.3", "c170c708c41dac9275d15a8fff4eca08d52bab71",
          "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49")]
-    assert F.ASSET_ALLOWLIST == {"tokenizer.json", "tiktoken.model", "tokenizer_config.json"}
+    assert adapters.ASSET_ALLOWLIST == {"tokenizer.json", "tiktoken.model", "tokenizer_config.json"}
     existing = {t.repo_id for t in tokenization.TOKENIZERS} | {s.repo_id for s in F.LOCAL}
     assert not existing & {s.repo_id for s in R.SPECS}
     assert not {s.key for s in F.ALL} & {s.key for s in R.SPECS}
@@ -81,12 +83,12 @@ def test_custom_sentencepiece_reader_removed():
 
 def test_weight_and_unlisted_assets_refused(tmp_path, monkeypatch):
     bad = R.RegionalSpec("x", "x", "a/b", "0" * 40, "tokenizers", {"model.safetensors": "0" * 64}, "")
-    with pytest.raises(F.AssetIntegrityError, match="allow-listed"):
-        F.fetch_assets(bad, tmp_path, R.ASSET_ALLOWLIST)
+    with pytest.raises(adapters.AssetIntegrityError, match="allow-listed"):
+        adapters.fetch_assets(bad, tmp_path, R.ASSET_ALLOWLIST)
     fake = tmp_path / "tokenizer.model"
     fake.write_bytes(b"not the pinned file")
     monkeypatch.setattr("huggingface_hub.hf_hub_download", lambda *a, **k: str(fake))
-    with pytest.raises(F.AssetIntegrityError, match="SHA-256"):
+    with pytest.raises(adapters.AssetIntegrityError, match="SHA-256"):
         R.load(R.ALLAM, tmp_path)
 
 
@@ -94,14 +96,14 @@ def test_sentencepiece_runtime_version_is_pinned(tmp_path, monkeypatch):
     import sentencepiece
 
     monkeypatch.setattr(sentencepiece, "__version__", "0.2.0")
-    with pytest.raises(F.AssetIntegrityError, match="pinned 0.2.1"):
+    with pytest.raises(adapters.AssetIntegrityError, match="pinned 0.2.1"):
         R.sentencepiece_processor(tmp_path / "tokenizer.model")
 
 
 def test_tokenizer_json_with_unknown_normalizer_refused(tmp_path):
     p = tmp_path / "tokenizer.json"
     p.write_text(json.dumps({"normalizer": {"type": "Lowercase"}}))
-    with pytest.raises(F.AssetIntegrityError, match="normalizer"):
+    with pytest.raises(adapters.AssetIntegrityError, match="normalizer"):
         R.TokenizerJsonCounter(R.JAIS3, p)
 
 
@@ -128,13 +130,13 @@ def test_evidence_guard_protects_equivalence_and_exclusion(tmp_path):
         ({"k2": None}, "would be removed")]:
         new = {**json.loads(json.dumps(old)), **change}
         new = {k: v for k, v in new.items() if v is not None}
-        with pytest.raises(F.PublishedResultsError, match=msg):
+        with pytest.raises(measure.PublishedResultsError, match=msg):
             R.protect_evidence(tmp_path, new)
 
 
 @pytest.mark.parametrize("exc,code,msg", [
     (R.RegionalError("k2: AssetIntegrityError"), 2, "no output was written"),
-    (F.PublishedResultsError("k2: evidence would change"), 4, "nothing was written")])
+    (measure.PublishedResultsError("k2: evidence would change"), 4, "nothing was written")])
 def test_cli_failed_verification_exits_nonzero(monkeypatch, capsys, exc, code, msg):
     def fail(root):
         raise exc
@@ -170,7 +172,7 @@ def test_statuses_and_no_values_for_unmeasured(outputs):
     assert set(st.values()) <= set(R.STATUSES)
     measured = {k for k, v in st.items() if v == "MEASURED"}
     assert {r["model_key"] for r in rows} == measured == {m["model_key"] for m in summary["models"].values()}
-    assert all(r["measurement_method"] == F.RAW_CONTENT for r in rows)
+    assert all(r["measurement_method"] == adapters.RAW_CONTENT for r in rows)
     assert summary["status"] == "PROVISIONAL" and fm["corpus_status"] == "provisional"
 
 
@@ -240,7 +242,7 @@ def test_reference_models_match_published_results(outputs):
     _, summary, _ = outputs
     published = json.loads((ROOT / F.OUTPUTS["summary"]).read_text())["models"]
     ref = summary["reference_models"]
-    assert set(ref) == {m for m, s in published.items() if s["measurement_method"] == F.RAW_CONTENT}
+    assert set(ref) == {m for m, s in published.items() if s["measurement_method"] == adapters.RAW_CONTENT}
     for m, s in ref.items():
         for f in ("ar_tokens_total", "en_tokens_total", "ttr", "median_article_ratio"):
             assert s[f] == published[m][f]
@@ -294,10 +296,10 @@ def test_rows_reproduce_byte_for_byte(outputs):
     for spec in R.SPECS:
         committed = [r for r in rows if r["model_key"] == spec.key]
         if committed:
-            fresh = F.measure_rows(spec, R.load(spec, ROOT / R.HF_CACHE), records, m,
+            fresh = measure.measure_rows(spec, R.load(spec, ROOT / R.HF_CACHE), records, m,
                                    committed[0]["measurement_meta"])
             assert [{k: str(v) for k, v in r.items()} for r in fresh] == committed
-    assert F.weights_present(ROOT / R.HF_CACHE) == []
+    assert adapters.weights_present(ROOT / R.HF_CACHE) == []
 
 
 def _sandbox(tmp_path, link_regional_cache=True):
@@ -380,9 +382,9 @@ def test_changed_evidence_is_refused(tmp_path):
     path = root / R.OUTPUTS["manifest"]
     doc = json.loads(path.read_text())
     doc["adapters"]["acegpt-v2-32b"]["equivalent_to"] = "jais-3-375b-a23b"
-    path.write_text(F.dumps(doc))
+    path.write_text(measure.dumps(doc))
     before = _published(root)
-    with pytest.raises(F.PublishedResultsError, match="acegpt-v2-32b: its published equivalence would change"):
+    with pytest.raises(measure.PublishedResultsError, match="acegpt-v2-32b: its published equivalence would change"):
         R.run(root)
     assert _published(root) == before
 
@@ -397,7 +399,7 @@ def test_changed_published_rows_are_refused(tmp_path):
     first[col] = str(int(first[col]) + 1)
     path.write_text(head + ",".join(first) + "".join(lines[2:]), encoding="utf-8")
     before = _published(root)
-    with pytest.raises(F.PublishedResultsError, match="would change"):
+    with pytest.raises(measure.PublishedResultsError, match="would change"):
         R.run(root)
     assert _published(root) == before
 

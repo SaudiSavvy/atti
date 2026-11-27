@@ -295,10 +295,21 @@ function alertBox(msg) { const p = document.getElementById('preview'); if (p) p.
 function recordPanel(i, d, rec) {
   const box = el('div', {class: 'rec'}, el('h3', {style: 'margin:0 0 6px;font-size:15px'}, `Record decision as ${D.reviewer}`),
     el('p', {class: 'hint'}, `Nothing is recorded until you preview the exact record and confirm it. It is then validated and written to review/${i.home}_human_decisions.json (Article ${i.key}), bound to that corpus's manifest hash.`));
-  if (rec) box.append(el('p', {class: 'ok'}, `Currently recorded: ${rec.decision} by ${rec.reviewer} on ${rec.date}. Recording again replaces it.`));
+  if (rec) box.append(el('p', {class: 'ok'}, `Currently recorded: ${rec.decision} by ${rec.reviewer} on ${rec.date}. Recording again replaces it.`),
+    recordedFindings(rec));
   box.append(el('button', {onclick: doPreview}, 'Preview record'));
   box.append(el('div', {id: 'preview'}, preview ? previewView(preview) : null));
   return box;
+}
+function recordedFindings(rec) {
+  const rows = [];
+  if (rec.review_period) rows.push(['Review period', rec.review_period]);
+  if (rec.equivalence) rows.push(['Semantic equivalence', rec.equivalence]);
+  if (rec.terminology) rows.push(['Legal terminology', rec.terminology]);
+  for (const x of rec.discrepancies || []) rows.push([`${x.severity} discrepancy`, x.note]);
+  if (rec.ai_adjudication) rows.push([`Verdict on AI assessment: ${rec.ai_adjudication.verdict}`, rec.ai_adjudication.note]);
+  if (rec.comment) rows.push(['Comment', rec.comment]);
+  return rows.length ? el('dl', {class: 'meta'}, ...rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, v)])) : null;
 }
 async function doPreview() {
   try { await flush(); preview = await api('preview', {id: cur}); }

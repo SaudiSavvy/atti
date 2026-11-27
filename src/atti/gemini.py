@@ -14,9 +14,11 @@ import json
 import os
 from pathlib import Path
 
+from atti import measure
+from atti import adapters
 from atti import frontier as F
 
-GEMINI = F.ApiSpec(
+GEMINI = adapters.ApiSpec(
     "gemini-4-neon", "Gemini 4 Neon", "google", "gemini-4-neon",
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-4-neon:countTokens", "GEMINI_API_KEY",
     "https://aistudio.google.com/api-reference/tokens/count-tokens")
@@ -39,34 +41,34 @@ FRONTIER_PILOT = F.OUTPUTS["pilot"]
 FRONTIER_SUMMARY = F.OUTPUTS["summary"]
 
 
-class GeminiBlocked(F.FrontierError):
+class GeminiBlocked(adapters.FrontierError):
     pass
 
 
 def counter(root: Path, client=None, key: str | None = None, sleep=None,
-            anchor: dict | None = None) -> F.CachedApiCounter:
+            anchor: dict | None = None) -> adapters.CachedApiCounter:
     """Cache-first counter; live requests only when GEMINI_API_KEY (or `key`) is available."""
-    cache = F.ApiCache(root / CACHE)
+    cache = adapters.ApiCache(root / CACHE)
     key = key if key is not None else os.environ.get(GEMINI.env_var)
     extra = {"sleep": sleep} if sleep is not None else {}
-    live = F.ApiCounter(GEMINI, key=key, client=client, min_interval_s=MIN_INTERVAL_S, retries=RETRIES,
+    live = adapters.ApiCounter(GEMINI, key=key, client=client, min_interval_s=MIN_INTERVAL_S, retries=RETRIES,
                         **extra) if key else None
     if live is None and not cache.data:
         raise GeminiBlocked(f"{GEMINI.env_var} is not set in the environment and no cached counts exist; "
                             "no request was made")
-    return F.CachedApiCounter(GEMINI, cache, live, anchor=anchor or GEMINI_ANCHOR)  # validates every record
+    return adapters.CachedApiCounter(GEMINI, cache, live, anchor=anchor or GEMINI_ANCHOR)  # validates every record
 
 
 def pilot_articles(root: Path, manifest: dict) -> list[str]:
     """The ten articles already used for the frontier pilot (recomputed and cross-checked)."""
-    keys = F.pilot_keys(manifest)
+    keys = measure.pilot_keys(manifest)
     published = json.loads((root / FRONTIER_PILOT).read_text(encoding="utf-8"))["pilot_articles"]
     if keys != published:
-        raise F.FrontierError(f"pilot articles {keys} differ from the frontier pilot {published}")
+        raise adapters.FrontierError(f"pilot articles {keys} differ from the frontier pilot {published}")
     return keys
 
 
-def probe_framing(c: F.CachedApiCounter) -> dict:
+def probe_framing(c: adapters.CachedApiCounter) -> dict:
     """Observations only: totalTokens for very short inputs. Never used to adjust article counts."""
     live = c.live
     out = []
@@ -85,21 +87,17 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
     """`anchor` defaults to GEMINI_ANCHOR (the committed measurement); tests pass their own."""
     from atti import v2
 
-    manifest = json.loads((root / v2.MANIFEST_PATH).read_text(encoding="utf-8"))
-    records = v2.verify(manifest, root / v2.RAW)
-    keys = [a["key"] for a in manifest["articles"]]
-    if len(keys) != 100 or len(set(keys)) != 100:
-        raise F.FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
+    manifest, records = v2.load_verified(root)
     c = counter(root, client=client, key=key, sleep=sleep, anchor=anchor)
     pkeys = pilot_articles(root, manifest)
     status = {"key": GEMINI.key, "display": GEMINI.display, "provider": GEMINI.provider,
               "api_model": GEMINI.model, "endpoint": GEMINI.endpoint, "docs": GEMINI.docs,
               "http_method": "POST", "auth": "x-goog-api-key header (value from GEMINI_API_KEY; never stored)",
-              "credential_env_var": GEMINI.env_var, "request_shape": F.request_shape(GEMINI),
-              "measurement_method": F.API_INPUT, "count_field": "totalTokens",
+              "credential_env_var": GEMINI.env_var, "request_shape": adapters.request_shape(GEMINI),
+              "measurement_method": adapters.API_INPUT, "count_field": "totalTokens",
               "rate_limit": {"min_interval_s": MIN_INTERVAL_S, "retries": RETRIES,
                              "backoff": "Retry-After if given, else 2**attempt s; on 429, 5xx, transport errors"},
-              "adapter_version": F.ADAPTER_VERSION, "status": "IMPLEMENTED"}
+              "adapter_version": adapters.ADAPTER_VERSION, "status": "IMPLEMENTED"}
     old = root / OUTPUTS["manifest"]
     if c.live is not None:
         status["framing_observations"] = probe_framing(c)
@@ -109,13 +107,13 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
             status["framing_observations"] = prev["framing_observations"]
     outputs = {}
     if c.live is not None:
-        p = F.run_pilot(GEMINI.key, c, {r.key: (r.ar_text, r.en_text) for r in records if r.key in pkeys},
+        p = measure.run_pilot(GEMINI.key, c, {r.key: (r.ar_text, r.en_text) for r in records if r.key in pkeys},
                         repeats=2)
         pilot = {"corpus": F.CORPUS, "pilot_articles": pkeys,
                  "selection": "the ten frontier pilot articles (Arabic-length decile midpoints, token-blind)",
                  "repeats": 2, "requests": "live; each text counted twice",
                  "adapter": {"passed": p.passed, "checks": p.checks, "counts": p.counts, "error": p.error}}
-        outputs["pilot"] = F.dumps(pilot)
+        outputs["pilot"] = measure.dumps(pilot)
     else:  # offline regeneration: the pilot is a record of live requests and is kept, not re-run
         path = root / OUTPUTS["pilot"]
         if not path.exists():
@@ -124,19 +122,19 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
         texts = {r.key: (r.ar_text, r.en_text) for r in records if r.key in pkeys}
         if rec["passed"]:
             if sorted(rec["counts"]) != sorted(texts):
-                raise F.CacheIntegrityError(f"recorded pilot covers {sorted(rec['counts'])}, expected {sorted(texts)}")
+                raise adapters.CacheIntegrityError(f"recorded pilot covers {sorted(rec['counts'])}, expected {sorted(texts)}")
             for art, (ar, en) in texts.items():
                 if rec["counts"][art] != [c.count(ar), c.count(en)]:
-                    raise F.CacheIntegrityError(f"recorded pilot count {rec['counts'][art]} for article {art} "
+                    raise adapters.CacheIntegrityError(f"recorded pilot count {rec['counts'][art]} for article {art} "
                                                 f"disagrees with the cache")
-        p = F.PilotResult(GEMINI.key, rec["passed"], rec["checks"], rec["counts"], rec["error"], replayed=True)
+        p = measure.PilotResult(GEMINI.key, rec["passed"], rec["checks"], rec["counts"], rec["error"], replayed=True)
     if not p.passed:
         status.update(status="BLOCKED", blocked_reason=f"pilot failed: {p.error}")
     else:
         status["status"] = "VALIDATED"
         if not pilot_only:
             status["cache_evidence"] = c.check_anchor([t for r in records for t in (r.ar_text, r.en_text)])
-            rows = F.measure_rows(GEMINI, c, records, manifest, "")
+            rows = measure.measure_rows(GEMINI, c, records, manifest, "")
             meta = c.meta()
             for r in rows:
                 r["measurement_meta"] = meta
@@ -144,13 +142,13 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
             status["measured_on"] = sorted({v["measured_on"] for v in c.cache.data.values()})
             outputs.update(build_outputs(root, rows, status))
     if pilot_only or not p.passed:
-        outputs["manifest"] = F.dumps(status)
-    F.publish(root, OUTPUTS, outputs, manifest)  # validates; never drops, changes or downgrades published results
+        outputs["manifest"] = measure.dumps(status)
+    measure.publish(root, OUTPUTS, outputs, manifest)  # validates; never drops, changes or downgrades published results
     return status
 
 
 def build_outputs(root: Path, rows: list[dict], status: dict) -> dict:
-    s = F.model_summary(rows)
+    s = measure.model_summary(rows)
     frontier = json.loads((root / FRONTIER_SUMMARY).read_text(encoding="utf-8"))["models"]
     ref = {"qwen": "Qwen/Qwen2.5-3B-Instruct", "mistral": "mistralai/Mistral-7B-Instruct-v0.3"}
     s["ttr_pct_diff_vs"] = {n: (s["ttr"] / frontier[m]["ttr"] - 1) * 100 for n, m in ref.items()}
@@ -159,10 +157,10 @@ def build_outputs(root: Path, rows: list[dict], status: dict) -> dict:
     summary = {"corpus": F.CORPUS, "status": "PROVISIONAL", "articles": [r["article"] for r in rows],
                "models": {GEMINI.model: {"source": str(OUTPUTS["csv"]), "model_key": GEMINI.key, **s}}}
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=F.CSV_FIELDS, lineterminator="\n")
+    w = csv.DictWriter(buf, fieldnames=measure.CSV_FIELDS, lineterminator="\n")
     w.writeheader()
     w.writerows(rows)
-    return {"csv": buf.getvalue(), "summary": F.dumps(summary), "manifest": F.dumps(status),
+    return {"csv": buf.getvalue(), "summary": measure.dumps(summary), "manifest": measure.dumps(status),
             "report": render_report(summary, status, frontier)}
 
 
@@ -190,7 +188,7 @@ def render_report(summary: dict, status: dict, frontier: dict) -> str:
          "providers, so even these three are only loosely comparable. They are not ranked with content-only "
          "tokenizer counts.\n",
          "| Model | Σ AR | Σ EN | **TTR** | Median | Min | Max |", "|---|---:|---:|---:|---:|---:|---:|"]
-    api = {m: v for m, v in frontier.items() if v["measurement_method"] == F.API_INPUT}
+    api = {m: v for m, v in frontier.items() if v["measurement_method"] == adapters.API_INPUT}
     api[GEMINI.model] = g
     for m, v in api.items():
         L.append(f"| {m} | {v['ar_tokens_total']} | {v['en_tokens_total']} | **{v['ttr']:.4f}** | "

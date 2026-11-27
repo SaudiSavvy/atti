@@ -54,7 +54,7 @@ def load(spec: TokenizerSpec, cache_dir: Path) -> LoadedTokenizer:
     tok = Tokenizer.from_str(data.decode("utf-8"))
     tok.no_truncation()
     tok.no_padding()
-    return LoadedTokenizer(spec, tok, hashlib.sha256(data).hexdigest())
+    return LoadedTokenizer(spec, tok, got)
 
 
 class TokenCountError(RuntimeError):
@@ -84,8 +84,8 @@ def uncovered_chars(text: str, offsets: list[tuple[int, int]]) -> list[int]:
     return [i for i, c in enumerate(text) if not covered[i] and not c.isspace()]
 
 
-def count_tokens(tok: Tokenizer, text: str) -> int:
-    """Content-only token count: no BOS/EOS, no chat template, no truncation/padding.
+def checked_encoding(tok: Tokenizer, text: str):
+    """Content-only encoding: no BOS/EOS, no chat template, no truncation/padding.
 
     Raises TokenCountError unless (1) truncation and padding are disabled,
     (2) no overflow segments exist, (3) every non-whitespace input character
@@ -105,4 +105,9 @@ def count_tokens(tok: Tokenizer, text: str) -> int:
     leaked = set(enc.ids) & special_ids(tok)
     if leaked:
         raise TokenCountError(f"special/unknown token ids in content encoding: {sorted(leaked)}")
-    return len(enc.ids)
+    return enc
+
+
+def count_tokens(tok: Tokenizer, text: str) -> int:
+    """Number of tokens in the guarded content-only encoding (see ``checked_encoding``)."""
+    return len(checked_encoding(tok, text).ids)

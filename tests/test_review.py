@@ -140,17 +140,3 @@ def test_cli_decide_writes_only_valid_decisions(tmp_path, monkeypatch):
     assert json.loads(dec_path.read_text())["decisions"]["1"]["decision"] == "APPROVE"
     assert cli.main(["decide", "1", "REJECT", "--reviewer", "A. Reviewer", "--comment", "x"]) == 2
     assert json.loads(dec_path.read_text())["decisions"]["1"]["decision"] == "APPROVE"
-
-
-def test_html_page_is_read_and_draft_only():
-    ai = {"reviewer": "AI", "independence_caveat": "same model.", "status_criteria": {},
-          "material_discrepancies": [{"article": 2, "issue": "scope"}], "no_fail_found": "",
-          "articles": {"1": {"proposed_status": "PASS", "evidence": "e"},
-                       "2": {"proposed_status": "NEEDS_REVIEW", "evidence": "e"}}}
-    pairs = [ArticlePair(1, "h", "نص <أ>", "text one"), ArticlePair(2, "h", "نص", "text two")]
-    out = review.render_html(MANIFEST, pairs, {1: 1, 2: 3}, ai,
-                             review.decisions_template("toy", MANIFEST, H), [], flagged=[2])
-    assert "nothing on this page is saved" in out and "NOT saved by this page" in out
-    assert out.count('type="radio"') == 6 and " checked" not in out.replace(":checked", "")
-    assert '<article id="a2" class="flagged"' in out and 'dir="rtl"' in out
-    assert "&lt;أ&gt;" in out and "http" not in out and "localStorage" not in out
