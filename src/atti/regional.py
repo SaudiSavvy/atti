@@ -274,8 +274,7 @@ class TokenizerJsonCounter:
         return unicodedata.normalize(self.form, text) if self.form else text
 
     def ids(self, text: str) -> list[int]:
-        tokenization.count_tokens(self.tok, text)  # truncation/overflow/coverage/special/unknown guards
-        ids = self.tok.encode(text, add_special_tokens=False).ids
+        ids = tokenization.checked_encoding(self.tok, text).ids  # truncation/overflow/coverage/special-id guards
         out, want = self.tok.decode(ids, skip_special_tokens=False), self.expected(text)
         if out != want and not (self.prefix_space and out == " " + want):
             raise adapters.FrontierError(f"{self.spec.key}: decode(encode(text)) != text")

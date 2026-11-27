@@ -58,7 +58,6 @@ CORPORA = {
     "expanded_v1": ("manifest/expanded_v1_manifest.json", "results/expanded_v1.csv",
                     "results/expanded_v1_summary.json", "reports/expanded_v1.md"),
 }
-REQUIRED_ARTIFACTS = CORPORA["pilot"]
 
 
 def load_published(root: Path, name: str = "pilot") -> dict:

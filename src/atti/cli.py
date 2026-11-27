@@ -1,4 +1,4 @@
-"""Command-line entry point: ``uv run atti {fetch,manifest,pilot}``."""
+"""Command-line entry point: ``uv run atti <command>`` (see ``uv run atti --help``)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,14 @@ def _root() -> Path:
     return Path.cwd()
 
 
-EXIT_VERIFICATION, EXIT_NETWORK = 2, 3
+EXIT_VERIFICATION, EXIT_NETWORK, EXIT_BLOCKED = 2, 3, 4
+
+
+def _print_peak_memory() -> None:
+    import resource
+
+    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # bytes on macOS, kilobytes on Linux
+    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
 
 
 def _network_error(exc) -> int:
@@ -93,7 +100,7 @@ def cmd_verify_live(args) -> int:
 def cmd_review_sheet(args) -> int:
     from types import SimpleNamespace
 
-    from atti import corpus, review
+    from atti import corpus, review, v2
 
     root = _root()
     name = args.corpus
@@ -103,8 +110,6 @@ def cmd_review_sheet(args) -> int:
     sources = {}
     try:
         if name == "current_law_v2":
-            from atti import v2
-
             recs = v2.verify(manifest, root / v2.RAW)
             pairs = [SimpleNamespace(article=r.key, ar_text=r.ar_text, en_text=r.en_text) for r in recs]
             parts = {r.key: r.part for r in recs}
@@ -116,9 +121,7 @@ def cmd_review_sheet(args) -> int:
             ar_articles, _ = corpus.load_sources(root / "data" / "raw")
             parts = {a.number: a.part for a in ar_articles if not a.bis}
             ai = corpus.read_json(root / "review" / f"{name}_ai_review.json")
-    except (corpus.VerificationError, Exception) as exc:  # noqa: BLE001
-        if type(exc).__name__ != "VerificationError":
-            raise
+    except (corpus.VerificationError, v2.VerificationError) as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
     try:
@@ -154,10 +157,8 @@ def cmd_review_sheet(args) -> int:
 
 
 def cmd_decide(args) -> int:
-    """Record ONE human decision in the decision file (the only writer of that file)."""
+    """Record ONE human decision in the decision file (validated; refuses to overwrite without --replace)."""
     import datetime as dt
-    import json
-    import os
 
     from atti import corpus, review
 
@@ -192,9 +193,7 @@ def cmd_decide(args) -> int:
     except ValueError as exc:
         print(f"NOT RECORDED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
-    tmp = dec_path.with_name(dec_path.name + ".part")
-    tmp.write_text(json.dumps(new, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(tmp, dec_path)
+    review.save_json(dec_path, new)
     d = new["decisions"][str(args.article)]
     print(f"recorded Article {args.article}: {d['decision']} by {d['reviewer']} on {d['date']}"
           + (f" (reviewed {d['review_period']})" if d.get("review_period") else ""))
@@ -278,8 +277,6 @@ def cmd_v2(args) -> int:
 
 
 def cmd_frontier(args) -> int:
-    import resource
-
     from atti import adapters, frontier, measure, sources, v2
 
     try:
@@ -296,15 +293,12 @@ def cmd_frontier(args) -> int:
         return EXIT_VERIFICATION
     for st in status.values():
         print(f"{st['display']}: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))
-    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    _print_peak_memory()
     print("wrote " + ", ".join(str(p) for k, p in frontier.OUTPUTS.items() if k == "pilot" or not args.pilot_only))
     return 0
 
 
 def cmd_regional(args) -> int:
-    import resource
-
     from atti import adapters, measure, regional, sources, tokenization, v2
 
     try:
@@ -321,13 +315,10 @@ def cmd_regional(args) -> int:
     for st in status.values():
         extra = st.get("equivalent_to") or st.get("reason") or st.get("blocked_reason") or ""
         print(f"{st['display']}: {st['status']}" + (f" ({extra[:120]})" if extra else ""))
-    rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print(f"peak resident memory: {rss / (1e6 if sys.platform == 'darwin' else 1e3):.0f} MB")
+    _print_peak_memory()
     print("wrote " + ", ".join(str(p) for p in regional.OUTPUTS.values()))
     return 0
 
-
-EXIT_BLOCKED = 4
 
 
 def _refused(exc) -> int:

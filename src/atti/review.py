@@ -18,7 +18,7 @@ import json
 import re
 from pathlib import Path
 
-from atti.sources import UntrustedURLError, require_https_host, sha256_bytes
+from atti.sources import UntrustedURLError, require_https_host, sha256_bytes, write_atomic
 
 AI_STATUSES = ("PASS", "NEEDS_REVIEW", "FAIL")
 HUMAN_DECISIONS = ("APPROVE", "REJECT", "REQUEST_EXAMINATION")
@@ -252,6 +252,12 @@ def write_json_new(path: Path, data: dict) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return True
+
+
+def save_json(path: Path, data: dict) -> None:
+    """Write a decision (or drafts) file atomically, in the repository's JSON layout."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_atomic(path, (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
 
 
 def record_decision(dec: dict, manifest: dict, manifest_hash: str, article: int, decision: str,

@@ -108,7 +108,8 @@ def download(url: str) -> bytes:
         raise NetworkError(f"{url}: {exc}") from exc
 
 
-def _write_atomic(path: Path, data: bytes) -> None:
+def write_atomic(path: Path, data: bytes) -> None:
+    """Write via a temporary sibling and rename, so readers never see a partial file."""
     tmp = path.with_name(path.name + ".part")
     tmp.write_bytes(data)
     os.replace(tmp, path)
@@ -121,7 +122,7 @@ def fetch(source: Source, cache_dir: Path, downloader: Downloader = download) ->
     if path.exists():
         return path
     data = downloader(source.url)
-    _write_atomic(path, data)
+    write_atomic(path, data)
     log_path = cache_dir / "fetch_log.json"
     log = json.loads(log_path.read_text()) if log_path.exists() else {}
     log[source.key] = {
@@ -131,7 +132,7 @@ def fetch(source: Source, cache_dir: Path, downloader: Downloader = download) ->
         "bytes": len(data),
         "retrieved_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
     }
-    _write_atomic(log_path, (json.dumps(log, indent=2, ensure_ascii=False) + "\n").encode())
+    write_atomic(log_path, (json.dumps(log, indent=2, ensure_ascii=False) + "\n").encode())
     return path
 
 

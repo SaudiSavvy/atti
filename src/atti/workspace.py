@@ -21,7 +21,6 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
-import os
 import secrets
 import threading
 from dataclasses import dataclass, field
@@ -232,13 +231,6 @@ def build_items(data: dict) -> tuple[list[Item], dict]:
 
 # ---------------------------------------------------------------- drafts (local, git-ignored)
 
-def _atomic_write(path: Path, data: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".part")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(tmp, path)
-
-
 def _s(v, n=_TEXT_MAX) -> str:
     return v[:n] if isinstance(v, str) else ""
 
@@ -378,7 +370,7 @@ class Workspace:
         return out
 
     def _save(self):
-        _atomic_write(self.drafts_path, self.drafts)
+        review.save_json(self.drafts_path, self.drafts)
 
     def _item(self, item_id) -> Item:
         if not isinstance(item_id, str) or item_id not in self.items:
@@ -462,7 +454,7 @@ class Workspace:
                                              flagged=flagged)
             except ValueError as exc:
                 raise WorkspaceError(str(exc)) from exc
-            _atomic_write(self._paths(it.home)[1], new)
+            review.save_json(self._paths(it.home)[1], new)
             self.drafts.setdefault("events", []).append(
                 {"event": "recorded", "item": item_id, "decision": rec["decision"],
                  "replace": existing is not None, "at": dt.datetime.now().isoformat(timespec="seconds")})

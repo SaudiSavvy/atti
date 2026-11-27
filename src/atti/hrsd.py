@@ -29,7 +29,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from atti.arabic import parse_ordinal
-from atti.sources import NetworkError, require_https_host, sha256_bytes
+from atti.sources import NetworkError, require_https_host, sha256_bytes, write_atomic
 from atti.textnorm import normalize_ws
 
 HOST = "www.hrsd.gov.sa"
@@ -100,9 +100,7 @@ class Fetcher:
             return path
         resp = self._get(url)
         path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".part")
-        tmp.write_bytes(resp.content)
-        tmp.replace(path)
+        write_atomic(path, resp.content)
         prov_path = self.cache_dir / "provenance.json"
         prov = json.loads(prov_path.read_text()) if prov_path.exists() else {}
         prov[key] = {
@@ -182,7 +180,6 @@ class HtmlArticle:
 # ("Article 79:(Bis)", as published for Article 79 bis in Part 5).
 _EN_HEADING = re.compile(r"^Article\s*\(?\s*(\d+)\s*\)?\s*(?:\(?\s*(bis|repeated)\s*\)?)?\s*:?\s*"
                          r"(?:\(\s*(bis|repeated)\s*\)\s*:?)?\s*(.*)$", re.I | re.S)
-_AR_HEADING = re.compile(r"^(?:\(\s*)?(المادة\b[^:]*?|\(?\s*[^\s:]+[^:]*?مكرر\s*\)?)\s*:\s*(.*)$", re.S)
 # Sub-section titles that some Part pages publish as plain paragraphs, not headings.
 _SECTION_TITLE = re.compile(
     r"^(?:(?:First|Second|Third|Fourth|Fifth|Sixth)\s*[:\-–]|(?:Section|Chapter|Part)\s+\w+\s*$|"

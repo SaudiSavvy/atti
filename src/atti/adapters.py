@@ -124,8 +124,7 @@ class HFCounter:
         self.tok.no_padding()
 
     def ids(self, text: str) -> list[int]:
-        tokenization.count_tokens(self.tok, text)  # truncation/overflow/coverage/special-id guards
-        ids = self.tok.encode(text, add_special_tokens=False).ids
+        ids = tokenization.checked_encoding(self.tok, text).ids  # truncation/overflow/coverage/special-id guards
         if self.tok.decode(ids, skip_special_tokens=False) != text:
             raise FrontierError(f"{self.spec.key}: decode(encode(text)) != text")
         return ids
