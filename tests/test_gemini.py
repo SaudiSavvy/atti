@@ -6,6 +6,8 @@ import shutil
 import httpx
 import pytest
 
+from atti import measure
+from atti import adapters
 from atti import frontier as F
 from atti import gemini as G
 from tests.conftest import ROOT
@@ -44,14 +46,14 @@ def ok(n):
 
 def live(script, sleeps=None):
     sleeps = [] if sleeps is None else sleeps
-    return F.ApiCounter(G.GEMINI, key=KEY, client=Client(script), sleep=sleeps.append, clock=lambda: 0.0,
+    return adapters.ApiCounter(G.GEMINI, key=KEY, client=Client(script), sleep=sleeps.append, clock=lambda: 0.0,
                         min_interval_s=G.MIN_INTERVAL_S, retries=G.RETRIES)
 
 
 def test_identifier_endpoint_and_method():
     assert G.GEMINI.model == "gemini-4-neon" and G.GEMINI.provider == "google"
     assert G.GEMINI.endpoint == URL and G.GEMINI.env_var == "GEMINI_API_KEY"
-    assert G.GEMINI.method == F.API_INPUT
+    assert G.GEMINI.method == adapters.API_INPUT
     assert G.GEMINI not in F.ALL  # the frontier run (and its Anthropic/OpenAI calls) is untouched
 
 
@@ -73,7 +75,7 @@ def test_request_is_one_user_message_with_one_text_part():
 ])
 def test_client_errors_fail_without_retry_or_leak(status, payload, msg):
     c = live([Resp(status, payload)])
-    with pytest.raises(F.ApiError, match=msg) as exc:
+    with pytest.raises(adapters.ApiError, match=msg) as exc:
         c.count("x")
     assert len(c._client.calls) == 1
     assert KEY not in str(exc.value) and "bad key" not in str(exc.value)  # provider messages not echoed
@@ -82,7 +84,7 @@ def test_client_errors_fail_without_retry_or_leak(status, payload, msg):
 
 def test_non_json_error_body():
     c = live([Resp(403, raw=True)])
-    with pytest.raises(F.ApiError, match="not JSON \\(HTTP 403\\)"):
+    with pytest.raises(adapters.ApiError, match="not JSON \\(HTTP 403\\)"):
         c.count("x")
 
 
@@ -100,7 +102,7 @@ def test_non_json_error_body():
 ])
 def test_malformed_success_responses_rejected(payload, msg):
     c = live([Resp(200, payload)])
-    with pytest.raises(F.ApiError, match=msg):
+    with pytest.raises(adapters.ApiError, match=msg):
         c.count("x")
 
 
@@ -120,7 +122,7 @@ def test_rate_limit_server_and_transport_errors_retried(first):
 def test_bounded_retries_then_explicit_failure():
     sleeps = []
     c = live([Resp(503)] * (G.RETRIES + 1), sleeps)
-    with pytest.raises(F.ApiError, match="giving up after 7 attempts \\(HTTP 503\\)"):
+    with pytest.raises(adapters.ApiError, match="giving up after 7 attempts \\(HTTP 503\\)"):
         c.count("x")
     # exponential backoff 1, 2, ... 64 s (1 s also equals the rate-limit interval, so compare the rest)
     assert [s for s in sleeps if s > G.MIN_INTERVAL_S] == [2 ** i for i in range(1, G.RETRIES + 1)]
@@ -129,7 +131,7 @@ def test_bounded_retries_then_explicit_failure():
 def test_rate_limiting_between_requests():
     t = iter([0.0, 0.2, 0.2])  # first request at t=0; second asked for at t=0.2
     sleeps = []
-    c = F.ApiCounter(G.GEMINI, key=KEY, client=Client([ok(3), ok(4)]), sleep=sleeps.append,
+    c = adapters.ApiCounter(G.GEMINI, key=KEY, client=Client([ok(3), ok(4)]), sleep=sleeps.append,
                      clock=lambda: next(t), min_interval_s=1.0, retries=0)
     c.count("a"), c.count("b")
     assert sleeps == [pytest.approx(0.8)]
@@ -147,7 +149,7 @@ def test_cache_is_credential_free_and_write_once(tmp_path):
     text = (tmp_path / G.CACHE).read_text()
     assert KEY not in text and "x-goog-api-key" not in text
     rec = next(iter(json.loads(text).values()))
-    assert rec["request_shape"] == F.request_shape(G.GEMINI) and rec["model"] == "gemini-4-neon"
+    assert rec["request_shape"] == adapters.request_shape(G.GEMINI) and rec["model"] == "gemini-4-neon"
     assert rec["endpoint"] == URL and rec["measured_on"]
 
 
@@ -163,7 +165,7 @@ def test_pilot_detects_unstable_provider():
     n = iter(range(10, 100))
     c = live([], [])
     c._client.fn = lambda url, h, j: ok(next(n))
-    assert not F.run_pilot("gemini-4-neon", c, {"1": ("a", "b")}).passed
+    assert not measure.run_pilot("gemini-4-neon", c, {"1": ("a", "b")}).passed
 
 
 # ---------------------------------------------------------------- mocked end-to-end (needs cached sources)
@@ -199,7 +201,7 @@ def test_mocked_end_to_end_writes_only_gemini_outputs(sandbox):
     import csv
 
     rows = list(csv.DictReader((sandbox / G.OUTPUTS["csv"]).open(encoding="utf-8")))
-    assert len(rows) == 100 and {r["measurement_method"] for r in rows} == {F.API_INPUT}
+    assert len(rows) == 100 and {r["measurement_method"] for r in rows} == {adapters.API_INPUT}
     assert {r["tokenizer_revision_or_api_model"] for r in rows} == {"gemini-4-neon"}
     man = json.loads((sandbox / G.OUTPUTS["manifest"]).read_text())
     assert man["framing_observations"]["inputs"][0]["text"] == "a" and man["count_field"] == "totalTokens"
@@ -212,11 +214,11 @@ def test_mocked_end_to_end_writes_only_gemini_outputs(sandbox):
     # pinned from these (mocked) results; the production anchor rejects this cache
     snapshot = {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()}
     n = len(client.calls)
-    with pytest.raises(F.CacheIntegrityError, match="pinned anchor"):
+    with pytest.raises(adapters.CacheIntegrityError, match="pinned anchor"):
         G.run(sandbox, key="")
     assert {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()} == snapshot  # nothing published
     pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows for l in ("ar", "en")}
-    own = {"articles_sha256": F.counts_digest(pairs), "texts": len(pairs), "source": "mocked run"}
+    own = {"articles_sha256": adapters.counts_digest(pairs), "texts": len(pairs), "source": "mocked run"}
     G.run(sandbox, key="", anchor=own)
     assert len(client.calls) == n
     produced = {k: (sandbox / p).read_bytes() for k, p in G.OUTPUTS.items()}
@@ -235,7 +237,7 @@ def test_gemini_anchor_reproduces_committed_results():
 
     rows = list(csv.DictReader((ROOT / G.OUTPUTS["csv"]).open(encoding="utf-8")))
     pairs = {(r[f"{l}_sha256"], int(r[f"{l}_tokens"])) for r in rows for l in ("ar", "en")}
-    assert F.counts_digest(pairs) == G.GEMINI_ANCHOR["articles_sha256"] and len(pairs) == 200
+    assert adapters.counts_digest(pairs) == G.GEMINI_ANCHOR["articles_sha256"] and len(pairs) == 200
 
 
 def _real_sandbox(tmp_path):
@@ -278,7 +280,7 @@ def test_gemini_corrupted_cache_fails_without_publishing(tmp_path, monkeypatch, 
     row = next(csv.DictReader((ROOT / G.OUTPUTS["csv"]).open(encoding="utf-8")))
     data[row["ar_sha256"]].update(corrupt)
     (root / G.CACHE).write_text(json.dumps(data))
-    with pytest.raises(F.CacheIntegrityError, match=msg):
+    with pytest.raises(adapters.CacheIntegrityError, match=msg):
         G.run(root)
     for rel in G.OUTPUTS.values():
         assert (root / rel).read_bytes() == (ROOT / rel).read_bytes()  # nothing published
@@ -296,9 +298,9 @@ def test_gemini_pilot_stale_7_live_9_9_is_a_controlled_failure(sandbox):
     text = recs[G.pilot_articles(sandbox, m)[0]].ar_text
     sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
     (sandbox / G.CACHE).parent.mkdir(parents=True, exist_ok=True)
-    (sandbox / G.CACHE).write_text(json.dumps({sha: F.new_record(G.GEMINI, sha, 7)}))
+    (sandbox / G.CACHE).write_text(json.dumps({sha: adapters.new_record(G.GEMINI, sha, 7)}))
     client = Client(fn=lambda url, h, j: ok(9))
-    with pytest.raises(F.CacheIntegrityError, match="holds 7, new observation is 9"):
+    with pytest.raises(adapters.CacheIntegrityError, match="holds 7, new observation is 9"):
         G.run(sandbox, client=client, key=KEY, sleep=lambda s: None)
     assert not any((sandbox / p).exists() for p in G.OUTPUTS.values())  # nothing published
     assert json.loads((sandbox / G.CACHE).read_text())[sha]["input_tokens"] == 7  # not overwritten

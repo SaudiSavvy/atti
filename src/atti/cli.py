@@ -280,13 +280,13 @@ def cmd_v2(args) -> int:
 def cmd_frontier(args) -> int:
     import resource
 
-    from atti import frontier, sources, v2
+    from atti import adapters, frontier, measure, sources, v2
 
     try:
         status = frontier.run(_root(), pilot_only=args.pilot_only)
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         return _refused(exc)
-    except frontier.CacheIntegrityError as exc:
+    except adapters.CacheIntegrityError as exc:
         print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     except sources.NetworkError as exc:
@@ -305,17 +305,17 @@ def cmd_frontier(args) -> int:
 def cmd_regional(args) -> int:
     import resource
 
-    from atti import frontier, regional, sources, tokenization, v2
+    from atti import adapters, measure, regional, sources, tokenization, v2
 
     try:
         status = regional.run(_root())
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         print(f"REFUSED: {exc}. Published regional results were left unchanged; nothing was written.",
               file=sys.stderr)
         return EXIT_BLOCKED
     except sources.NetworkError as exc:
         return _network_error(exc)
-    except (v2.VerificationError, frontier.FrontierError, tokenization.TokenizerIntegrityError) as exc:
+    except (v2.VerificationError, adapters.FrontierError, tokenization.TokenizerIntegrityError) as exc:
         print(f"VERIFICATION FAILED: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     for st in status.values():
@@ -338,16 +338,16 @@ def _refused(exc) -> int:
 
 
 def cmd_gemini(args) -> int:
-    from atti import frontier, gemini, sources, v2
+    from atti import adapters, gemini, measure, sources, v2
 
     try:
         st = gemini.run(_root(), pilot_only=args.pilot_only)
-    except frontier.PublishedResultsError as exc:
+    except measure.PublishedResultsError as exc:
         return _refused(exc)
     except gemini.GeminiBlocked as exc:
         print(f"Gemini 4 Neon: BLOCKED ({exc})", file=sys.stderr)
         return EXIT_BLOCKED
-    except frontier.CacheIntegrityError as exc:
+    except adapters.CacheIntegrityError as exc:
         print(f"CACHE INTEGRITY FAILURE: {exc}; no output was written", file=sys.stderr)
         return EXIT_VERIFICATION
     except sources.NetworkError as exc:
@@ -355,7 +355,7 @@ def cmd_gemini(args) -> int:
     except v2.VerificationError as exc:
         print(f"VERIFICATION FAILED: {exc}", file=sys.stderr)
         return EXIT_VERIFICATION
-    except frontier.ApiError as exc:
+    except adapters.ApiError as exc:
         print(f"Gemini 4 Neon: API ERROR ({exc}); nothing written for the failed step", file=sys.stderr)
         return EXIT_NETWORK
     print(f"Gemini 4 Neon: {st['status']}" + (f" ({st['blocked_reason']})" if "blocked_reason" in st else ""))

@@ -29,6 +29,8 @@ from pathlib import Path
 
 from tokenizers import Tokenizer
 
+from atti import measure
+from atti import adapters
 from atti import frontier as F
 from atti import tokenization
 
@@ -48,12 +50,12 @@ OUTPUTS = {
 }
 
 
-class RegionalError(F.FrontierError):
+class RegionalError(adapters.FrontierError):
     """The run could not verify every tokenizer; nothing was written and published outputs are unchanged."""
 
 
 @dataclass(frozen=True)
-class RegionalSpec(F.LocalSpec):
+class RegionalSpec(adapters.LocalSpec):
     model_country: str = ""
     model_developers: str = ""
     model_license: str = ""  # the downstream model release's own declaration
@@ -183,7 +185,7 @@ UNAVAILABLE = {
     "falcon-h1-arabic": {
         "key": "falcon-h1-arabic", "display": "Falcon-H1 Arabic 34B", "model_country": "United Arab Emirates",
         "model_developers": "Technology Innovation Institute (TII), Abu Dhabi", "status": "UNAVAILABLE",
-        "measurement_method": F.RAW_CONTENT,
+        "measurement_method": adapters.RAW_CONTENT,
         "reason": "No public tokenizer: no Falcon-H1 Arabic repository exists on the Hugging Face Hub (searches "
                   "for Falcon-H1-Arabic, Falcon-Arabic and falcon-h1-ar, by author tiiuae and Hub-wide), and the "
                   "official announcement (huggingface.co/blog/tiiuae/falcon-h1-arabic) and product page "
@@ -200,10 +202,10 @@ def sentencepiece_processor(model_file: Path):
     try:
         import sentencepiece as spm
     except ImportError as exc:
-        raise F.AssetIntegrityError("the official sentencepiece runtime is not installed; "
+        raise adapters.AssetIntegrityError("the official sentencepiece runtime is not installed; "
                                     "run `uv sync --locked` (dependency group `regional`)") from exc
     if spm.__version__ != SENTENCEPIECE_VERSION:
-        raise F.AssetIntegrityError(f"sentencepiece {spm.__version__} != pinned {SENTENCEPIECE_VERSION}")
+        raise adapters.AssetIntegrityError(f"sentencepiece {spm.__version__} != pinned {SENTENCEPIECE_VERSION}")
     return spm.SentencePieceProcessor(model_file=str(model_file)), spm.__version__
 
 
@@ -221,7 +223,7 @@ class SentencePieceCounter:
         pieces = self.sp.encode(text, out_type="immutable_proto").pieces  # begin/end: character offsets
         ids = [p.id for p in pieces]
         if ids != self.sp.encode(text, out_type=int):
-            raise F.FrontierError(f"{self.spec.key}: proto and integer encodings disagree")
+            raise adapters.FrontierError(f"{self.spec.key}: proto and integer encodings disagree")
         gaps = tokenization.uncovered_chars(text, [(p.begin, p.end) for p in pieces])
         if gaps:
             raise tokenization.TokenCountError(f"{len(gaps)} characters not covered by any token "
@@ -230,7 +232,7 @@ class SentencePieceCounter:
         if leaked:
             raise tokenization.TokenCountError(f"special/unknown token ids in content encoding: {sorted(leaked)}")
         if self.sp.decode(ids) != text:
-            raise F.FrontierError(f"{self.spec.key}: decode(encode(text)) != text")
+            raise adapters.FrontierError(f"{self.spec.key}: decode(encode(text)) != text")
         return ids
 
     def count(self, text: str) -> int:
@@ -257,7 +259,7 @@ class TokenizerJsonCounter:
         elif norm is None or set(norm) == {"type"} and norm["type"] in _NORMALIZERS:
             self.form = _NORMALIZERS[norm and norm["type"]]
         else:
-            raise F.AssetIntegrityError(f"{spec.repo_id}: unsupported normalizer {json.dumps(norm)[:80]}")
+            raise adapters.AssetIntegrityError(f"{spec.repo_id}: unsupported normalizer {json.dumps(norm)[:80]}")
         pre = data.get("pre_tokenizer") or {}
         steps = pre.get("pretokenizers", [pre])
         self.prefix_space = any(p.get("type") == "ByteLevel" and p.get("add_prefix_space") for p in steps)
@@ -276,7 +278,7 @@ class TokenizerJsonCounter:
         ids = self.tok.encode(text, add_special_tokens=False).ids
         out, want = self.tok.decode(ids, skip_special_tokens=False), self.expected(text)
         if out != want and not (self.prefix_space and out == " " + want):
-            raise F.FrontierError(f"{self.spec.key}: decode(encode(text)) != text")
+            raise adapters.FrontierError(f"{self.spec.key}: decode(encode(text)) != text")
         return ids
 
     def count(self, text: str) -> int:
@@ -284,12 +286,12 @@ class TokenizerJsonCounter:
 
 
 def load(spec: RegionalSpec, cache_dir: Path, paths: dict | None = None):
-    paths = paths or F.fetch_assets(spec, cache_dir, ASSET_ALLOWLIST)
+    paths = paths or adapters.fetch_assets(spec, cache_dir, ASSET_ALLOWLIST)
     if spec.kind == "sentencepiece":
         return SentencePieceCounter(spec, paths["tokenizer.model"])
     if spec.kind == "tokenizers":
         return TokenizerJsonCounter(spec, paths["tokenizer.json"])
-    raise F.FrontierError(f"unknown adapter kind {spec.kind}")
+    raise adapters.FrontierError(f"unknown adapter kind {spec.kind}")
 
 
 def unknown_chars(counter, text: str) -> list[str]:
@@ -305,11 +307,11 @@ def unknown_chars(counter, text: str) -> list[str]:
 def official_crosscheck(spec: RegionalSpec, root: Path, counter, texts: list[str]) -> dict:
     """Encode every text with the official SentencePiece runtime and the repository's own tokenizer.model,
     and compare with the counted tokenizer.json ids (executed on every run; nothing is hard-coded)."""
-    paths = F.fetch_assets(replace(spec, assets=spec.crosscheck_assets), root / HF_CACHE, ASSET_ALLOWLIST)
+    paths = adapters.fetch_assets(replace(spec, assets=spec.crosscheck_assets), root / HF_CACHE, ASSET_ALLOWLIST)
     sp, version = sentencepiece_processor(paths["tokenizer.model"])
     same = sum(sp.encode(t, out_type=int) == counter.ids(t) for t in texts)
     if same != len(texts):  # the counted tokenizer must agree with the official reference on every text
-        raise F.FrontierError(f"official SentencePiece cross-check failed: {same}/{len(texts)} texts give "
+        raise adapters.FrontierError(f"official SentencePiece cross-check failed: {same}/{len(texts)} texts give "
                               "identical ids")
     return {"reference": f"sentencepiece {version} SentencePieceProcessor.encode with the repository's "
                          f"tokenizer.model (sha256 {spec.crosscheck_assets['tokenizer.model']})",
@@ -339,7 +341,7 @@ def reference_tokenizers(root: Path, texts: list[str]) -> dict[str, dict]:
         out[t.repo_id] = {"ids_sha256": ids_digest(tok.encode(x, add_special_tokens=False).ids for x in texts),
                           "tokenizer_json": t.sha256, "tok": tok}
     for s in F.LOCAL:
-        c = F.load_local(s, root / F.HF_CACHE)
+        c = adapters.load_local(s, root / F.HF_CACHE)
         out[s.repo_id] = {"ids_sha256": ids_digest(c.ids(x) for x in texts),
                           "tokenizer_json": s.assets.get("tokenizer.json"), "tok": getattr(c, "tok", None)}
     return out
@@ -363,7 +365,7 @@ def run(root: Path) -> dict:
     records = v2.verify(manifest, root / v2.RAW)
     keys = [a["key"] for a in manifest["articles"]]
     if len(keys) != 100 or len(set(keys)) != 100 or [r.key for r in records] != keys:
-        raise F.FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
+        raise adapters.FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
     texts = [t for r in records for t in (r.ar_text, r.en_text)]
     try:
         refs = reference_tokenizers(root, texts)
@@ -387,7 +389,7 @@ def run(root: Path) -> dict:
     status.update(UNAVAILABLE)
     protect_evidence(root, status)
     outputs = build_outputs(root, manifest, rows, status, refs)
-    F.publish(root, OUTPUTS, outputs, manifest)  # validates; never drops, changes or downgrades published rows
+    measure.publish(root, OUTPUTS, outputs, manifest)  # validates; never drops, changes or downgrades published rows
     return status
 
 
@@ -399,7 +401,7 @@ def evaluate(spec: RegionalSpec, root: Path, records, manifest: dict, refs: dict
           "tokenizer_type": spec.tokenizer_type, "tokenizer_origin": spec.tokenizer_origin,
           "tokenizer_terms": spec.tokenizer_terms, "adapter": spec.kind, "measurement_method": spec.method,
           "source_note": spec.source_note}
-    paths = F.fetch_assets(spec, root / HF_CACHE, ASSET_ALLOWLIST)
+    paths = adapters.fetch_assets(spec, root / HF_CACHE, ASSET_ALLOWLIST)
     st["assets"] = {n: {"sha256": d, "bytes": paths[n].stat().st_size} for n, d in spec.assets.items()}
     counter = load(spec, root / HF_CACHE, paths)
     st["runtime"] = counter.runtime
@@ -429,7 +431,7 @@ def evaluate(spec: RegionalSpec, root: Path, records, manifest: dict, refs: dict
         return st, [], counter
     meta = f"{spec.repo_id}@{spec.revision[:12]}; " + ", ".join(
         f"{n} sha256 {d[:12]}" for n, d in spec.assets.items())
-    rows = F.measure_rows(spec, counter, records, manifest, meta)
+    rows = measure.measure_rows(spec, counter, records, manifest, meta)
     for r in rows:
         r["adapter_version"] = ADAPTER_VERSION
     st["status"] = "MEASURED"
@@ -459,7 +461,7 @@ def protect_evidence(root: Path, status: dict) -> None:
         if any(n.get("checks", {}).get(c) != o.get("checks", {}).get(c) for c in PROTECTED_CHECKS):
             errs.append(f"{k}: its published verification evidence would change")
     if errs:
-        raise F.PublishedResultsError("; ".join(errs))
+        raise measure.PublishedResultsError("; ".join(errs))
 
 
 def failure_kind(msg: str) -> str:
@@ -479,8 +481,8 @@ def check(counter, records) -> dict:
             try:
                 ids = counter.ids(text)
                 if counter.ids(text) != ids:
-                    raise F.FrontierError("non-deterministic encoding")
-            except (tokenization.TokenCountError, F.FrontierError) as exc:
+                    raise adapters.FrontierError("non-deterministic encoding")
+            except (tokenization.TokenCountError, adapters.FrontierError) as exc:
                 kind = f"{lang} texts with {failure_kind(str(exc))}"
                 failures[kind] = failures.get(kind, 0) + 1
                 for ch in unknown_chars(counter, text):
@@ -515,7 +517,7 @@ def reference_rows(root: Path) -> dict[str, list[dict]]:
     """Content-only rows already published (Qwen, Mistral, frontier local tokenizers); read only."""
     rows = F.baseline_rows(root)
     with (root / F.OUTPUTS["csv"]).open(encoding="utf-8", newline="") as f:
-        rows += [r for r in csv.DictReader(f) if r["measurement_method"] == F.RAW_CONTENT]
+        rows += [r for r in csv.DictReader(f) if r["measurement_method"] == adapters.RAW_CONTENT]
     return {m: [r for r in rows if r["model"] == m] for m in dict.fromkeys(r["model"] for r in rows)}
 
 
@@ -525,7 +527,7 @@ REFERENCE_DISPLAY = {"Qwen/Qwen2.5-3B-Instruct": "Qwen2.5-3B-Instruct",
 
 
 def _stats(rows: list[dict]) -> dict:
-    s = F.model_summary(rows)
+    s = measure.model_summary(rows)
     s["ttr_without_34_35_108"] = ttr_without(rows)
     s["token_tax_pct"] = (s["ttr"] - 1) * 100
     return s
@@ -538,7 +540,7 @@ def build_outputs(root: Path, manifest: dict, rows: list[dict], status: dict, re
         s = _stats(sel)
         if (s["ar_tokens_total"], s["en_tokens_total"], s["ttr"]) != (
                 published[m]["ar_tokens_total"], published[m]["en_tokens_total"], published[m]["ttr"]):
-            raise F.FrontierError(f"{m}: published rows do not reproduce the published summary")
+            raise adapters.FrontierError(f"{m}: published rows do not reproduce the published summary")
         reference[m] = {"display": REFERENCE_DISPLAY[m], "source": "existing ATTI results (read only)",
                         "ids_sha256": refs[m]["ids_sha256"], **s}
     ref = {"qwen": "Qwen/Qwen2.5-3B-Instruct", "mistral": "mistralai/Mistral-7B-Instruct-v0.3"}
@@ -556,7 +558,7 @@ def build_outputs(root: Path, manifest: dict, rows: list[dict], status: dict, re
     for s in models.values():
         s["en_tokens_per_1000_chars_vs_median"] = s["en_tokens_per_1000_chars"] / en_median
         s["ranking"] = "separate" if s["en_tokens_per_1000_chars_vs_median"] > ENGLISH_FLAG else "primary"
-    summary = {"corpus": F.CORPUS, "status": "PROVISIONAL", "measurement_method": F.RAW_CONTENT,
+    summary = {"corpus": F.CORPUS, "status": "PROVISIONAL", "measurement_method": adapters.RAW_CONTENT,
                "articles": [a["key"] for a in manifest["articles"]],
                "sensitivity_excluded_articles": list(SENSITIVITY_EXCLUDED),
                "separate_ranking_rule": f"English tokens per 1,000 characters above {ENGLISH_FLAG}x the median "
@@ -564,12 +566,12 @@ def build_outputs(root: Path, manifest: dict, rows: list[dict], status: dict, re
                "models": models, "reference_models": reference,
                "equivalence_groups": equivalence_groups(status, reference)}
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=F.CSV_FIELDS, lineterminator="\n")
+    w = csv.DictWriter(buf, fieldnames=measure.CSV_FIELDS, lineterminator="\n")
     w.writeheader()
     w.writerows(rows)
     fm = {"corpus": F.CORPUS, "corpus_manifest": "manifest/current_law_v2_manifest.json",
           "corpus_status": manifest["status"], "adapter_version": ADAPTER_VERSION, "checked_on": CHECKED_ON,
-          "measurement_method": F.RAW_CONTENT,
+          "measurement_method": adapters.RAW_CONTENT,
           "status_definitions": {
               "MEASURED": "all 100 pairs measured in both languages; every guard held on all 200 texts",
               "EQUIVALENT": "token ids identical to another tokenizer's on all 200 corpus texts; reported only "
@@ -582,7 +584,7 @@ def build_outputs(root: Path, manifest: dict, rows: list[dict], status: dict, re
           "asset_policy": "allow-listed tokenizer files only (" + ", ".join(sorted(ASSET_ALLOWLIST)) + ") at "
                           "pinned revisions, SHA-256 checked before use; no weights; no repository code run",
           "adapters": status}
-    return {"csv": buf.getvalue(), "summary": F.dumps(summary), "manifest": F.dumps(fm),
+    return {"csv": buf.getvalue(), "summary": measure.dumps(summary), "manifest": measure.dumps(fm),
             "report": render_report(summary, fm)}
 
 
