@@ -125,13 +125,9 @@ def run(root: Path, pilot_only: bool = False) -> dict:
     """Pilot every adapter on 10 pairs; measure all 100 pairs only for adapters that pass."""
     from atti import v2
 
-    manifest = json.loads((root / v2.MANIFEST_PATH).read_text(encoding="utf-8"))
-    records = v2.verify(manifest, root / v2.RAW)
-    keys = [a["key"] for a in manifest["articles"]]
-    if len(keys) != 100 or len(set(keys)) != 100 or [r.key for r in records] != keys:
-        raise FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
+    manifest, records = v2.load_verified(root)
     pkeys = pilot_keys(manifest)
-    status, pilot, rows, counters = {}, {}, [], {}
+    status, pilot, rows = {}, {}, []
     all_texts = [t for r in records for t in (r.ar_text, r.en_text)]
     prev = recorded_observations(root)
 

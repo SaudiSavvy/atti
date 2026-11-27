@@ -360,11 +360,7 @@ def run(root: Path) -> dict:
     nothing, so the last verified outputs remain."""
     from atti import v2
 
-    manifest = json.loads((root / v2.MANIFEST_PATH).read_text(encoding="utf-8"))
-    records = v2.verify(manifest, root / v2.RAW)
-    keys = [a["key"] for a in manifest["articles"]]
-    if len(keys) != 100 or len(set(keys)) != 100 or [r.key for r in records] != keys:
-        raise adapters.FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
+    manifest, records = v2.load_verified(root)
     texts = [t for r in records for t in (r.ar_text, r.en_text)]
     try:
         refs = reference_tokenizers(root, texts)

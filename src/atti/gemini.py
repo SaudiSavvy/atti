@@ -87,11 +87,7 @@ def run(root: Path, pilot_only: bool = False, client=None, key: str | None = Non
     """`anchor` defaults to GEMINI_ANCHOR (the committed measurement); tests pass their own."""
     from atti import v2
 
-    manifest = json.loads((root / v2.MANIFEST_PATH).read_text(encoding="utf-8"))
-    records = v2.verify(manifest, root / v2.RAW)
-    keys = [a["key"] for a in manifest["articles"]]
-    if len(keys) != 100 or len(set(keys)) != 100:
-        raise adapters.FrontierError("the corpus must be exactly the 100 current_law_v2 pairs")
+    manifest, records = v2.load_verified(root)
     c = counter(root, client=client, key=key, sleep=sleep, anchor=anchor)
     pkeys = pilot_articles(root, manifest)
     status = {"key": GEMINI.key, "display": GEMINI.display, "provider": GEMINI.provider,
